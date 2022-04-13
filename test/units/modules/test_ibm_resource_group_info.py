@@ -19,7 +19,7 @@ import os
 
 from ibm_cloud_sdk_core import ApiException
 
-from ansible.modules.cloud.ibm import resource_manager_resource_group_info
+from ansible.modules.cloud.ibm import ibm_resource_group_info
 from units.compat.mock import patch
 from units.modules.utils import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
 
@@ -31,15 +31,11 @@ class TestResourceGroupModuleInfo(ModuleTestCase):
     Test class for ResourceGroup module testing.
     """
 
-    def test_read_resource_group_success(self):
-        """Test the "read" path - successful."""
-        datasource = {
-            'id': 'testString',
-        }
-
-        patcher = patch('ansible.modules.cloud.ibm.resource_manager_resource_group_info.ResourceManagerV2.get_resource_group')
+    def test_list_ibm_resource_group_success(self):
+        """Test the "list" path - successful."""
+        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_group_info.ResourceManagerV2.get_resource_group')
         mock = patcher.start()
-        mock.return_value = DetailedResponseMock(datasource)
+        mock.return_value = DetailedResponseMock([])
 
         set_module_args({
             'id': 'testString',
@@ -47,21 +43,19 @@ class TestResourceGroupModuleInfo(ModuleTestCase):
 
         with self.assertRaises(AnsibleExitJson) as result:
             os.environ['RESOURCE_MANAGER_AUTH_TYPE'] = 'noAuth'
-            resource_manager_resource_group_info.main()
+            ibm_resource_group_info.main()
 
-        assert result.exception.args[0]['msg'] == datasource
+        assert result.exception.args[0]['msg'] == []
 
-        mock.assert_called_once_with(
-            id='testString',
-        )
+        mock.assert_called_once()
 
         patcher.stop()
 
-    def test_read_resource_group_failed(self):
-        """Test the "read" path - failed."""
-        patcher = patch('ansible.modules.cloud.ibm.resource_manager_resource_group_info.ResourceManagerV2.get_resource_group')
+    def test_list_ibm_resource_group_failed(self):
+        """Test the "list" path - failed."""
+        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_group_info.ResourceManagerV2.get_resource_group')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='Read resource_group error')
+        mock.side_effect = ApiException(400, message='List ibm_resource_group error')
 
         set_module_args({
             'id': 'testString',
@@ -69,12 +63,10 @@ class TestResourceGroupModuleInfo(ModuleTestCase):
 
         with self.assertRaises(AnsibleFailJson) as result:
             os.environ['RESOURCE_MANAGER_AUTH_TYPE'] = 'noAuth'
-            resource_manager_resource_group_info.main()
+            ibm_resource_group_info.main()
 
-        assert result.exception.args[0]['msg'] == 'Read resource_group error'
+        assert result.exception.args[0]['msg'] == 'List ibm_resource_group error'
 
-        mock.assert_called_once_with(
-            id='testString',
-        )
+        mock.assert_called_once()
 
         patcher.stop()

@@ -31,12 +31,12 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = r'''
 ---
-module: resource_manager_resource_group_info
-short_description: Manage resource_group info.
+module: ibm_resource_group_info
+short_description: Manage ibm_resource_group info.
 author: IBM SDK Generator
 version_added: "0.1"
 description:
-    - This module retrieves one or more resource_group(s).
+    - This module retrieves one or more ibm_resource_group(s).
 requirements:
     - "ResourceManagerV2"
 options:
@@ -66,15 +66,14 @@ def run_module():
 
     sdk = ResourceManagerV2.new_instance()
 
-    if id:
-        # read
-        try:
-            response = sdk.get_resource_group(
-                id=id
-            )
-            module.exit_json(msg=response.get_result())
-        except ApiException as ex:
-            module.fail_json(msg=ex.message)
+    # list
+    try:
+        response = sdk.get_resource_group(
+            id=id
+        )
+        module.exit_json(msg=response.get_result())
+    except ApiException as ex:
+        module.fail_json(msg=ex.message)
 
 def main():
     run_module()
