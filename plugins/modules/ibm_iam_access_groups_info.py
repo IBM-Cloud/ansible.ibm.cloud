@@ -31,18 +31,22 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = r'''
 ---
-module: iam_access_groups_iam_access_group_members_info
-short_description: Manage iam_access_group_members info.
+module: ibm_iam_access_groups_info
+short_description: Manage ibm_iam_access_groups info.
 author: IBM SDK Generator
 version_added: "0.1"
 description:
-    - This module retrieves one or more iam_access_group_members(s).
+    - This module retrieves one or more ibm_iam_access_groups(s).
 requirements:
     - "IamAccessGroupsV2"
 options:
-    access_group_id:
+    account_id:
         description:
-            - The access group identifier.
+            - Account ID of the API keys(s) to query. If a service IAM ID is specified in iam_id then account_id must match the account of the IAM ID. If a user IAM ID is specified in iam_id then then account_id must match the account of the Authorization token.
+        type: str
+    iam_id:
+        description:
+            - Return groups for member ID (IBMid, service ID or trusted profile ID).
         type: str
     offset:
         description:
@@ -56,17 +60,17 @@ options:
         description:
             - Return up to this limit of results where limit is between 0 and 100.
         type: int
+    show_federated:
+        description:
+            - If show_federated is true, each group listed will return an is_federated value that is set to true if rules exist for the group.
+        type: bool
     sort:
         description:
-            - If verbose is true, sort the results by id, name, or email.
+            - Sort the results by id, name, description, or is_federated flag.
         type: str
-    type:
+    hide_public_access:
         description:
-            - Filter the results by member type.
-        type: str
-    verbose:
-        description:
-            - Return user's email and name for each user ID or the name for each service ID or trusted profile.
+            - If hide_public_access is true, do not include the Public Access Group in the results.
         type: bool
 '''
 
@@ -76,7 +80,10 @@ Examples coming soon.
 
 def run_module():
     module_args = dict(
-        access_group_id=dict(
+        account_id=dict(
+            type='str',
+            required=False),
+        iam_id=dict(
             type='str',
             required=False),
         offset=dict(
@@ -88,13 +95,13 @@ def run_module():
         limit=dict(
             type='int',
             required=False),
+        show_federated=dict(
+            type='bool',
+            required=False),
         sort=dict(
             type='str',
             required=False),
-        type=dict(
-            type='str',
-            required=False),
-        verbose=dict(
+        hide_public_access=dict(
             type='bool',
             required=False),
     )
@@ -104,27 +111,28 @@ def run_module():
         supports_check_mode=False
     )
 
-    access_group_id = module.params["access_group_id"]
+    account_id = module.params["account_id"]
+    iam_id = module.params["iam_id"]
     offset = module.params["offset"]
     transaction_id = module.params["transaction_id"]
     limit = module.params["limit"]
+    show_federated = module.params["show_federated"]
     sort = module.params["sort"]
-    type = module.params["type"]
-    verbose = module.params["verbose"]
+    hide_public_access = module.params["hide_public_access"]
 
     sdk = IamAccessGroupsV2.new_instance()
 
-    # if iam_id: ToDo: remove this generated line
-        # read
+    # list
     try:
-        response = sdk.list_access_group_members(
-            access_group_id=access_group_id,
+        response = sdk.list_access_groups(
+            account_id=account_id,
             transaction_id=transaction_id,
+            iam_id=iam_id,
             limit=limit,
             offset=offset,
-            type=type,
-            verbose=verbose,
-            sort=sort
+            sort=sort,
+            show_federated=show_federated,
+            hide_public_access=hide_public_access
         )
         module.exit_json(msg=response.get_result())
     except ApiException as ex:

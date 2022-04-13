@@ -31,54 +31,67 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = r'''
 ---
-module: iam_access_groups_iam_access_group_rule
-short_description: Manage iam_access_group_rule resources.
+module: ibm_iam_access_group_members
+short_description: Manage ibm_iam_access_group_members resources.
 author: IBM SDK Generator
 version_added: "0.1"
 description:
-    - This module creates, updates, or deletes a iam_access_group_rule.
-    - By default the module will look for an existing iam_access_group_rule.
+    - This module creates, updates, or deletes a ibm_iam_access_group_members.
+    - By default the module will look for an existing ibm_iam_access_group_members.
 requirements:
     - "IamAccessGroupsV2"
 options:
+    members:
+        description:
+            - An array of member objects to add to an access group.
+        type: list
+        suboptions:
+            iam_id:
+                description:
+                    - The IBMid, service ID or trusted profile ID of the member.
+                type: str
+            type:
+                description:
+                    - The type of the member, must be either "user", "service" or "trusted profile".
+                type: str
+    access_group_id:
+        description:
+            - The access group identifier.
+        type: str
+    iam_id:
+        description:
+            - The IAM identifier.
+        type: str
+    offset:
+        description:
+            - The offset of the first result item to be returned.
+        type: int
+    transaction_id:
+        description:
+            - An optional transaction ID can be passed to your request, which can be useful for tracking calls through multiple services by using one identifier. The header key must be set to Transaction-Id and the value is anything that you choose. If no transaction ID is passed in, then a random ID is generated.
+        type: str
+    limit:
+        description:
+            - Return up to this limit of results where limit is between 0 and 100.
+        type: int
+    sort:
+        description:
+            - If verbose is true, sort the results by id, name, or email.
+        type: str
+    type:
+        description:
+            - Filter the results by member type.
+        type: str
+    verbose:
+        description:
+            - Return user's email and name for each user ID or the name for each service ID or trusted profile.
+        type: bool
     state:
         description:
             - Should the resource be present or absent.
         type: str
         default: present
         choices: [present, absent]
-    name:
-        description:
-            - The name of the rule.
-        type: str
-    expiration:
-        description:
-            - The number of hours that the rule lives for.
-        type: int
-    conditions:
-        description:
-            - A list of conditions the rule must satisfy.
-        type: list
-    realm_name:
-        description:
-            - The url of the identity provider.
-        type: str
-    rule_id:
-        description:
-            - The rule to get.
-        type: str
-    access_group_id:
-        description:
-            - The access group identifier.
-        type: str
-    if_match:
-        description:
-            - The current revision number of the rule being updated. This can be found in the Get Rule response ETag header.
-        type: str
-    transaction_id:
-        description:
-            - An optional transaction ID can be passed to your request, which can be useful for tracking calls through multiple services by using one identifier. The header key must be set to Transaction-Id and the value is anything that you choose. If no transaction ID is passed in, then a random ID is generated.
-        type: str
 '''
 
 EXAMPLES = r'''
@@ -87,29 +100,40 @@ Examples coming soon.
 
 def run_module():
     module_args = dict(
-        name=dict(
-            type='str',
-            required=False),
-        expiration=dict(
-            type='int',
-            required=False),
-        conditions=dict(
+        members=dict(
             type='list',
-            required=False),
-        realm_name=dict( # ToDo: terraform argument name is identity_provider 
-            type='str',
-            required=False),
-        rule_id=dict(
-            type='str',
+            options=dict(
+                iam_id=dict(
+                    type='str',
+                    required=False),
+                type=dict(
+                    type='str',
+                    required=False),
+            ),
             required=False),
         access_group_id=dict(
             type='str',
             required=False),
-        if_match=dict(
+        iam_id=dict(
             type='str',
+            required=False),
+        offset=dict(
+            type='int',
             required=False),
         transaction_id=dict(
             type='str',
+            required=False),
+        limit=dict(
+            type='int',
+            required=False),
+        sort=dict(
+            type='str',
+            required=False),
+        type=dict(
+            type='str',
+            required=False),
+        verbose=dict(
+            type='bool',
             required=False),
         state=dict(
             type='str',
@@ -123,15 +147,15 @@ def run_module():
         supports_check_mode=False
     )
 
-    name = module.params["name"]
-    expiration = module.params["expiration"]
-    conditions = module.params["conditions"]
-    realm_name = module.params["realm_name"]
-    rule_id = module.params["rule_id"]
+    members = module.params["members"]
     access_group_id = module.params["access_group_id"]
-    if_match = module.params["if_match"]
+    iam_id = module.params["iam_id"]
+    offset = module.params["offset"]
     transaction_id = module.params["transaction_id"]
-
+    limit = module.params["limit"]
+    sort = module.params["sort"]
+    type = module.params["type"]
+    verbose = module.params["verbose"]
     state = module.params["state"]
 
     sdk = IamAccessGroupsV2.new_instance()
@@ -139,12 +163,16 @@ def run_module():
     resource_exists=True
 
     # Check for existence
-    if rule_id:
+    if iam_id:
         try:
-            sdk.get_access_group_rule(
+            sdk.list_access_group_members(
                 access_group_id=access_group_id,
-                rule_id=rule_id,
                 transaction_id=transaction_id,
+                limit=limit,
+                offset=offset,
+                type=type,
+                verbose=verbose,
+                sort=sort,
             )
         except ApiException as ex:
             if ex.code == 404:
@@ -159,30 +187,27 @@ def run_module():
     if state == "absent":
         if resource_exists:
             try:
-                sdk.remove_access_group_rule(
+                sdk.remove_member_from_access_group(
                     access_group_id=access_group_id,
-                    rule_id=rule_id,
+                    iam_id=iam_id,
                     transaction_id=transaction_id,
                 )
             except ApiException as ex:
                 module.fail_json(msg=ex.message)
             else:
-                payload = {"id": rule_id , "status": "deleted"}
+                payload = {"id": iam_id , "status": "deleted"}
                 module.exit_json(changed=True, msg=payload)
         else:
-            payload = {"id": rule_id , "status": "not_found"}
+            payload = {"id": iam_id , "status": "not_found"}
             module.exit_json(changed=False, msg=payload)
 
     if state == "present":
         if not resource_exists:
             # Create path
             try:
-                result = sdk.add_access_group_rule(
+                result = sdk.add_members_to_access_group(
                     access_group_id=access_group_id,
-                    expiration=expiration,
-                    realm_name=realm_name,
-                    conditions=conditions,
-                    name=name,
+                    members=members,
                     transaction_id=transaction_id,
                 ).get_result()
             except ApiException as ex:
@@ -192,14 +217,9 @@ def run_module():
         else:
             # Update path
             try:
-                result = sdk.replace_access_group_rule(
+                result = sdk.add_members_to_access_group(
                     access_group_id=access_group_id,
-                    rule_id=rule_id,
-                    if_match=if_match,
-                    expiration=expiration,
-                    realm_name=realm_name,
-                    conditions=conditions,
-                    name=name,
+                    members=members,
                     transaction_id=transaction_id,
                 ).get_result()
             except ApiException as ex:

@@ -19,7 +19,7 @@ import os
 
 from ibm_cloud_sdk_core import ApiException
 
-from ansible.modules.cloud.ibm import iam_access_groups_iam_access_group_info
+from ansible.modules.cloud.ibm import ibm_iam_access_group_info
 from units.compat.mock import patch
 from units.modules.utils import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
 
@@ -31,7 +31,7 @@ class TestGroupModuleInfo(ModuleTestCase):
     Test class for Group module testing.
     """
 
-    def test_read_iam_access_group_success(self):
+    def test_read_ibm_iam_access_group_success(self):
         """Test the "read" path - successful."""
         datasource = {
             'access_group_id': 'testString',
@@ -39,7 +39,7 @@ class TestGroupModuleInfo(ModuleTestCase):
             'show_federated': False,
         }
 
-        patcher = patch('ansible.modules.cloud.ibm.iam_access_groups_iam_access_group_info.IamAccessGroupsV2.get_access_group')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_iam_access_group_info.IamAccessGroupsV2.get_access_group')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock(datasource)
 
@@ -51,7 +51,7 @@ class TestGroupModuleInfo(ModuleTestCase):
 
         with self.assertRaises(AnsibleExitJson) as result:
             os.environ['IAM_ACCESS_GROUPS_AUTH_TYPE'] = 'noAuth'
-            iam_access_groups_iam_access_group_info.main()
+            ibm_iam_access_group_info.main()
 
         assert result.exception.args[0]['msg'] == datasource
 
@@ -63,11 +63,11 @@ class TestGroupModuleInfo(ModuleTestCase):
 
         patcher.stop()
 
-    def test_read_iam_access_group_failed(self):
+    def test_read_ibm_iam_access_group_failed(self):
         """Test the "read" path - failed."""
-        patcher = patch('ansible.modules.cloud.ibm.iam_access_groups_iam_access_group_info.IamAccessGroupsV2.get_access_group')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_iam_access_group_info.IamAccessGroupsV2.get_access_group')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='Read iam_access_group error')
+        mock.side_effect = ApiException(400, message='Read ibm_iam_access_group error')
 
         set_module_args({
             'access_group_id': 'testString',
@@ -77,9 +77,9 @@ class TestGroupModuleInfo(ModuleTestCase):
 
         with self.assertRaises(AnsibleFailJson) as result:
             os.environ['IAM_ACCESS_GROUPS_AUTH_TYPE'] = 'noAuth'
-            iam_access_groups_iam_access_group_info.main()
+            ibm_iam_access_group_info.main()
 
-        assert result.exception.args[0]['msg'] == 'Read iam_access_group error'
+        assert result.exception.args[0]['msg'] == 'Read ibm_iam_access_group error'
 
         mock.assert_called_once_with(
             access_group_id='testString',

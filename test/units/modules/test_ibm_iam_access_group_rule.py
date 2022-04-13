@@ -19,7 +19,7 @@ import os
 
 from ibm_cloud_sdk_core import ApiException
 
-from ansible.modules.cloud.ibm import iam_access_groups_iam_access_group_rule
+from ansible.modules.cloud.ibm import ibm_iam_access_group_rule
 from ibm_platform_services import *  # pylint: disable=wildcard-import,unused-wildcard-import
 from units.compat.mock import patch
 from units.modules.utils import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
@@ -27,15 +27,70 @@ from units.modules.utils import ModuleTestCase, AnsibleFailJson, AnsibleExitJson
 from .common import DetailedResponseMock
 
 
-class TestRuleModule(ModuleTestCase):
-    """
-    Test class for Rule module testing.
+def post_process_result(expected: dict, result: dict) -> dict:
+    """Removes implicitly added items by Ansible.
+
+    Args:
+        expected: the expected results
+        result: the actual ressult
+    Returns:
+        A cleaned dictionary.
     """
 
-    def test_read_iam_access_group_rule_failed(self):
+    new_result = {}
+
+    for res_key, res_value in result.items():
+        try:
+            mock_value = expected[res_key]
+        except KeyError:
+            # If this key not presented in the expected dictionary and its value is None
+            # we can ignore it, since it supposed to be an implicitly added item by Ansible.
+            if res_value is None:
+                continue
+
+            new_result[res_key] = res_value
+        else:
+            # We need to recursively check nested dictionaries as well.
+            if isinstance(res_value, dict):
+                new_result[res_key] = post_process_result(mock_value, res_value)
+            # Just like lists.
+            elif isinstance(res_value, list) and len(res_value) > 0:
+                # We use an inner function for recursive list processing.
+                def process_list(m: list, r: list) -> list:
+                    # Create a new list that we will return at the end of this function.
+                    # We will check, process then add each elements one by one.
+                    new_list = []
+                    for mock_elem, res_elem in zip(m, r):
+                        # If both items are dict use the outer function to process them.
+                        if isinstance(mock_elem, dict) and isinstance(res_elem, dict):
+                            new_list.append(post_process_result(mock_elem, res_elem))
+                        # If both items are list, use this function to process them.
+                        elif isinstance(mock_elem, list) and isinstance(res_elem, list):
+                            new_list.append(process_list(mock_elem, res_elem))
+                        # Otherwise just add it to the new list, but only if both items have
+                        # the same type. Otherwise do nothing, since it's and invalid scenario.
+                        elif isinstance(mock_elem, type(res_elem)):
+                            new_list.append(res_elem)
+
+                    return new_list
+
+                new_result[res_key] = process_list(mock_value, res_value)
+            # This should be a simple value, so let's use it as is.
+            else:
+                new_result[res_key] = res_value
+
+    return new_result
+
+
+class TestRuleRequestModule(ModuleTestCase):
+    """
+    Test class for RuleRequest module testing.
+    """
+
+    def test_read_ibm_iam_access_group_rule_failed(self):
         """Test the inner "read" path in this module with a server error response."""
 
-        patcher = patch('ansible.modules.cloud.ibm.iam_access_groups_iam_access_group_rule.IamAccessGroupsV2.get_access_group_rule')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_iam_access_group_rule.IamAccessGroupsV2.get_access_group_rule')
         mock = patcher.start()
         mock.side_effect = ApiException(500, message='Something went wrong...')
 
@@ -47,25 +102,29 @@ class TestRuleModule(ModuleTestCase):
 
         with self.assertRaises(AnsibleFailJson) as result:
             os.environ['IAM_ACCESS_GROUPS_AUTH_TYPE'] = 'noAuth'
-            iam_access_groups_iam_access_group_rule.main()
+            ibm_iam_access_group_rule.main()
 
         assert result.exception.args[0]['msg'] == 'Something went wrong...'
 
-        mock.assert_called_once_with(
+        mock_data = dict(
             access_group_id='testString',
             rule_id='testString',
             transaction_id='testString',
         )
 
+        mock.assert_called_once()
+        processed_result = post_process_result(mock_data, mock.call_args.kwargs)
+        assert mock_data == processed_result
+
         patcher.stop()
 
-    def test_create_iam_access_group_rule_success(self):
+    def test_create_ibm_iam_access_group_rule_success(self):
         """Test the "create" path - successful."""
-        rule_conditions_model = dict(
-            claim='isManager',
-            operator='EQUALS',
-            value='true',
-        )
+        rule_conditions_model = {
+            'claim': 'isManager',
+            'operator': 'EQUALS',
+            'value': 'true',
+        }
 
         resource = {
             'access_group_id': 'testString',
@@ -76,11 +135,11 @@ class TestRuleModule(ModuleTestCase):
             'transaction_id': 'testString',
         }
 
-        patcher = patch('ansible.modules.cloud.ibm.iam_access_groups_iam_access_group_rule.IamAccessGroupsV2.add_access_group_rule')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_iam_access_group_rule.IamAccessGroupsV2.add_access_group_rule')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock(resource)
 
-        get_access_group_rule_patcher = patch('ansible.modules.cloud.ibm.iam_access_groups_iam_access_group_rule.IamAccessGroupsV2.get_access_group_rule')
+        get_access_group_rule_patcher = patch('ansible.modules.cloud.ibm.ibm_iam_access_group_rule.IamAccessGroupsV2.get_access_group_rule')
         get_access_group_rule_mock = get_access_group_rule_patcher.start()
 
         set_module_args({
@@ -94,7 +153,7 @@ class TestRuleModule(ModuleTestCase):
 
         with self.assertRaises(AnsibleExitJson) as result:
             os.environ['IAM_ACCESS_GROUPS_AUTH_TYPE'] = 'noAuth'
-            iam_access_groups_iam_access_group_rule.main()
+            ibm_iam_access_group_rule.main()
 
         assert result.exception.args[0]['changed'] is True
         assert result.exception.args[0]['msg'] == resource
@@ -108,28 +167,30 @@ class TestRuleModule(ModuleTestCase):
             transaction_id='testString',
         )
 
-        mock.assert_called_once_with(**mock_data)
+        mock.assert_called_once()
+        processed_result = post_process_result(mock_data, mock.call_args.kwargs)
+        assert mock_data == processed_result
 
         get_access_group_rule_mock.assert_not_called()
 
         get_access_group_rule_patcher.stop()
         patcher.stop()
 
-    def test_create_iam_access_group_rule_failed(self):
+    def test_create_ibm_iam_access_group_rule_failed(self):
         """Test the "create" path - failed."""
 
-        get_access_group_rule_patcher = patch('ansible.modules.cloud.ibm.iam_access_groups_iam_access_group_rule.IamAccessGroupsV2.get_access_group_rule')
+        get_access_group_rule_patcher = patch('ansible.modules.cloud.ibm.ibm_iam_access_group_rule.IamAccessGroupsV2.get_access_group_rule')
         get_access_group_rule_mock = get_access_group_rule_patcher.start()
 
-        patcher = patch('ansible.modules.cloud.ibm.iam_access_groups_iam_access_group_rule.IamAccessGroupsV2.add_access_group_rule')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_iam_access_group_rule.IamAccessGroupsV2.add_access_group_rule')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='Create iam_access_group_rule error')
+        mock.side_effect = ApiException(400, message='Create ibm_iam_access_group_rule error')
 
-        rule_conditions_model = dict(
-            claim='isManager',
-            operator='EQUALS',
-            value='true',
-        )
+        rule_conditions_model = {
+            'claim': 'isManager',
+            'operator': 'EQUALS',
+            'value': 'true',
+        }
 
         set_module_args({
             'access_group_id': 'testString',
@@ -142,9 +203,9 @@ class TestRuleModule(ModuleTestCase):
 
         with self.assertRaises(AnsibleFailJson) as result:
             os.environ['IAM_ACCESS_GROUPS_AUTH_TYPE'] = 'noAuth'
-            iam_access_groups_iam_access_group_rule.main()
+            ibm_iam_access_group_rule.main()
 
-        assert result.exception.args[0]['msg'] == 'Create iam_access_group_rule error'
+        assert result.exception.args[0]['msg'] == 'Create ibm_iam_access_group_rule error'
 
         mock_data = dict(
             access_group_id='testString',
@@ -155,20 +216,22 @@ class TestRuleModule(ModuleTestCase):
             transaction_id='testString',
         )
 
-        mock.assert_called_once_with(**mock_data)
+        mock.assert_called_once()
+        processed_result = post_process_result(mock_data, mock.call_args.kwargs)
+        assert mock_data == processed_result
 
         get_access_group_rule_mock.assert_not_called()
 
         get_access_group_rule_patcher.stop()
         patcher.stop()
 
-    def test_update_iam_access_group_rule_success(self):
+    def test_update_ibm_iam_access_group_rule_success(self):
         """Test the "update" path - successful."""
-        rule_conditions_model = dict(
-            claim='isManager',
-            operator='EQUALS',
-            value='true',
-        )
+        rule_conditions_model = {
+            'claim': 'isManager',
+            'operator': 'EQUALS',
+            'value': 'true',
+        }
 
         resource = {
             'access_group_id': 'testString',
@@ -181,11 +244,11 @@ class TestRuleModule(ModuleTestCase):
             'transaction_id': 'testString',
         }
 
-        patcher = patch('ansible.modules.cloud.ibm.iam_access_groups_iam_access_group_rule.IamAccessGroupsV2.replace_access_group_rule')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_iam_access_group_rule.IamAccessGroupsV2.replace_access_group_rule')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock(resource)
 
-        get_access_group_rule_patcher = patch('ansible.modules.cloud.ibm.iam_access_groups_iam_access_group_rule.IamAccessGroupsV2.get_access_group_rule')
+        get_access_group_rule_patcher = patch('ansible.modules.cloud.ibm.ibm_iam_access_group_rule.IamAccessGroupsV2.get_access_group_rule')
         get_access_group_rule_mock = get_access_group_rule_patcher.start()
         get_access_group_rule_mock.return_value = DetailedResponseMock(resource)
 
@@ -202,7 +265,7 @@ class TestRuleModule(ModuleTestCase):
 
         with self.assertRaises(AnsibleExitJson) as result:
             os.environ['IAM_ACCESS_GROUPS_AUTH_TYPE'] = 'noAuth'
-            iam_access_groups_iam_access_group_rule.main()
+            ibm_iam_access_group_rule.main()
 
         assert result.exception.args[0]['changed'] is True
         assert result.exception.args[0]['msg'] == resource
@@ -218,7 +281,9 @@ class TestRuleModule(ModuleTestCase):
             transaction_id='testString',
         )
 
-        mock.assert_called_once_with(**mock_data)
+        mock.assert_called_once()
+        processed_result = post_process_result(mock_data, mock.call_args.kwargs)
+        assert mock_data == processed_result
 
         get_access_group_rule_mock_data = dict(
             access_group_id='testString',
@@ -230,18 +295,19 @@ class TestRuleModule(ModuleTestCase):
         for param in get_access_group_rule_mock_data:
             get_access_group_rule_mock_data[param] = mock_data.get(param, None)
 
-        get_access_group_rule_mock.assert_called_once_with(**get_access_group_rule_mock_data)
-
+        get_access_group_rule_mock.assert_called_once()
+        get_access_group_rule_processed_result = post_process_result(get_access_group_rule_mock_data, get_access_group_rule_mock.call_args.kwargs)
+        assert get_access_group_rule_mock_data == get_access_group_rule_processed_result
         get_access_group_rule_patcher.stop()
         patcher.stop()
 
-    def test_update_iam_access_group_rule_failed(self):
+    def test_update_ibm_iam_access_group_rule_failed(self):
         """Test the "update" path - failed."""
-        rule_conditions_model = dict(
-            claim='isManager',
-            operator='EQUALS',
-            value='true',
-        )
+        rule_conditions_model = {
+            'claim': 'isManager',
+            'operator': 'EQUALS',
+            'value': 'true',
+        }
 
         resource = {
             'access_group_id': 'testString',
@@ -254,11 +320,11 @@ class TestRuleModule(ModuleTestCase):
             'transaction_id': 'testString',
         }
 
-        patcher = patch('ansible.modules.cloud.ibm.iam_access_groups_iam_access_group_rule.IamAccessGroupsV2.replace_access_group_rule')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_iam_access_group_rule.IamAccessGroupsV2.replace_access_group_rule')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='Update iam_access_group_rule error')
+        mock.side_effect = ApiException(400, message='Update ibm_iam_access_group_rule error')
 
-        get_access_group_rule_patcher = patch('ansible.modules.cloud.ibm.iam_access_groups_iam_access_group_rule.IamAccessGroupsV2.get_access_group_rule')
+        get_access_group_rule_patcher = patch('ansible.modules.cloud.ibm.ibm_iam_access_group_rule.IamAccessGroupsV2.get_access_group_rule')
         get_access_group_rule_mock = get_access_group_rule_patcher.start()
         get_access_group_rule_mock.return_value = DetailedResponseMock(resource)
 
@@ -275,9 +341,9 @@ class TestRuleModule(ModuleTestCase):
 
         with self.assertRaises(AnsibleFailJson) as result:
             os.environ['IAM_ACCESS_GROUPS_AUTH_TYPE'] = 'noAuth'
-            iam_access_groups_iam_access_group_rule.main()
+            ibm_iam_access_group_rule.main()
 
-        assert result.exception.args[0]['msg'] == 'Update iam_access_group_rule error'
+        assert result.exception.args[0]['msg'] == 'Update ibm_iam_access_group_rule error'
 
         mock_data = dict(
             access_group_id='testString',
@@ -290,7 +356,9 @@ class TestRuleModule(ModuleTestCase):
             transaction_id='testString',
         )
 
-        mock.assert_called_once_with(**mock_data)
+        mock.assert_called_once()
+        processed_result = post_process_result(mock_data, mock.call_args.kwargs)
+        assert mock_data == processed_result
 
         get_access_group_rule_mock_data = dict(
             access_group_id='testString',
@@ -302,18 +370,20 @@ class TestRuleModule(ModuleTestCase):
         for param in get_access_group_rule_mock_data:
             get_access_group_rule_mock_data[param] = mock_data.get(param, None)
 
-        get_access_group_rule_mock.assert_called_once_with(**get_access_group_rule_mock_data)
+        get_access_group_rule_mock.assert_called_once()
+        get_access_group_rule_processed_result = post_process_result(get_access_group_rule_mock_data, get_access_group_rule_mock.call_args.kwargs)
+        assert get_access_group_rule_mock_data == get_access_group_rule_processed_result
 
         get_access_group_rule_patcher.stop()
         patcher.stop()
 
-    def test_delete_iam_access_group_rule_success(self):
+    def test_delete_ibm_iam_access_group_rule_success(self):
         """Test the "delete" path - successfull."""
-        patcher = patch('ansible.modules.cloud.ibm.iam_access_groups_iam_access_group_rule.IamAccessGroupsV2.remove_access_group_rule')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_iam_access_group_rule.IamAccessGroupsV2.remove_access_group_rule')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock()
 
-        get_access_group_rule_patcher = patch('ansible.modules.cloud.ibm.iam_access_groups_iam_access_group_rule.IamAccessGroupsV2.get_access_group_rule')
+        get_access_group_rule_patcher = patch('ansible.modules.cloud.ibm.ibm_iam_access_group_rule.IamAccessGroupsV2.get_access_group_rule')
         get_access_group_rule_mock = get_access_group_rule_patcher.start()
         get_access_group_rule_mock.return_value = DetailedResponseMock()
 
@@ -328,7 +398,7 @@ class TestRuleModule(ModuleTestCase):
 
         with self.assertRaises(AnsibleExitJson) as result:
             os.environ['IAM_ACCESS_GROUPS_AUTH_TYPE'] = 'noAuth'
-            iam_access_groups_iam_access_group_rule.main()
+            ibm_iam_access_group_rule.main()
 
         assert result.exception.args[0]['changed'] is True
         assert result.exception.args[0]['msg']['id'] == 'testString'
@@ -340,7 +410,9 @@ class TestRuleModule(ModuleTestCase):
             transaction_id='testString',
         )
 
-        mock.assert_called_once_with(**mock_data)
+        mock.assert_called_once()
+        processed_result = post_process_result(mock_data, mock.call_args.kwargs)
+        assert mock_data == processed_result
 
         get_access_group_rule_mock_data = dict(
             access_group_id='testString',
@@ -352,18 +424,20 @@ class TestRuleModule(ModuleTestCase):
         for param in get_access_group_rule_mock_data:
             get_access_group_rule_mock_data[param] = mock_data.get(param, None)
 
-        get_access_group_rule_mock.assert_called_once_with(**get_access_group_rule_mock_data)
+        get_access_group_rule_mock.assert_called_once()
+        get_access_group_rule_processed_result = post_process_result(get_access_group_rule_mock_data, get_access_group_rule_mock.call_args.kwargs)
+        assert get_access_group_rule_mock_data == get_access_group_rule_processed_result
 
         get_access_group_rule_patcher.stop()
         patcher.stop()
 
-    def test_delete_iam_access_group_rule_not_exists(self):
+    def test_delete_ibm_iam_access_group_rule_not_exists(self):
         """Test the "delete" path - not exists."""
-        patcher = patch('ansible.modules.cloud.ibm.iam_access_groups_iam_access_group_rule.IamAccessGroupsV2.remove_access_group_rule')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_iam_access_group_rule.IamAccessGroupsV2.remove_access_group_rule')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock()
 
-        get_access_group_rule_patcher = patch('ansible.modules.cloud.ibm.iam_access_groups_iam_access_group_rule.IamAccessGroupsV2.get_access_group_rule')
+        get_access_group_rule_patcher = patch('ansible.modules.cloud.ibm.ibm_iam_access_group_rule.IamAccessGroupsV2.get_access_group_rule')
         get_access_group_rule_mock = get_access_group_rule_patcher.start()
         get_access_group_rule_mock.side_effect = ApiException(404)
 
@@ -378,7 +452,7 @@ class TestRuleModule(ModuleTestCase):
 
         with self.assertRaises(AnsibleExitJson) as result:
             os.environ['IAM_ACCESS_GROUPS_AUTH_TYPE'] = 'noAuth'
-            iam_access_groups_iam_access_group_rule.main()
+            ibm_iam_access_group_rule.main()
 
         assert result.exception.args[0]['changed'] is False
         assert result.exception.args[0]['msg']['id'] == 'testString'
@@ -402,18 +476,20 @@ class TestRuleModule(ModuleTestCase):
         for param in get_access_group_rule_mock_data:
             get_access_group_rule_mock_data[param] = mock_data.get(param, None)
 
-        get_access_group_rule_mock.assert_called_once_with(**get_access_group_rule_mock_data)
+        get_access_group_rule_mock.assert_called_once()
+        get_access_group_rule_processed_result = post_process_result(get_access_group_rule_mock_data, get_access_group_rule_mock.call_args.kwargs)
+        assert get_access_group_rule_mock_data == get_access_group_rule_processed_result
 
         get_access_group_rule_patcher.stop()
         patcher.stop()
 
-    def test_delete_iam_access_group_rule_failed(self):
+    def test_delete_ibm_iam_access_group_rule_failed(self):
         """Test the "delete" path - failed."""
-        patcher = patch('ansible.modules.cloud.ibm.iam_access_groups_iam_access_group_rule.IamAccessGroupsV2.remove_access_group_rule')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_iam_access_group_rule.IamAccessGroupsV2.remove_access_group_rule')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='Delete iam_access_group_rule error')
+        mock.side_effect = ApiException(400, message='Delete ibm_iam_access_group_rule error')
 
-        get_access_group_rule_patcher = patch('ansible.modules.cloud.ibm.iam_access_groups_iam_access_group_rule.IamAccessGroupsV2.get_access_group_rule')
+        get_access_group_rule_patcher = patch('ansible.modules.cloud.ibm.ibm_iam_access_group_rule.IamAccessGroupsV2.get_access_group_rule')
         get_access_group_rule_mock = get_access_group_rule_patcher.start()
         get_access_group_rule_mock.return_value = DetailedResponseMock()
 
@@ -426,9 +502,9 @@ class TestRuleModule(ModuleTestCase):
 
         with self.assertRaises(AnsibleFailJson) as result:
             os.environ['IAM_ACCESS_GROUPS_AUTH_TYPE'] = 'noAuth'
-            iam_access_groups_iam_access_group_rule.main()
+            ibm_iam_access_group_rule.main()
 
-        assert result.exception.args[0]['msg'] == 'Delete iam_access_group_rule error'
+        assert result.exception.args[0]['msg'] == 'Delete ibm_iam_access_group_rule error'
 
         mock_data = dict(
             access_group_id='testString',
@@ -436,7 +512,9 @@ class TestRuleModule(ModuleTestCase):
             transaction_id='testString',
         )
 
-        mock.assert_called_once_with(**mock_data)
+        mock.assert_called_once()
+        processed_result = post_process_result(mock_data, mock.call_args.kwargs)
+        assert mock_data == processed_result
 
         get_access_group_rule_mock_data = dict(
             access_group_id='testString',
@@ -448,7 +526,9 @@ class TestRuleModule(ModuleTestCase):
         for param in get_access_group_rule_mock_data:
             get_access_group_rule_mock_data[param] = mock_data.get(param, None)
 
-        get_access_group_rule_mock.assert_called_once_with(**get_access_group_rule_mock_data)
+        get_access_group_rule_mock.assert_called_once()
+        get_access_group_rule_processed_result = post_process_result(get_access_group_rule_mock_data, get_access_group_rule_mock.call_args.kwargs)
+        assert get_access_group_rule_mock_data == get_access_group_rule_processed_result
 
         get_access_group_rule_patcher.stop()
         patcher.stop()

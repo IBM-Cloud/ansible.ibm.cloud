@@ -19,7 +19,7 @@ import os
 
 from ibm_cloud_sdk_core import ApiException
 
-from ansible.modules.cloud.ibm import iam_access_groups_iam_access_group_members_info
+from ansible.modules.cloud.ibm import ibm_iam_access_group_members_info
 from units.compat.mock import patch
 from units.modules.utils import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
 
@@ -31,21 +31,11 @@ class TestGroupMembersListModuleInfo(ModuleTestCase):
     Test class for GroupMembersList module testing.
     """
 
-    def test_read_iam_access_group_members_success(self):
-        """Test the "read" path - successful."""
-        datasource = {
-            'access_group_id': 'testString',
-            'transaction_id': 'testString',
-            'limit': 38,
-            'offset': 38,
-            'type': 'testString',
-            'verbose': False,
-            'sort': 'testString',
-        }
-
-        patcher = patch('ansible.modules.cloud.ibm.iam_access_groups_iam_access_group_members_info.IamAccessGroupsV2.list_access_group_members')
+    def test_list_ibm_iam_access_group_members_success(self):
+        """Test the "list" path - successful."""
+        patcher = patch('ansible.modules.cloud.ibm.ibm_iam_access_group_members_info.IamAccessGroupsV2.list_access_group_members')
         mock = patcher.start()
-        mock.return_value = DetailedResponseMock(datasource)
+        mock.return_value = DetailedResponseMock([])
 
         set_module_args({
             'access_group_id': 'testString',
@@ -59,27 +49,19 @@ class TestGroupMembersListModuleInfo(ModuleTestCase):
 
         with self.assertRaises(AnsibleExitJson) as result:
             os.environ['IAM_ACCESS_GROUPS_AUTH_TYPE'] = 'noAuth'
-            iam_access_groups_iam_access_group_members_info.main()
+            ibm_iam_access_group_members_info.main()
 
-        assert result.exception.args[0]['msg'] == datasource
+        assert result.exception.args[0]['msg'] == []
 
-        mock.assert_called_once_with(
-            access_group_id='testString',
-            transaction_id='testString',
-            limit=38,
-            offset=38,
-            type='testString',
-            verbose=False,
-            sort='testString',
-        )
+        mock.assert_called_once()
 
         patcher.stop()
 
-    def test_read_iam_access_group_members_failed(self):
-        """Test the "read" path - failed."""
-        patcher = patch('ansible.modules.cloud.ibm.iam_access_groups_iam_access_group_members_info.IamAccessGroupsV2.list_access_group_members')
+    def test_list_ibm_iam_access_group_members_failed(self):
+        """Test the "list" path - failed."""
+        patcher = patch('ansible.modules.cloud.ibm.ibm_iam_access_group_members_info.IamAccessGroupsV2.list_access_group_members')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='Read iam_access_group_members error')
+        mock.side_effect = ApiException(400, message='List ibm_iam_access_group_members error')
 
         set_module_args({
             'access_group_id': 'testString',
@@ -93,18 +75,10 @@ class TestGroupMembersListModuleInfo(ModuleTestCase):
 
         with self.assertRaises(AnsibleFailJson) as result:
             os.environ['IAM_ACCESS_GROUPS_AUTH_TYPE'] = 'noAuth'
-            iam_access_groups_iam_access_group_members_info.main()
+            ibm_iam_access_group_members_info.main()
 
-        assert result.exception.args[0]['msg'] == 'Read iam_access_group_members error'
+        assert result.exception.args[0]['msg'] == 'List ibm_iam_access_group_members error'
 
-        mock.assert_called_once_with(
-            access_group_id='testString',
-            transaction_id='testString',
-            limit=38,
-            offset=38,
-            type='testString',
-            verbose=False,
-            sort='testString',
-        )
+        mock.assert_called_once()
 
         patcher.stop()

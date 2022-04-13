@@ -31,12 +31,12 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = r'''
 ---
-module: iam_access_groups_iam_access_groups_info
-short_description: Manage iam_access_groups info.
+module: ibm_iam_access_group_info
+short_description: Manage ibm_iam_access_group info.
 author: IBM SDK Generator
 version_added: "0.1"
 description:
-    - This module retrieves one or more iam_access_groups(s).
+    - This module retrieves one or more ibm_iam_access_group(s).
 requirements:
     - "IamAccessGroupsV2"
 options:
@@ -44,37 +44,13 @@ options:
         description:
             - The access group identifier.
         type: str
-    account_id:
-        description:
-            - Account ID of the API keys(s) to query. If a service IAM ID is specified in iam_id then account_id must match the account of the IAM ID. If a user IAM ID is specified in iam_id then then account_id must match the account of the Authorization token.
-        type: str
-    iam_id:
-        description:
-            - Return groups for member ID (IBMid, service ID or trusted profile ID).
-        type: str
-    offset:
-        description:
-            - The offset of the first result item to be returned.
-        type: int
     transaction_id:
         description:
             - An optional transaction ID can be passed to your request, which can be useful for tracking calls through multiple services by using one identifier. The header key must be set to Transaction-Id and the value is anything that you choose. If no transaction ID is passed in, then a random ID is generated.
         type: str
-    limit:
-        description:
-            - Return up to this limit of results where limit is between 0 and 100.
-        type: int
     show_federated:
         description:
-            - If show_federated is true, each group listed will return an is_federated value that is set to true if rules exist for the group.
-        type: bool
-    sort:
-        description:
-            - Sort the results by id, name, description, or is_federated flag.
-        type: str
-    hide_public_access:
-        description:
-            - If hide_public_access is true, do not include the Public Access Group in the results.
+            - If show_federated is true, the group will return an is_federated value that is set to true if rules exist for the group.
         type: bool
 '''
 
@@ -87,28 +63,10 @@ def run_module():
         access_group_id=dict(
             type='str',
             required=False),
-        account_id=dict(
-            type='str',
-            required=False),
-        iam_id=dict(
-            type='str',
-            required=False),
-        offset=dict(
-            type='int',
-            required=False),
         transaction_id=dict(
             type='str',
             required=False),
-        limit=dict(
-            type='int',
-            required=False),
         show_federated=dict(
-            type='bool',
-            required=False),
-        sort=dict(
-            type='str',
-            required=False),
-        hide_public_access=dict(
             type='bool',
             required=False),
     )
@@ -119,14 +77,8 @@ def run_module():
     )
 
     access_group_id = module.params["access_group_id"]
-    account_id = module.params["account_id"]
-    iam_id = module.params["iam_id"]
-    offset = module.params["offset"]
     transaction_id = module.params["transaction_id"]
-    limit = module.params["limit"]
     show_federated = module.params["show_federated"]
-    sort = module.params["sort"]
-    hide_public_access = module.params["hide_public_access"]
 
     sdk = IamAccessGroupsV2.new_instance()
 
@@ -141,22 +93,6 @@ def run_module():
             module.exit_json(msg=response.get_result())
         except ApiException as ex:
             module.fail_json(msg=ex.message)
-
-    # list
-    try:
-        response = sdk.list_access_groups(
-            account_id=account_id,
-            transaction_id=transaction_id,
-            iam_id=iam_id,
-            limit=limit,
-            offset=offset,
-            sort=sort,
-            show_federated=show_federated,
-            hide_public_access=hide_public_access
-        )
-        module.exit_json(msg=response.get_result())
-    except ApiException as ex:
-        module.fail_json(msg=ex.message)
 
 def main():
     run_module()
