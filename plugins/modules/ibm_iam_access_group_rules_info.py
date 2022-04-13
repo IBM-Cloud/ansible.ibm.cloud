@@ -31,12 +31,12 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = r'''
 ---
-module: iam_access_groups_iam_access_group_info
-short_description: Manage iam_access_group info.
+module: ibm_iam_access_group_rules_info
+short_description: Manage ibm_iam_access_group_rules info.
 author: IBM SDK Generator
 version_added: "0.1"
 description:
-    - This module retrieves one or more iam_access_group(s).
+    - This module retrieves one or more ibm_iam_access_group_rules(s).
 requirements:
     - "IamAccessGroupsV2"
 options:
@@ -48,10 +48,6 @@ options:
         description:
             - An optional transaction ID can be passed to your request, which can be useful for tracking calls through multiple services by using one identifier. The header key must be set to Transaction-Id and the value is anything that you choose. If no transaction ID is passed in, then a random ID is generated.
         type: str
-    show_federated:
-        description:
-            - If show_federated is true, the group will return an is_federated value that is set to true if rules exist for the group.
-        type: bool
 '''
 
 EXAMPLES = r'''
@@ -66,9 +62,6 @@ def run_module():
         transaction_id=dict(
             type='str',
             required=False),
-        show_federated=dict(
-            type='bool',
-            required=False),
     )
 
     module = AnsibleModule(
@@ -78,21 +71,18 @@ def run_module():
 
     access_group_id = module.params["access_group_id"]
     transaction_id = module.params["transaction_id"]
-    show_federated = module.params["show_federated"]
 
     sdk = IamAccessGroupsV2.new_instance()
 
-    if access_group_id:
-        # read
-        try:
-            response = sdk.get_access_group(
-                access_group_id=access_group_id,
-                transaction_id=transaction_id,
-                show_federated=show_federated
-            )
-            module.exit_json(msg=response.get_result())
-        except ApiException as ex:
-            module.fail_json(msg=ex.message)
+    # list
+    try:
+        response = sdk.list_access_group_rules(
+            access_group_id=access_group_id,
+            transaction_id=transaction_id
+        )
+        module.exit_json(msg=response.get_result())
+    except ApiException as ex:
+        module.fail_json(msg=ex.message)
 
 def main():
     run_module()

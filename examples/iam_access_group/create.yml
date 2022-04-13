@@ -7,7 +7,7 @@
         file: vars.yml
 
     - name: Check access group Exists
-      iam_access_groups_iam_access_group_info:
+      ibm_iam_access_group_info:
         access_group_id: "{{access_group_id}}"
       failed_when: 
          - access_group_output.msg.id is not defined
@@ -21,7 +21,7 @@
       when: access_group_output.msg.id is defined
     ## create access group
     - name: Create access Group
-      iam_access_groups_iam_access_group:
+      ibm_iam_access_group:
         name: "{{ access_group_name }}"
         account_id: "{{ account_id }}"
       register: ag_create_output
@@ -38,7 +38,7 @@
         msg: "access Group: {{ access_group }}"
     ## create access group rule
     - name: Create access Group Rule
-      iam_access_groups_iam_access_group_rule:
+      ibm_iam_access_group_rule:
         name: "{{ access_group_name }}"
         name             : "newrule"
         expiration        : 4
@@ -54,12 +54,12 @@
       when: ag_rule_create_output.msg.id is defined
 
     - name: Get details of all access group rules in an access group
-      iam_access_groups_iam_access_group_rules_info:
+      ibm_iam_access_group_rules_info:
         access_group_id: "{{ access_group.id }}"
 
     ## create access group members
     - name: Create access Group Members
-      iam_access_groups_iam_access_group_members:
+      ibm_iam_access_group_members:
         members : "{{members}}"
         access_group_id : "{{ag_create_output.msg.id}}"
       register: ag_members_create_output
@@ -71,11 +71,11 @@
       when: ag_members_create_output.msg.members[0].iam_id is defined
 
     - name: Get details of all access group members in an access group
-      iam_access_groups_iam_access_group_members_info:
+      ibm_iam_access_group_members_info:
         access_group_id: "{{ access_group.id }}"
     
     - name: Delete access Group Members
-      iam_access_groups_iam_access_group_members:
+      ibm_iam_access_group_members:
         iam_id : "{{iam_id}}"
         access_group_id : "{{ag_create_output.msg.id}}"
         state: absent
@@ -83,7 +83,7 @@
       when: access_group_members.members[0].iam_id is defined
     
     - name: Delete access Group Rule
-      iam_access_groups_iam_access_group_rule:
+      ibm_iam_access_group_rule:
         rule_id: "{{access_group_rule.id}}"
         access_group_id : "{{ag_create_output.msg.id}}"
         state: absent
@@ -91,12 +91,12 @@
       when: access_group_rule.id is defined  
 
     - name: Delete access group
-      iam_access_groups_iam_access_group:
+      ibm_iam_access_group:
         access_group_id: "{{ access_group.id }}"
         state: absent
       register: output
       when: ag_create_output.msg.id is defined  
 
     - name: Get details of all access groups in an account
-      iam_access_groups_iam_access_groups_info:
+      ibm_iam_access_groups_info:
         account_id: "{{ account_id }}"

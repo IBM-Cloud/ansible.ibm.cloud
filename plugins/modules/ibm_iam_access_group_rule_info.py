@@ -31,12 +31,12 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = r'''
 ---
-module: iam_access_groups_iam_access_group_rule_info
-short_description: Manage iam_access_group_rule info.
+module: ibm_iam_access_group_rule_info
+short_description: Manage ibm_iam_access_group_rule info.
 author: IBM SDK Generator
 version_added: "0.1"
 description:
-    - This module retrieves one or more iam_access_group_rule(s).
+    - This module retrieves one or more ibm_iam_access_group_rule(s).
 requirements:
     - "IamAccessGroupsV2"
 options:
@@ -82,17 +82,16 @@ def run_module():
 
     sdk = IamAccessGroupsV2.new_instance()
 
-    if rule_id:
-        # read
-        try:
-            response = sdk.get_access_group_rule(
-                access_group_id=access_group_id,
-                rule_id=rule_id,
-                transaction_id=transaction_id
-            )
-            module.exit_json(msg=response.get_result())
-        except ApiException as ex:
-            module.fail_json(msg=ex.message)
+    # list
+    try:
+        response = sdk.get_access_group_rule(
+            access_group_id=access_group_id,
+            rule_id=rule_id,
+            transaction_id=transaction_id
+        )
+        module.exit_json(msg=response.get_result())
+    except ApiException as ex:
+        module.fail_json(msg=ex.message)
 
 def main():
     run_module()
