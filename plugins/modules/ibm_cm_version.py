@@ -14,15 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=missing-function-docstring,too-many-branches
-
-
-from ibm_cloud_sdk_core import ApiException
-
-from ansible.module_utils.basic import AnsibleModule
-# pylint: disable=line-too-long,fixme
-from ibm_platform_services import CatalogManagementV1 # Todo: change this to external python package format
-
 ANSIBLE_METADATA = {
     'metadata_version': '1.1',
     'status': ['preview'],
@@ -31,34 +22,30 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = r'''
 ---
-module: catalog_management_cm_version
-short_description: Manage cm_version resources.
+module: ibm_cm_version
+short_description: Manage ibm_cm_version resources.
 author: IBM SDK Generator
 version_added: "0.1"
 description:
-    - This module creates, updates, or deletes a cm_version.
-    - By default the module will look for an existing cm_version.
+    - This module creates, updates, or deletes a ibm_cm_version.
+    - By default the module will look for an existing ibm_cm_version.
 requirements:
     - "CatalogManagementV1"
 options:
-    state:
-        description:
-            - Should the resource be present or absent.
-        type: str
-        default: present
-        choices: [present, absent]
     content:
         description:
             - byte array representing the content to be imported.  Only supported for OVA images at this time.
-        type: bytes
+        type: str
     tags:
         description:
             - Tags array.
         type: list
+        elements: str
     target_kinds:
         description:
             - Target kinds.  Current valid values are 'iks', 'roks', 'vcenter', and 'terraform'.
         type: list
+        elements: str
     repo_type:
         description:
             - The type of repository containing this version.  Valid values are 'public_git' or 'enterprise_git'.
@@ -91,22 +78,40 @@ options:
         description:
             - Indicates that the current terraform template is used to install a VSI Image.
         type: bool
+    state:
+        description:
+            - Should the resource be present or absent.
+        type: str
+        default: present
+        choices: [present, absent]
 '''
 
 EXAMPLES = r'''
 Examples coming soon.
 '''
 
+
+import base64
+
+from ansible.module_utils.basic import AnsibleModule
+from ibm_cloud_sdk_core import ApiException
+from ibm_platform_services import CatalogManagementV1
+
+from ansible.module_utils.cloud.ibm.auth import get_authenticator
+
+
 def run_module():
     module_args = dict(
         content=dict(
-            type='bytes',
+            type='str',
             required=False),
         tags=dict(
             type='list',
+            elements=str,
             required=False),
         target_kinds=dict(
             type='list',
+            elements=str,
             required=False),
         repo_type=dict(
             type='str',
@@ -145,6 +150,10 @@ def run_module():
     )
 
     content = module.params["content"]
+    try:
+        content = base64.b64decode(content) if content is not None else None
+    except Exception as ex:
+        module.fail_json(msg=f'Error during decoding value for content: {ex}')
     tags = module.params["tags"]
     target_kinds = module.params["target_kinds"]
     repo_type = module.params["repo_type"]
@@ -155,10 +164,15 @@ def run_module():
     target_version = module.params["target_version"]
     include_config = module.params["include_config"]
     is_vsi = module.params["is_vsi"]
-
     state = module.params["state"]
 
-    sdk = CatalogManagementV1.new_instance()
+    authenticator = get_authenticator(service_name='catalog_management')
+    if authenticator is None:
+        module.fail_json(msg='Cannot create the authenticator.')
+
+    sdk = CatalogManagementV1(
+        authenticator=authenticator,
+    )
 
     resource_exists=True
 
@@ -214,8 +228,10 @@ def run_module():
             else:
                 module.exit_json(changed=True, msg=result)
 
+
 def main():
     run_module()
+
 
 if __name__ == '__main__':
     main()

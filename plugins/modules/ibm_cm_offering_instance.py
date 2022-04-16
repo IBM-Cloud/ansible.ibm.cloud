@@ -14,15 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=missing-function-docstring,too-many-branches
-
-
-from ibm_cloud_sdk_core import ApiException
-
-from ansible.module_utils.basic import AnsibleModule
-# pylint: disable=line-too-long,fixme
-from ibm_platform_services import CatalogManagementV1 # Todo: change this to external python package format
-
 ANSIBLE_METADATA = {
     'metadata_version': '1.1',
     'status': ['preview'],
@@ -31,22 +22,16 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = r'''
 ---
-module: catalog_management_cm_offering_instance
-short_description: Manage cm_offering_instance resources.
+module: ibm_cm_offering_instance
+short_description: Manage ibm_cm_offering_instance resources.
 author: IBM SDK Generator
 version_added: "0.1"
 description:
-    - This module creates, updates, or deletes a cm_offering_instance.
-    - By default the module will look for an existing cm_offering_instance.
+    - This module creates, updates, or deletes a ibm_cm_offering_instance.
+    - By default the module will look for an existing ibm_cm_offering_instance.
 requirements:
     - "CatalogManagementV1"
 options:
-    state:
-        description:
-            - Should the resource be present or absent.
-        type: str
-        default: present
-        choices: [present, absent]
     kind_format:
         description:
             - the format this instance has (helm, operator, ova...).
@@ -111,6 +96,7 @@ options:
         description:
             - List of target namespaces to install into.
         type: list
+        elements: str
     cluster_all_namespaces:
         description:
             - designate to install into all namespaces.
@@ -123,6 +109,27 @@ options:
         description:
             - the last operation performed and status.
         type: dict
+        suboptions:
+            operation:
+                description:
+                    - last operation performed.
+                type: str
+            state_:
+                description:
+                    - state after the last operation performed.
+                type: str
+            message:
+                description:
+                    - additional information about the last operation.
+                type: str
+            transaction_id:
+                description:
+                    - transaction id from the last operation.
+                type: str
+            updated:
+                description:
+                    - Date and time last updated.
+                type: str
     instance_identifier:
         description:
             - Version Instance identifier.
@@ -131,11 +138,25 @@ options:
         description:
             - IAM Refresh token.
         type: str
+    state:
+        description:
+            - Should the resource be present or absent.
+        type: str
+        default: present
+        choices: [present, absent]
 '''
 
 EXAMPLES = r'''
 Examples coming soon.
 '''
+
+
+from ansible.module_utils.basic import AnsibleModule
+from ibm_cloud_sdk_core import ApiException
+from ibm_platform_services import CatalogManagementV1
+
+from ansible.module_utils.cloud.ibm.auth import get_authenticator
+
 
 def run_module():
     module_args = dict(
@@ -186,6 +207,7 @@ def run_module():
             required=False),
         cluster_namespaces=dict(
             type='list',
+            elements=str,
             required=False),
         cluster_all_namespaces=dict(
             type='bool',
@@ -193,8 +215,26 @@ def run_module():
         crn=dict(
             type='str',
             required=False),
+        # Represents the OfferingInstanceLastOperation Python class
         last_operation=dict(
             type='dict',
+            options=dict(
+                operation=dict(
+                    type='str',
+                    required=False),
+                state_=dict(
+                    type='str',
+                    required=False),
+                message=dict(
+                    type='str',
+                    required=False),
+                transaction_id=dict(
+                    type='str',
+                    required=False),
+                updated=dict(
+                    type='str',
+                    required=False),
+            ),
             required=False),
         instance_identifier=dict(
             type='str',
@@ -235,10 +275,15 @@ def run_module():
     last_operation = module.params["last_operation"]
     instance_identifier = module.params["instance_identifier"]
     x_auth_refresh_token = module.params["x_auth_refresh_token"]
-
     state = module.params["state"]
 
-    sdk = CatalogManagementV1.new_instance()
+    authenticator = get_authenticator(service_name='catalog_management')
+    if authenticator is None:
+        module.fail_json(msg='Cannot create the authenticator.')
+
+    sdk = CatalogManagementV1(
+        authenticator=authenticator,
+    )
 
     resource_exists=True
 
@@ -335,8 +380,10 @@ def run_module():
             else:
                 module.exit_json(changed=True, msg=result)
 
+
 def main():
     run_module()
+
 
 if __name__ == '__main__':
     main()
