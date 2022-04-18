@@ -31,22 +31,16 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = r'''
 ---
-module: resource_manager_resource_group
-short_description: Manage resource_group resources.
+module: ibm_resource_group
+short_description: Manage ibm_resource_group resources.
 author: IBM SDK Generator
 version_added: "0.1"
 description:
-    - This module creates, updates, or deletes a resource_group.
-    - By default the module will look for an existing resource_group.
+    - This module creates, updates, or deletes a ibm_resource_group.
+    - By default the module will look for an existing ibm_resource_group.
 requirements:
     - "ResourceManagerV2"
 options:
-    state:
-        description:
-            - Should the resource be present or absent.
-        type: str
-        default: present
-        choices: [present, absent]
     account_id:
         description:
             - The account id of the resource group.
@@ -55,7 +49,7 @@ options:
         description:
             - The new name of the resource group.
         type: str
-    rg_state:
+    state_:
         description:
             - The state of the resource group.
         type: str
@@ -63,6 +57,12 @@ options:
         description:
             - The short or long ID of the alias.
         type: str
+    state:
+        description:
+            - Should the resource be present or absent.
+        type: str
+        default: present
+        choices: [present, absent]
 '''
 
 EXAMPLES = r'''
@@ -77,7 +77,7 @@ def run_module():
         name=dict(
             type='str',
             required=False),
-        rg_state=dict(
+        state_=dict(
             type='str',
             required=False),
         id=dict(
@@ -97,9 +97,8 @@ def run_module():
 
     account_id = module.params["account_id"]
     name = module.params["name"]
-    rg_state = module.params["rg_state"]
+    state_ = module.params["state_"]
     id = module.params["id"]
-
     state = module.params["state"]
 
     sdk = ResourceManagerV2.new_instance()
@@ -155,7 +154,7 @@ def run_module():
                 result = sdk.update_resource_group(
                     id=id,
                     name=name,
-                    state=rg_state,
+                    state=state_,
                 ).get_result()
             except ApiException as ex:
                 module.fail_json(msg=ex.message)

@@ -31,12 +31,12 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = r'''
 ---
-module: resource_manager_resource_groups_info
-short_description: Manage resource_groups info.
+module: ibm_resource_groups_info
+short_description: Manage ibm_resource_groups info.
 author: IBM SDK Generator
 version_added: "0.1"
 description:
-    - This module retrieves one or more resource_groups(s).
+    - This module retrieves one or more ibm_resource_groups(s).
 requirements:
     - "ResourceManagerV2"
 options:
@@ -60,10 +60,6 @@ options:
         description:
             - Boolean value to specify whether or not to list default resource groups.
         type: bool
-    id:
-        description:
-            - The short or long ID of the alias.
-        type: str
 '''
 
 EXAMPLES = r'''
@@ -87,9 +83,6 @@ def run_module():
         include_deleted=dict(
             type='bool',
             required=False),
-        id=dict(
-            type='str',
-            required=False),
     )
 
     module = AnsibleModule(
@@ -102,19 +95,8 @@ def run_module():
     account_id = module.params["account_id"]
     name = module.params["name"]
     include_deleted = module.params["include_deleted"]
-    id = module.params["id"]
 
     sdk = ResourceManagerV2.new_instance()
-
-    if id:
-        # read
-        try:
-            response = sdk.get_resource_group(
-                id=id
-            )
-            module.exit_json(msg=response.get_result())
-        except ApiException as ex:
-            module.fail_json(msg=ex.message)
 
     # list
     try:
