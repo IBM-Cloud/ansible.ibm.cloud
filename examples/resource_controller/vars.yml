@@ -1,0 +1,6 @@
+---
+resource_group: "a06db00ce84e4b8a8ac81ef56748c5132"
+plan: "14-day"
+service: "logdna"
+location: "us-south"
+name: "test"
