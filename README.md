@@ -14,12 +14,24 @@ This collection works with Ansible 2.9+
     ```
 
 # Installation
+1. Build collection using below command. This will generate a tar.gz file in the current working directory
 ```bash
-TODO
+ansible-galaxy collection build -f
+```
+2.  Install the collection using below command.
+```bash
+ansible-galaxy collection install <above generated tar.gz file name> -f
+```
+3. The python module dependencies are not installed by ansible-galaxy. They can be manually installed using pip:
+```bash
+pip install requirements.txt
 ```
 
 # Resources Supported
-  * Catalog (ibm_cm_catalog, ibm_cm_offering, ibm_cm_offering_instance,ibm_cm_version)
-  * Access Group (ibm_iam_access_group, ibm_iam_access_group_info, ibm_iam_access_group_members, ibm_iam_access_group_members_info, ibm_iam_access_group_rule, ibm_iam_access_group_rule_info, ibm_iam_access_group_rules_info, ibm_iam_access_groups_info)
-  * Resource Manager (resource_manager_resource_group, resource_manager_resource_group_info, resource_manager_resource_groups_info)
-  * Schematics (schematics_schematics_action.py, schematics_schematics_inventory, schematics_schematics_job, schematics_schematics_resource_query, schematics_schematics_workspace)
+|Service|Supported modules|
+|------|-----|
+|Catalog Management|ibm_cm_catalog<br>ibm_cm_offering<br>ibm_cm_offering_instance<br>ibm_cm_version |
+|IAM Access Group |ibm_iam_access_group<br>ibm_iam_access_group_info<br>ibm_iam_access_group_members<br>ibm_iam_access_group_members_info<br>ibm_iam_access_group_rule<br>ibm_iam_access_group_rule_info<br>ibm_iam_access_group_rules_info<br>ibm_iam_access_groups_info |
+|Resource Manager |ibm_resource_group<br>ibm_resource_group_info<br>ibm_resource_groups_info <br>ibm_resource_quota_info<br>ibm_resource_quotas_info |
+|Resource Controller |ibm_resource_instance<br>ibm_resource_instance_info<br>ibm_resource_instances_info<br> ibm_resource_key<br>ibm_resource_key_info<br>ibm_resource_keys_info <br> ibm_resource_alias<br>ibm_resource_alias_info<br>ibm_resource_aliases_info <br> ibm_resource_binding<br>ibm_resource_binding_info<br>ibm_resource_bindings_info<br>ibm_resource_reclamations_info |
+|Schematics |schematics_schematics_action<br>schematics_schematics_inventory<br>schematics_schematics_job<br>schematics_schematics_resource_query<br>schematics_schematics_workspace |
