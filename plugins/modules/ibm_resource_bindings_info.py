@@ -14,15 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=missing-function-docstring
-
-
-from ibm_cloud_sdk_core import ApiException
-
-from ansible.module_utils.basic import AnsibleModule
-# pylint: disable=line-too-long,fixme
-from ibm_platform_services import ResourceControllerV2 # Todo: change this to external python package format
-from ..module_utils.auth import get_authenticator
 ANSIBLE_METADATA = {
     'metadata_version': '1.1',
     'status': ['preview'],
@@ -31,12 +22,12 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = r'''
 ---
-module: ibm_resource_keys_info
-short_description: Manage ibm_resource_keys info.
+module: ibm_resource_bindings_info
+short_description: Manage ibm_resource_bindings info.
 author: IBM SDK Generator
 version_added: "0.1"
 description:
-    - This module retrieves one or more ibm_resource_keys(s).
+    - This module retrieves one or more ibm_resource_bindings(s).
 requirements:
     - "ResourceControllerV2"
 options:
@@ -50,7 +41,7 @@ options:
         type: str
     name:
         description:
-            - The human-readable name of the key.
+            - The human-readable name of the binding.
         type: str
     limit:
         description:
@@ -62,21 +53,33 @@ options:
         type: str
     guid:
         description:
-            - The GUID of the key.
+            - The GUID of the binding.
         type: str
     resource_id:
         description:
-            - The unique ID of the offering. This value is provided by and stored in the global catalog.
+            - The unique ID of the offering (service name). This value is provided by and stored in the global catalog.
         type: str
     updated_to:
         description:
             - End date inclusive filter.
+        type: str
+    region_binding_id:
+        description:
+            - The ID of the binding in the target environment. For example, `service_binding_id` in a given IBM Cloud environment.
         type: str
 '''
 
 EXAMPLES = r'''
 Examples coming soon.
 '''
+
+
+from ansible.module_utils.basic import AnsibleModule
+from ibm_cloud_sdk_core import ApiException
+from ibm_platform_services import ResourceControllerV2
+
+from ..module_utils.auth import get_authenticator
+
 
 def run_module():
     module_args = dict(
@@ -104,6 +107,9 @@ def run_module():
         updated_to=dict(
             type='str',
             required=False),
+        region_binding_id=dict(
+            type='str',
+            required=False),
     )
 
     module = AnsibleModule(
@@ -119,8 +125,8 @@ def run_module():
     guid = module.params["guid"]
     resource_id = module.params["resource_id"]
     updated_to = module.params["updated_to"]
+    region_binding_id = module.params["region_binding_id"]
 
-    # sdk = ResourceControllerV2.new_instance()
     authenticator = get_authenticator(service_name='resource_controller')
     if authenticator is None:
         module.fail_json(msg='Cannot create the authenticator.')
@@ -131,11 +137,12 @@ def run_module():
 
     # list
     try:
-        response = sdk.list_resource_keys(
+        response = sdk.list_resource_bindings(
             guid=guid,
             name=name,
             resource_group_id=resource_group_id,
             resource_id=resource_id,
+            region_binding_id=region_binding_id,
             limit=limit,
             start=start,
             updated_from=updated_from,
@@ -145,8 +152,10 @@ def run_module():
     except ApiException as ex:
         module.fail_json(msg=ex.message)
 
+
 def main():
     run_module()
+
 
 if __name__ == '__main__':
     main()

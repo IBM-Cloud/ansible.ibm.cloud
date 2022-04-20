@@ -1,6 +1,8 @@
 ---
 - name: Resource key Creation.
   hosts: localhost
+  collections:
+   - ibm.cloudcollection
   tasks:
     - name: Fetch the variables from var file
       include_vars:

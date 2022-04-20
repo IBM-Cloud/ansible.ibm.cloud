@@ -22,48 +22,45 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = r'''
 ---
-module: ibm_iam_access_group
-short_description: Manage ibm_iam_access_group resources.
+module: ibm_resource_binding
+short_description: Manage ibm_resource_binding resources.
 author: IBM SDK Generator
 version_added: "0.1"
 description:
-    - This module creates, updates, or deletes a ibm_iam_access_group.
-    - By default the module will look for an existing ibm_iam_access_group.
+    - This module creates, updates, or deletes a ibm_resource_binding.
+    - By default the module will look for an existing ibm_resource_binding.
 requirements:
-    - "IamAccessGroupsV2"
+    - "ResourceControllerV2"
 options:
+    role:
+        description:
+            - The service or custom role name or it's CRN.
+        type: str
     name:
         description:
-            - Assign the specified name to the access group. This field is case-insensitive and has a limit of 100 characters. The group name has to be unique within an account.
+            - The name of the binding. Must be 180 characters or less and cannot include any special characters other than `(space) - . _ :`.
         type: str
-    description:
+    source:
         description:
-            - Assign an optional description for the access group. This field has a limit of 250 characters.
+            - The ID of resource alias.
         type: str
-    access_group_id:
+    parameters:
         description:
-            - The access group identifier.
+            - Configuration options represented as key-value pairs. Service defined options are passed through to the target resource brokers, whereas platform defined options are not.
+        type: dict
+        suboptions:
+            serviceid_crn:
+                description:
+                    - An optional platform defined option to reuse an existing IAM serviceId for the role assignment.
+                type: str
+    target:
+        description:
+            - The CRN of application to bind to in a specific environment, for example, Dallas YP, CFEE instance.
         type: str
-    account_id:
+    id:
         description:
-            - Account ID of the API keys(s) to query. If a service IAM ID is specified in iam_id then account_id must match the account of the IAM ID. If a user IAM ID is specified in iam_id then then account_id must match the account of the Authorization token.
+            - The ID of the binding.
         type: str
-    if_match:
-        description:
-            - The current revision number of the group being updated. This can be found in the Create/Get access group response ETag header.
-        type: str
-    transaction_id:
-        description:
-            - An optional transaction ID can be passed to your request, which can be useful for tracking calls through multiple services by using one identifier. The header key must be set to Transaction-Id and the value is anything that you choose. If no transaction ID is passed in, then a random ID is generated.
-        type: str
-    show_federated:
-        description:
-            - If show_federated is true, the group will return an is_federated value that is set to true if rules exist for the group.
-        type: bool
-    force:
-        description:
-            - If force is true, delete the group as well as its associated members and rules.
-        type: bool
     state:
         description:
             - Should the resource be present or absent.
@@ -79,36 +76,36 @@ Examples coming soon.
 
 from ansible.module_utils.basic import AnsibleModule
 from ibm_cloud_sdk_core import ApiException
-from ibm_platform_services import IamAccessGroupsV2
+from ibm_platform_services import ResourceControllerV2
 
 from ..module_utils.auth import get_authenticator
 
 
 def run_module():
     module_args = dict(
+        role=dict(
+            type='str',
+            required=False),
         name=dict(
             type='str',
             required=False),
-        description=dict(
+        source=dict(
             type='str',
             required=False),
-        access_group_id=dict(
+        # Represents the ResourceBindingPostParameters Python class
+        parameters=dict(
+            type='dict',
+            options=dict(
+                serviceid_crn=dict(
+                    type='str',
+                    required=False),
+            ),
+            required=False),
+        target=dict(
             type='str',
             required=False),
-        account_id=dict(
+        id=dict(
             type='str',
-            required=False),
-        if_match=dict(
-            type='str',
-            required=False),
-        transaction_id=dict(
-            type='str',
-            required=False),
-        show_federated=dict(
-            type='bool',
-            required=False),
-        force=dict(
-            type='bool',
             required=False),
         state=dict(
             type='str',
@@ -122,33 +119,29 @@ def run_module():
         supports_check_mode=False
     )
 
+    role = module.params["role"]
     name = module.params["name"]
-    description = module.params["description"]
-    access_group_id = module.params["access_group_id"]
-    account_id = module.params["account_id"]
-    if_match = module.params["if_match"]
-    transaction_id = module.params["transaction_id"]
-    show_federated = module.params["show_federated"]
-    force = module.params["force"]
+    source = module.params["source"]
+    parameters = module.params["parameters"]
+    target = module.params["target"]
+    id = module.params["id"]
     state = module.params["state"]
 
-    authenticator = get_authenticator(service_name='iam_access_groups')
+    authenticator = get_authenticator(service_name='resource_controller')
     if authenticator is None:
         module.fail_json(msg='Cannot create the authenticator.')
 
-    sdk = IamAccessGroupsV2(
+    sdk = ResourceControllerV2(
         authenticator=authenticator,
     )
 
     resource_exists=True
 
     # Check for existence
-    if access_group_id:
+    if id:
         try:
-            sdk.get_access_group(
-                access_group_id=access_group_id,
-                transaction_id=transaction_id,
-                show_federated=show_federated,
+            sdk.get_resource_binding(
+                id=id,
             )
         except ApiException as ex:
             if ex.code == 404:
@@ -163,29 +156,28 @@ def run_module():
     if state == "absent":
         if resource_exists:
             try:
-                sdk.delete_access_group(
-                    access_group_id=access_group_id,
-                    transaction_id=transaction_id,
-                    force=force,
+                sdk.delete_resource_binding(
+                    id=id,
                 )
             except ApiException as ex:
                 module.fail_json(msg=ex.message)
             else:
-                payload = {"id": access_group_id , "status": "deleted"}
+                payload = {"id": id , "status": "deleted"}
                 module.exit_json(changed=True, msg=payload)
         else:
-            payload = {"id": access_group_id , "status": "not_found"}
+            payload = {"id": id , "status": "not_found"}
             module.exit_json(changed=False, msg=payload)
 
     if state == "present":
         if not resource_exists:
             # Create path
             try:
-                result = sdk.create_access_group(
-                    account_id=account_id,
+                result = sdk.create_resource_binding(
+                    source=source,
+                    target=target,
                     name=name,
-                    description=description,
-                    transaction_id=transaction_id,
+                    parameters=parameters,
+                    role=role,
                 ).get_result()
             except ApiException as ex:
                 module.fail_json(msg=ex.message)
@@ -194,12 +186,9 @@ def run_module():
         else:
             # Update path
             try:
-                result = sdk.update_access_group(
-                    access_group_id=access_group_id,
-                    if_match=if_match,
+                result = sdk.update_resource_binding(
+                    id=id,
                     name=name,
-                    description=description,
-                    transaction_id=transaction_id,
                 ).get_result()
             except ApiException as ex:
                 module.fail_json(msg=ex.message)

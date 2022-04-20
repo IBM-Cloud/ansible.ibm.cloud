@@ -22,7 +22,7 @@ from units.compat.mock import patch
 from units.modules.utils import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
 
 from .common import DetailedResponseMock
-from ansible.modules.cloud.ibm import ibm_resource_group
+from ansible.modules.cloud.ibm import ibm_resource_alias
 
 
 def post_process_result(expected: dict, result: dict) -> dict:
@@ -80,15 +80,15 @@ def post_process_result(expected: dict, result: dict) -> dict:
     return new_result
 
 
-class TestResCreateResourceGroupModule(ModuleTestCase):
+class TestResourceAliasPostModule(ModuleTestCase):
     """
-    Test class for ResCreateResourceGroup module testing.
+    Test class for ResourceAliasPost module testing.
     """
 
-    def test_read_ibm_resource_group_failed(self):
+    def test_read_ibm_resource_alias_failed(self):
         """Test the inner "read" path in this module with a server error response."""
 
-        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_group.ResourceManagerV2.get_resource_group')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_alias.ResourceControllerV2.get_resource_alias')
         mock = patcher.start()
         mock.side_effect = ApiException(500, message='Something went wrong...')
 
@@ -97,8 +97,8 @@ class TestResCreateResourceGroupModule(ModuleTestCase):
         })
 
         with self.assertRaises(AnsibleFailJson) as result:
-            os.environ['RESOURCE_MANAGER_AUTH_TYPE'] = 'noAuth'
-            ibm_resource_group.main()
+            os.environ['RESOURCE_CONTROLLER_AUTH_TYPE'] = 'noAuth'
+            ibm_resource_alias.main()
 
         assert result.exception.args[0]['msg'] == 'Something went wrong...'
 
@@ -112,196 +112,195 @@ class TestResCreateResourceGroupModule(ModuleTestCase):
 
         patcher.stop()
 
-    def test_create_ibm_resource_group_success(self):
+    def test_create_ibm_resource_alias_success(self):
         """Test the "create" path - successful."""
         resource = {
-            'name': 'test1',
-            'account_id': '25eba2a9-beef-450b-82cf-f5ad5e36c6dd',
+            'name': 'my-alias',
+            'source': 'a8dff6d3-d287-4668-a81d-c87c55c2656d',
+            'target': 'crn:v1:bluemix:public:cf:us-south:o/5e939cd5-6377-4383-b9e0-9db22cd11753::cf-space:66c8b915-101a-406c-a784-e6636676e4f5',
         }
 
-        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_group.ResourceManagerV2.create_resource_group')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_alias.ResourceControllerV2.create_resource_alias')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock(resource)
 
-        get_resource_group_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_group.ResourceManagerV2.get_resource_group')
-        get_resource_group_mock = get_resource_group_patcher.start()
+        get_resource_alias_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_alias.ResourceControllerV2.get_resource_alias')
+        get_resource_alias_mock = get_resource_alias_patcher.start()
 
         set_module_args({
-            'name': 'test1',
-            'account_id': '25eba2a9-beef-450b-82cf-f5ad5e36c6dd',
+            'name': 'my-alias',
+            'source': 'a8dff6d3-d287-4668-a81d-c87c55c2656d',
+            'target': 'crn:v1:bluemix:public:cf:us-south:o/5e939cd5-6377-4383-b9e0-9db22cd11753::cf-space:66c8b915-101a-406c-a784-e6636676e4f5',
         })
 
         with self.assertRaises(AnsibleExitJson) as result:
-            os.environ['RESOURCE_MANAGER_AUTH_TYPE'] = 'noAuth'
-            ibm_resource_group.main()
+            os.environ['RESOURCE_CONTROLLER_AUTH_TYPE'] = 'noAuth'
+            ibm_resource_alias.main()
 
         assert result.exception.args[0]['changed'] is True
         assert result.exception.args[0]['msg'] == resource
 
         mock_data = dict(
-            name='test1',
-            account_id='25eba2a9-beef-450b-82cf-f5ad5e36c6dd',
+            name='my-alias',
+            source='a8dff6d3-d287-4668-a81d-c87c55c2656d',
+            target='crn:v1:bluemix:public:cf:us-south:o/5e939cd5-6377-4383-b9e0-9db22cd11753::cf-space:66c8b915-101a-406c-a784-e6636676e4f5',
         )
 
         mock.assert_called_once()
         processed_result = post_process_result(mock_data, mock.call_args.kwargs)
         assert mock_data == processed_result
 
-        get_resource_group_mock.assert_not_called()
+        get_resource_alias_mock.assert_not_called()
 
-        get_resource_group_patcher.stop()
+        get_resource_alias_patcher.stop()
         patcher.stop()
 
-    def test_create_ibm_resource_group_failed(self):
+    def test_create_ibm_resource_alias_failed(self):
         """Test the "create" path - failed."""
 
-        get_resource_group_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_group.ResourceManagerV2.get_resource_group')
-        get_resource_group_mock = get_resource_group_patcher.start()
+        get_resource_alias_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_alias.ResourceControllerV2.get_resource_alias')
+        get_resource_alias_mock = get_resource_alias_patcher.start()
 
-        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_group.ResourceManagerV2.create_resource_group')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_alias.ResourceControllerV2.create_resource_alias')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='Create ibm_resource_group error')
+        mock.side_effect = ApiException(400, message='Create ibm_resource_alias error')
 
         set_module_args({
-            'name': 'test1',
-            'account_id': '25eba2a9-beef-450b-82cf-f5ad5e36c6dd',
+            'name': 'my-alias',
+            'source': 'a8dff6d3-d287-4668-a81d-c87c55c2656d',
+            'target': 'crn:v1:bluemix:public:cf:us-south:o/5e939cd5-6377-4383-b9e0-9db22cd11753::cf-space:66c8b915-101a-406c-a784-e6636676e4f5',
         })
 
         with self.assertRaises(AnsibleFailJson) as result:
-            os.environ['RESOURCE_MANAGER_AUTH_TYPE'] = 'noAuth'
-            ibm_resource_group.main()
+            os.environ['RESOURCE_CONTROLLER_AUTH_TYPE'] = 'noAuth'
+            ibm_resource_alias.main()
 
-        assert result.exception.args[0]['msg'] == 'Create ibm_resource_group error'
+        assert result.exception.args[0]['msg'] == 'Create ibm_resource_alias error'
 
         mock_data = dict(
-            name='test1',
-            account_id='25eba2a9-beef-450b-82cf-f5ad5e36c6dd',
+            name='my-alias',
+            source='a8dff6d3-d287-4668-a81d-c87c55c2656d',
+            target='crn:v1:bluemix:public:cf:us-south:o/5e939cd5-6377-4383-b9e0-9db22cd11753::cf-space:66c8b915-101a-406c-a784-e6636676e4f5',
         )
 
         mock.assert_called_once()
         processed_result = post_process_result(mock_data, mock.call_args.kwargs)
         assert mock_data == processed_result
 
-        get_resource_group_mock.assert_not_called()
+        get_resource_alias_mock.assert_not_called()
 
-        get_resource_group_patcher.stop()
+        get_resource_alias_patcher.stop()
         patcher.stop()
 
-    def test_update_ibm_resource_group_success(self):
+    def test_update_ibm_resource_alias_success(self):
         """Test the "update" path - successful."""
         resource = {
             'id': 'testString',
-            'name': 'testString',
-            'state_': 'testString',
+            'name': 'my-new-alias-name',
         }
 
-        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_group.ResourceManagerV2.update_resource_group')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_alias.ResourceControllerV2.update_resource_alias')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock(resource)
 
-        get_resource_group_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_group.ResourceManagerV2.get_resource_group')
-        get_resource_group_mock = get_resource_group_patcher.start()
-        get_resource_group_mock.return_value = DetailedResponseMock(resource)
+        get_resource_alias_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_alias.ResourceControllerV2.get_resource_alias')
+        get_resource_alias_mock = get_resource_alias_patcher.start()
+        get_resource_alias_mock.return_value = DetailedResponseMock(resource)
 
         set_module_args({
             'id': 'testString',
-            'name': 'testString',
-            'state_': 'testString',
+            'name': 'my-new-alias-name',
         })
 
         with self.assertRaises(AnsibleExitJson) as result:
-            os.environ['RESOURCE_MANAGER_AUTH_TYPE'] = 'noAuth'
-            ibm_resource_group.main()
+            os.environ['RESOURCE_CONTROLLER_AUTH_TYPE'] = 'noAuth'
+            ibm_resource_alias.main()
 
         assert result.exception.args[0]['changed'] is True
         assert result.exception.args[0]['msg'] == resource
 
         mock_data = dict(
             id='testString',
-            name='testString',
-            state='testString',
+            name='my-new-alias-name',
         )
 
         mock.assert_called_once()
         processed_result = post_process_result(mock_data, mock.call_args.kwargs)
         assert mock_data == processed_result
 
-        get_resource_group_mock_data = dict(
+        get_resource_alias_mock_data = dict(
             id='testString',
         )
         # Set the variables that belong to the "read" path to `None`
         # since we test the "delete" path here.
-        for param in get_resource_group_mock_data:
-            get_resource_group_mock_data[param] = mock_data.get(param, None)
+        for param in get_resource_alias_mock_data:
+            get_resource_alias_mock_data[param] = mock_data.get(param, None)
 
-        get_resource_group_mock.assert_called_once()
-        get_resource_group_processed_result = post_process_result(get_resource_group_mock_data, get_resource_group_mock.call_args.kwargs)
-        assert get_resource_group_mock_data == get_resource_group_processed_result
-        get_resource_group_patcher.stop()
+        get_resource_alias_mock.assert_called_once()
+        get_resource_alias_processed_result = post_process_result(get_resource_alias_mock_data, get_resource_alias_mock.call_args.kwargs)
+        assert get_resource_alias_mock_data == get_resource_alias_processed_result
+        get_resource_alias_patcher.stop()
         patcher.stop()
 
-    def test_update_ibm_resource_group_failed(self):
+    def test_update_ibm_resource_alias_failed(self):
         """Test the "update" path - failed."""
         resource = {
             'id': 'testString',
-            'name': 'testString',
-            'state_': 'testString',
+            'name': 'my-new-alias-name',
         }
 
-        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_group.ResourceManagerV2.update_resource_group')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_alias.ResourceControllerV2.update_resource_alias')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='Update ibm_resource_group error')
+        mock.side_effect = ApiException(400, message='Update ibm_resource_alias error')
 
-        get_resource_group_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_group.ResourceManagerV2.get_resource_group')
-        get_resource_group_mock = get_resource_group_patcher.start()
-        get_resource_group_mock.return_value = DetailedResponseMock(resource)
+        get_resource_alias_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_alias.ResourceControllerV2.get_resource_alias')
+        get_resource_alias_mock = get_resource_alias_patcher.start()
+        get_resource_alias_mock.return_value = DetailedResponseMock(resource)
 
         set_module_args({
             'id': 'testString',
-            'name': 'testString',
-            'state_': 'testString',
+            'name': 'my-new-alias-name',
         })
 
         with self.assertRaises(AnsibleFailJson) as result:
-            os.environ['RESOURCE_MANAGER_AUTH_TYPE'] = 'noAuth'
-            ibm_resource_group.main()
+            os.environ['RESOURCE_CONTROLLER_AUTH_TYPE'] = 'noAuth'
+            ibm_resource_alias.main()
 
-        assert result.exception.args[0]['msg'] == 'Update ibm_resource_group error'
+        assert result.exception.args[0]['msg'] == 'Update ibm_resource_alias error'
 
         mock_data = dict(
             id='testString',
-            name='testString',
-            state='testString',
+            name='my-new-alias-name',
         )
 
         mock.assert_called_once()
         processed_result = post_process_result(mock_data, mock.call_args.kwargs)
         assert mock_data == processed_result
 
-        get_resource_group_mock_data = dict(
+        get_resource_alias_mock_data = dict(
             id='testString',
         )
         # Set the variables that belong to the "read" path to `None`
         # since we test the "delete" path here.
-        for param in get_resource_group_mock_data:
-            get_resource_group_mock_data[param] = mock_data.get(param, None)
+        for param in get_resource_alias_mock_data:
+            get_resource_alias_mock_data[param] = mock_data.get(param, None)
 
-        get_resource_group_mock.assert_called_once()
-        get_resource_group_processed_result = post_process_result(get_resource_group_mock_data, get_resource_group_mock.call_args.kwargs)
-        assert get_resource_group_mock_data == get_resource_group_processed_result
+        get_resource_alias_mock.assert_called_once()
+        get_resource_alias_processed_result = post_process_result(get_resource_alias_mock_data, get_resource_alias_mock.call_args.kwargs)
+        assert get_resource_alias_mock_data == get_resource_alias_processed_result
 
-        get_resource_group_patcher.stop()
+        get_resource_alias_patcher.stop()
         patcher.stop()
 
-    def test_delete_ibm_resource_group_success(self):
+    def test_delete_ibm_resource_alias_success(self):
         """Test the "delete" path - successfull."""
-        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_group.ResourceManagerV2.delete_resource_group')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_alias.ResourceControllerV2.delete_resource_alias')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock()
 
-        get_resource_group_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_group.ResourceManagerV2.get_resource_group')
-        get_resource_group_mock = get_resource_group_patcher.start()
-        get_resource_group_mock.return_value = DetailedResponseMock()
+        get_resource_alias_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_alias.ResourceControllerV2.get_resource_alias')
+        get_resource_alias_mock = get_resource_alias_patcher.start()
+        get_resource_alias_mock.return_value = DetailedResponseMock()
 
         args = {
             'id': 'testString',
@@ -311,8 +310,8 @@ class TestResCreateResourceGroupModule(ModuleTestCase):
         set_module_args(args)
 
         with self.assertRaises(AnsibleExitJson) as result:
-            os.environ['RESOURCE_MANAGER_AUTH_TYPE'] = 'noAuth'
-            ibm_resource_group.main()
+            os.environ['RESOURCE_CONTROLLER_AUTH_TYPE'] = 'noAuth'
+            ibm_resource_alias.main()
 
         assert result.exception.args[0]['changed'] is True
         assert result.exception.args[0]['msg']['id'] == 'testString'
@@ -326,30 +325,30 @@ class TestResCreateResourceGroupModule(ModuleTestCase):
         processed_result = post_process_result(mock_data, mock.call_args.kwargs)
         assert mock_data == processed_result
 
-        get_resource_group_mock_data = dict(
+        get_resource_alias_mock_data = dict(
             id='testString',
         )
         # Set the variables that belong to the "read" path to `None`
         # since we test the "delete" path here.
-        for param in get_resource_group_mock_data:
-            get_resource_group_mock_data[param] = mock_data.get(param, None)
+        for param in get_resource_alias_mock_data:
+            get_resource_alias_mock_data[param] = mock_data.get(param, None)
 
-        get_resource_group_mock.assert_called_once()
-        get_resource_group_processed_result = post_process_result(get_resource_group_mock_data, get_resource_group_mock.call_args.kwargs)
-        assert get_resource_group_mock_data == get_resource_group_processed_result
+        get_resource_alias_mock.assert_called_once()
+        get_resource_alias_processed_result = post_process_result(get_resource_alias_mock_data, get_resource_alias_mock.call_args.kwargs)
+        assert get_resource_alias_mock_data == get_resource_alias_processed_result
 
-        get_resource_group_patcher.stop()
+        get_resource_alias_patcher.stop()
         patcher.stop()
 
-    def test_delete_ibm_resource_group_not_exists(self):
+    def test_delete_ibm_resource_alias_not_exists(self):
         """Test the "delete" path - not exists."""
-        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_group.ResourceManagerV2.delete_resource_group')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_alias.ResourceControllerV2.delete_resource_alias')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock()
 
-        get_resource_group_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_group.ResourceManagerV2.get_resource_group')
-        get_resource_group_mock = get_resource_group_patcher.start()
-        get_resource_group_mock.side_effect = ApiException(404)
+        get_resource_alias_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_alias.ResourceControllerV2.get_resource_alias')
+        get_resource_alias_mock = get_resource_alias_patcher.start()
+        get_resource_alias_mock.side_effect = ApiException(404)
 
         args = {
             'id': 'testString',
@@ -359,8 +358,8 @@ class TestResCreateResourceGroupModule(ModuleTestCase):
         set_module_args(args)
 
         with self.assertRaises(AnsibleExitJson) as result:
-            os.environ['RESOURCE_MANAGER_AUTH_TYPE'] = 'noAuth'
-            ibm_resource_group.main()
+            os.environ['RESOURCE_CONTROLLER_AUTH_TYPE'] = 'noAuth'
+            ibm_resource_alias.main()
 
         assert result.exception.args[0]['changed'] is False
         assert result.exception.args[0]['msg']['id'] == 'testString'
@@ -372,30 +371,30 @@ class TestResCreateResourceGroupModule(ModuleTestCase):
 
         mock.assert_not_called()
 
-        get_resource_group_mock_data = dict(
+        get_resource_alias_mock_data = dict(
             id='testString',
         )
         # Set the variables that belong to the "read" path to `None`
         # since we test the "delete" path here.
-        for param in get_resource_group_mock_data:
-            get_resource_group_mock_data[param] = mock_data.get(param, None)
+        for param in get_resource_alias_mock_data:
+            get_resource_alias_mock_data[param] = mock_data.get(param, None)
 
-        get_resource_group_mock.assert_called_once()
-        get_resource_group_processed_result = post_process_result(get_resource_group_mock_data, get_resource_group_mock.call_args.kwargs)
-        assert get_resource_group_mock_data == get_resource_group_processed_result
+        get_resource_alias_mock.assert_called_once()
+        get_resource_alias_processed_result = post_process_result(get_resource_alias_mock_data, get_resource_alias_mock.call_args.kwargs)
+        assert get_resource_alias_mock_data == get_resource_alias_processed_result
 
-        get_resource_group_patcher.stop()
+        get_resource_alias_patcher.stop()
         patcher.stop()
 
-    def test_delete_ibm_resource_group_failed(self):
+    def test_delete_ibm_resource_alias_failed(self):
         """Test the "delete" path - failed."""
-        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_group.ResourceManagerV2.delete_resource_group')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_alias.ResourceControllerV2.delete_resource_alias')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='Delete ibm_resource_group error')
+        mock.side_effect = ApiException(400, message='Delete ibm_resource_alias error')
 
-        get_resource_group_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_group.ResourceManagerV2.get_resource_group')
-        get_resource_group_mock = get_resource_group_patcher.start()
-        get_resource_group_mock.return_value = DetailedResponseMock()
+        get_resource_alias_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_alias.ResourceControllerV2.get_resource_alias')
+        get_resource_alias_mock = get_resource_alias_patcher.start()
+        get_resource_alias_mock.return_value = DetailedResponseMock()
 
         set_module_args({
             'id': 'testString',
@@ -403,10 +402,10 @@ class TestResCreateResourceGroupModule(ModuleTestCase):
         })
 
         with self.assertRaises(AnsibleFailJson) as result:
-            os.environ['RESOURCE_MANAGER_AUTH_TYPE'] = 'noAuth'
-            ibm_resource_group.main()
+            os.environ['RESOURCE_CONTROLLER_AUTH_TYPE'] = 'noAuth'
+            ibm_resource_alias.main()
 
-        assert result.exception.args[0]['msg'] == 'Delete ibm_resource_group error'
+        assert result.exception.args[0]['msg'] == 'Delete ibm_resource_alias error'
 
         mock_data = dict(
             id='testString',
@@ -416,17 +415,17 @@ class TestResCreateResourceGroupModule(ModuleTestCase):
         processed_result = post_process_result(mock_data, mock.call_args.kwargs)
         assert mock_data == processed_result
 
-        get_resource_group_mock_data = dict(
+        get_resource_alias_mock_data = dict(
             id='testString',
         )
         # Set the variables that belong to the "read" path to `None`
         # since we test the "delete" path here.
-        for param in get_resource_group_mock_data:
-            get_resource_group_mock_data[param] = mock_data.get(param, None)
+        for param in get_resource_alias_mock_data:
+            get_resource_alias_mock_data[param] = mock_data.get(param, None)
 
-        get_resource_group_mock.assert_called_once()
-        get_resource_group_processed_result = post_process_result(get_resource_group_mock_data, get_resource_group_mock.call_args.kwargs)
-        assert get_resource_group_mock_data == get_resource_group_processed_result
+        get_resource_alias_mock.assert_called_once()
+        get_resource_alias_processed_result = post_process_result(get_resource_alias_mock_data, get_resource_alias_mock.call_args.kwargs)
+        assert get_resource_alias_mock_data == get_resource_alias_processed_result
 
-        get_resource_group_patcher.stop()
+        get_resource_alias_patcher.stop()
         patcher.stop()

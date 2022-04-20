@@ -27,7 +27,7 @@ from ansible.module_utils.basic import AnsibleModule
 from ..module_utils import catalog
 # pylint: disable=line-too-long,fixme
 from ibm_platform_services import ResourceControllerV2 # Todo: change this to external python package format
-
+from ..module_utils.auth import get_authenticator
 ANSIBLE_METADATA = {
     'metadata_version': '1.1',
     'status': ['preview'],
@@ -160,7 +160,14 @@ def run_module():
     state = module.params["state"]
     service = module.params["service"] # handcoded argument
 
-    sdk = ResourceControllerV2.new_instance()
+    # sdk = ResourceControllerV2.new_instance()
+    authenticator = get_authenticator(service_name='resource_controller')
+    if authenticator is None:
+        module.fail_json(msg='Cannot create the authenticator.')
+
+    sdk = ResourceControllerV2(
+        authenticator=authenticator,
+    )
 
     resource_exists=True
 

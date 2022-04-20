@@ -22,31 +22,31 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = r'''
 ---
-module: ibm_resource_group
-short_description: Manage ibm_resource_group resources.
+module: ibm_resource_alias
+short_description: Manage ibm_resource_alias resources.
 author: IBM SDK Generator
 version_added: "0.1"
 description:
-    - This module creates, updates, or deletes a ibm_resource_group.
-    - By default the module will look for an existing ibm_resource_group.
+    - This module creates, updates, or deletes a ibm_resource_alias.
+    - By default the module will look for an existing ibm_resource_alias.
 requirements:
-    - "ResourceManagerV2"
+    - "ResourceControllerV2"
 options:
-    account_id:
-        description:
-            - The account id of the resource group.
-        type: str
     name:
         description:
-            - The new name of the resource group.
+            - The name of the alias. Must be 180 characters or less and cannot include any special characters other than `(space) - . _ :`.
         type: str
-    state_:
+    source:
         description:
-            - The state of the resource group.
+            - The ID of resource instance.
+        type: str
+    target:
+        description:
+            - The CRN of target name(space) in a specific environment, for example, space in Dallas YP, CFEE instance etc.
         type: str
     id:
         description:
-            - The short or long ID of the alias.
+            - The ID of the alias.
         type: str
     state:
         description:
@@ -63,20 +63,20 @@ Examples coming soon.
 
 from ansible.module_utils.basic import AnsibleModule
 from ibm_cloud_sdk_core import ApiException
-from ibm_platform_services import ResourceManagerV2
+from ibm_platform_services import ResourceControllerV2
 
 from ..module_utils.auth import get_authenticator
 
 
 def run_module():
     module_args = dict(
-        account_id=dict(
-            type='str',
-            required=False),
         name=dict(
             type='str',
             required=False),
-        state_=dict(
+        source=dict(
+            type='str',
+            required=False),
+        target=dict(
             type='str',
             required=False),
         id=dict(
@@ -94,17 +94,17 @@ def run_module():
         supports_check_mode=False
     )
 
-    account_id = module.params["account_id"]
     name = module.params["name"]
-    state_ = module.params["state_"]
+    source = module.params["source"]
+    target = module.params["target"]
     id = module.params["id"]
     state = module.params["state"]
 
-    authenticator = get_authenticator(service_name='resource_manager')
+    authenticator = get_authenticator(service_name='resource_controller')
     if authenticator is None:
         module.fail_json(msg='Cannot create the authenticator.')
 
-    sdk = ResourceManagerV2(
+    sdk = ResourceControllerV2(
         authenticator=authenticator,
     )
 
@@ -113,7 +113,7 @@ def run_module():
     # Check for existence
     if id:
         try:
-            sdk.get_resource_group(
+            sdk.get_resource_alias(
                 id=id,
             )
         except ApiException as ex:
@@ -129,7 +129,7 @@ def run_module():
     if state == "absent":
         if resource_exists:
             try:
-                sdk.delete_resource_group(
+                sdk.delete_resource_alias(
                     id=id,
                 )
             except ApiException as ex:
@@ -145,9 +145,10 @@ def run_module():
         if not resource_exists:
             # Create path
             try:
-                result = sdk.create_resource_group(
+                result = sdk.create_resource_alias(
                     name=name,
-                    account_id=account_id,
+                    source=source,
+                    target=target,
                 ).get_result()
             except ApiException as ex:
                 module.fail_json(msg=ex.message)
@@ -156,10 +157,9 @@ def run_module():
         else:
             # Update path
             try:
-                result = sdk.update_resource_group(
+                result = sdk.update_resource_alias(
                     id=id,
                     name=name,
-                    state=state_,
                 ).get_result()
             except ApiException as ex:
                 module.fail_json(msg=ex.message)

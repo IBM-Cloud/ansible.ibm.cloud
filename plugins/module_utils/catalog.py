@@ -2,8 +2,16 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 from ibm_platform_services import GlobalCatalogV1
+from .auth import get_authenticator
 
-catalog_sdk = GlobalCatalogV1.new_instance()
+# catalog_sdk = GlobalCatalogV1.new_instance()
+authenticator = get_authenticator(service_name='global_catalog')
+if authenticator is None:
+    raise ValueError("[ERROR] Cannot create the authenticator.")
+catalog_sdk = GlobalCatalogV1(
+    authenticator=authenticator,
+)
+
 # service_name = "logdna"
 # location="us-south"
 # plan ="14-day"

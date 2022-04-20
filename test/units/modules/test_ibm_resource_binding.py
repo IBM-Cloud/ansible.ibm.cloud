@@ -22,7 +22,7 @@ from units.compat.mock import patch
 from units.modules.utils import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
 
 from .common import DetailedResponseMock
-from ansible.modules.cloud.ibm import ibm_resource_key
+from ansible.modules.cloud.ibm import ibm_resource_binding
 
 
 def post_process_result(expected: dict, result: dict) -> dict:
@@ -80,15 +80,15 @@ def post_process_result(expected: dict, result: dict) -> dict:
     return new_result
 
 
-class TestResourceKeyPostModule(ModuleTestCase):
+class TestResourceBindingPostModule(ModuleTestCase):
     """
-    Test class for ResourceKeyPost module testing.
+    Test class for ResourceBindingPost module testing.
     """
 
-    def test_read_ibm_resource_key_failed(self):
+    def test_read_ibm_resource_binding_failed(self):
         """Test the inner "read" path in this module with a server error response."""
 
-        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_key.ResourceControllerV2.get_resource_key')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_binding.ResourceControllerV2.get_resource_binding')
         mock = patcher.start()
         mock.side_effect = ApiException(500, message='Something went wrong...')
 
@@ -98,7 +98,7 @@ class TestResourceKeyPostModule(ModuleTestCase):
 
         with self.assertRaises(AnsibleFailJson) as result:
             os.environ['RESOURCE_CONTROLLER_AUTH_TYPE'] = 'noAuth'
-            ibm_resource_key.main()
+            ibm_resource_binding.main()
 
         assert result.exception.args[0]['msg'] == 'Something went wrong...'
 
@@ -112,45 +112,48 @@ class TestResourceKeyPostModule(ModuleTestCase):
 
         patcher.stop()
 
-    def test_create_ibm_resource_key_success(self):
+    def test_create_ibm_resource_binding_success(self):
         """Test the "create" path - successful."""
-        resource_key_post_parameters_model = {
+        resource_binding_post_parameters_model = {
             'serviceid_crn': 'crn:v1:bluemix:public:iam-identity::a/9fceaa56d1ab84893af6b9eec5ab81bb::serviceid:ServiceId-fe4c29b5-db13-410a-bacc-b5779a03d393',
             'foo': 'testString',
         }
 
         resource = {
-            'name': 'my-key',
             'source': '25eba2a9-beef-450b-82cf-f5ad5e36c6dd',
-            'parameters': resource_key_post_parameters_model,
+            'target': 'crn:v1:bluemix:public:cf:us-south:s/0ba4dba0-a120-4a1e-a124-5a249a904b76::cf-application:a1caa40b-2c24-4da8-8267-ac2c1a42ad0c',
+            'name': 'my-binding',
+            'parameters': resource_binding_post_parameters_model,
             'role': 'Writer',
         }
 
-        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_key.ResourceControllerV2.create_resource_key')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_binding.ResourceControllerV2.create_resource_binding')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock(resource)
 
-        get_resource_key_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_key.ResourceControllerV2.get_resource_key')
-        get_resource_key_mock = get_resource_key_patcher.start()
+        get_resource_binding_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_binding.ResourceControllerV2.get_resource_binding')
+        get_resource_binding_mock = get_resource_binding_patcher.start()
 
         set_module_args({
-            'name': 'my-key',
             'source': '25eba2a9-beef-450b-82cf-f5ad5e36c6dd',
-            'parameters': resource_key_post_parameters_model,
+            'target': 'crn:v1:bluemix:public:cf:us-south:s/0ba4dba0-a120-4a1e-a124-5a249a904b76::cf-application:a1caa40b-2c24-4da8-8267-ac2c1a42ad0c',
+            'name': 'my-binding',
+            'parameters': resource_binding_post_parameters_model,
             'role': 'Writer',
         })
 
         with self.assertRaises(AnsibleExitJson) as result:
             os.environ['RESOURCE_CONTROLLER_AUTH_TYPE'] = 'noAuth'
-            ibm_resource_key.main()
+            ibm_resource_binding.main()
 
         assert result.exception.args[0]['changed'] is True
         assert result.exception.args[0]['msg'] == resource
 
         mock_data = dict(
-            name='my-key',
             source='25eba2a9-beef-450b-82cf-f5ad5e36c6dd',
-            parameters=resource_key_post_parameters_model,
+            target='crn:v1:bluemix:public:cf:us-south:s/0ba4dba0-a120-4a1e-a124-5a249a904b76::cf-application:a1caa40b-2c24-4da8-8267-ac2c1a42ad0c',
+            name='my-binding',
+            parameters=resource_binding_post_parameters_model,
             role='Writer',
         )
 
@@ -158,43 +161,45 @@ class TestResourceKeyPostModule(ModuleTestCase):
         processed_result = post_process_result(mock_data, mock.call_args.kwargs)
         assert mock_data == processed_result
 
-        get_resource_key_mock.assert_not_called()
+        get_resource_binding_mock.assert_not_called()
 
-        get_resource_key_patcher.stop()
+        get_resource_binding_patcher.stop()
         patcher.stop()
 
-    def test_create_ibm_resource_key_failed(self):
+    def test_create_ibm_resource_binding_failed(self):
         """Test the "create" path - failed."""
 
-        get_resource_key_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_key.ResourceControllerV2.get_resource_key')
-        get_resource_key_mock = get_resource_key_patcher.start()
+        get_resource_binding_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_binding.ResourceControllerV2.get_resource_binding')
+        get_resource_binding_mock = get_resource_binding_patcher.start()
 
-        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_key.ResourceControllerV2.create_resource_key')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_binding.ResourceControllerV2.create_resource_binding')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='Create ibm_resource_key error')
+        mock.side_effect = ApiException(400, message='Create ibm_resource_binding error')
 
-        resource_key_post_parameters_model = {
+        resource_binding_post_parameters_model = {
             'serviceid_crn': 'crn:v1:bluemix:public:iam-identity::a/9fceaa56d1ab84893af6b9eec5ab81bb::serviceid:ServiceId-fe4c29b5-db13-410a-bacc-b5779a03d393',
             'foo': 'testString',
         }
 
         set_module_args({
-            'name': 'my-key',
             'source': '25eba2a9-beef-450b-82cf-f5ad5e36c6dd',
-            'parameters': resource_key_post_parameters_model,
+            'target': 'crn:v1:bluemix:public:cf:us-south:s/0ba4dba0-a120-4a1e-a124-5a249a904b76::cf-application:a1caa40b-2c24-4da8-8267-ac2c1a42ad0c',
+            'name': 'my-binding',
+            'parameters': resource_binding_post_parameters_model,
             'role': 'Writer',
         })
 
         with self.assertRaises(AnsibleFailJson) as result:
             os.environ['RESOURCE_CONTROLLER_AUTH_TYPE'] = 'noAuth'
-            ibm_resource_key.main()
+            ibm_resource_binding.main()
 
-        assert result.exception.args[0]['msg'] == 'Create ibm_resource_key error'
+        assert result.exception.args[0]['msg'] == 'Create ibm_resource_binding error'
 
         mock_data = dict(
-            name='my-key',
             source='25eba2a9-beef-450b-82cf-f5ad5e36c6dd',
-            parameters=resource_key_post_parameters_model,
+            target='crn:v1:bluemix:public:cf:us-south:s/0ba4dba0-a120-4a1e-a124-5a249a904b76::cf-application:a1caa40b-2c24-4da8-8267-ac2c1a42ad0c',
+            name='my-binding',
+            parameters=resource_binding_post_parameters_model,
             role='Writer',
         )
 
@@ -202,120 +207,120 @@ class TestResourceKeyPostModule(ModuleTestCase):
         processed_result = post_process_result(mock_data, mock.call_args.kwargs)
         assert mock_data == processed_result
 
-        get_resource_key_mock.assert_not_called()
+        get_resource_binding_mock.assert_not_called()
 
-        get_resource_key_patcher.stop()
+        get_resource_binding_patcher.stop()
         patcher.stop()
 
-    def test_update_ibm_resource_key_success(self):
+    def test_update_ibm_resource_binding_success(self):
         """Test the "update" path - successful."""
         resource = {
             'id': 'testString',
-            'name': 'my-new-key-name',
+            'name': 'my-new-binding-name',
         }
 
-        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_key.ResourceControllerV2.update_resource_key')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_binding.ResourceControllerV2.update_resource_binding')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock(resource)
 
-        get_resource_key_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_key.ResourceControllerV2.get_resource_key')
-        get_resource_key_mock = get_resource_key_patcher.start()
-        get_resource_key_mock.return_value = DetailedResponseMock(resource)
+        get_resource_binding_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_binding.ResourceControllerV2.get_resource_binding')
+        get_resource_binding_mock = get_resource_binding_patcher.start()
+        get_resource_binding_mock.return_value = DetailedResponseMock(resource)
 
         set_module_args({
             'id': 'testString',
-            'name': 'my-new-key-name',
+            'name': 'my-new-binding-name',
         })
 
         with self.assertRaises(AnsibleExitJson) as result:
             os.environ['RESOURCE_CONTROLLER_AUTH_TYPE'] = 'noAuth'
-            ibm_resource_key.main()
+            ibm_resource_binding.main()
 
         assert result.exception.args[0]['changed'] is True
         assert result.exception.args[0]['msg'] == resource
 
         mock_data = dict(
             id='testString',
-            name='my-new-key-name',
+            name='my-new-binding-name',
         )
 
         mock.assert_called_once()
         processed_result = post_process_result(mock_data, mock.call_args.kwargs)
         assert mock_data == processed_result
 
-        get_resource_key_mock_data = dict(
+        get_resource_binding_mock_data = dict(
             id='testString',
         )
         # Set the variables that belong to the "read" path to `None`
         # since we test the "delete" path here.
-        for param in get_resource_key_mock_data:
-            get_resource_key_mock_data[param] = mock_data.get(param, None)
+        for param in get_resource_binding_mock_data:
+            get_resource_binding_mock_data[param] = mock_data.get(param, None)
 
-        get_resource_key_mock.assert_called_once()
-        get_resource_key_processed_result = post_process_result(get_resource_key_mock_data, get_resource_key_mock.call_args.kwargs)
-        assert get_resource_key_mock_data == get_resource_key_processed_result
-        get_resource_key_patcher.stop()
+        get_resource_binding_mock.assert_called_once()
+        get_resource_binding_processed_result = post_process_result(get_resource_binding_mock_data, get_resource_binding_mock.call_args.kwargs)
+        assert get_resource_binding_mock_data == get_resource_binding_processed_result
+        get_resource_binding_patcher.stop()
         patcher.stop()
 
-    def test_update_ibm_resource_key_failed(self):
+    def test_update_ibm_resource_binding_failed(self):
         """Test the "update" path - failed."""
         resource = {
             'id': 'testString',
-            'name': 'my-new-key-name',
+            'name': 'my-new-binding-name',
         }
 
-        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_key.ResourceControllerV2.update_resource_key')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_binding.ResourceControllerV2.update_resource_binding')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='Update ibm_resource_key error')
+        mock.side_effect = ApiException(400, message='Update ibm_resource_binding error')
 
-        get_resource_key_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_key.ResourceControllerV2.get_resource_key')
-        get_resource_key_mock = get_resource_key_patcher.start()
-        get_resource_key_mock.return_value = DetailedResponseMock(resource)
+        get_resource_binding_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_binding.ResourceControllerV2.get_resource_binding')
+        get_resource_binding_mock = get_resource_binding_patcher.start()
+        get_resource_binding_mock.return_value = DetailedResponseMock(resource)
 
         set_module_args({
             'id': 'testString',
-            'name': 'my-new-key-name',
+            'name': 'my-new-binding-name',
         })
 
         with self.assertRaises(AnsibleFailJson) as result:
             os.environ['RESOURCE_CONTROLLER_AUTH_TYPE'] = 'noAuth'
-            ibm_resource_key.main()
+            ibm_resource_binding.main()
 
-        assert result.exception.args[0]['msg'] == 'Update ibm_resource_key error'
+        assert result.exception.args[0]['msg'] == 'Update ibm_resource_binding error'
 
         mock_data = dict(
             id='testString',
-            name='my-new-key-name',
+            name='my-new-binding-name',
         )
 
         mock.assert_called_once()
         processed_result = post_process_result(mock_data, mock.call_args.kwargs)
         assert mock_data == processed_result
 
-        get_resource_key_mock_data = dict(
+        get_resource_binding_mock_data = dict(
             id='testString',
         )
         # Set the variables that belong to the "read" path to `None`
         # since we test the "delete" path here.
-        for param in get_resource_key_mock_data:
-            get_resource_key_mock_data[param] = mock_data.get(param, None)
+        for param in get_resource_binding_mock_data:
+            get_resource_binding_mock_data[param] = mock_data.get(param, None)
 
-        get_resource_key_mock.assert_called_once()
-        get_resource_key_processed_result = post_process_result(get_resource_key_mock_data, get_resource_key_mock.call_args.kwargs)
-        assert get_resource_key_mock_data == get_resource_key_processed_result
+        get_resource_binding_mock.assert_called_once()
+        get_resource_binding_processed_result = post_process_result(get_resource_binding_mock_data, get_resource_binding_mock.call_args.kwargs)
+        assert get_resource_binding_mock_data == get_resource_binding_processed_result
 
-        get_resource_key_patcher.stop()
+        get_resource_binding_patcher.stop()
         patcher.stop()
 
-    def test_delete_ibm_resource_key_success(self):
+    def test_delete_ibm_resource_binding_success(self):
         """Test the "delete" path - successfull."""
-        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_key.ResourceControllerV2.delete_resource_key')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_binding.ResourceControllerV2.delete_resource_binding')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock()
 
-        get_resource_key_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_key.ResourceControllerV2.get_resource_key')
-        get_resource_key_mock = get_resource_key_patcher.start()
-        get_resource_key_mock.return_value = DetailedResponseMock()
+        get_resource_binding_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_binding.ResourceControllerV2.get_resource_binding')
+        get_resource_binding_mock = get_resource_binding_patcher.start()
+        get_resource_binding_mock.return_value = DetailedResponseMock()
 
         args = {
             'id': 'testString',
@@ -326,7 +331,7 @@ class TestResourceKeyPostModule(ModuleTestCase):
 
         with self.assertRaises(AnsibleExitJson) as result:
             os.environ['RESOURCE_CONTROLLER_AUTH_TYPE'] = 'noAuth'
-            ibm_resource_key.main()
+            ibm_resource_binding.main()
 
         assert result.exception.args[0]['changed'] is True
         assert result.exception.args[0]['msg']['id'] == 'testString'
@@ -340,30 +345,30 @@ class TestResourceKeyPostModule(ModuleTestCase):
         processed_result = post_process_result(mock_data, mock.call_args.kwargs)
         assert mock_data == processed_result
 
-        get_resource_key_mock_data = dict(
+        get_resource_binding_mock_data = dict(
             id='testString',
         )
         # Set the variables that belong to the "read" path to `None`
         # since we test the "delete" path here.
-        for param in get_resource_key_mock_data:
-            get_resource_key_mock_data[param] = mock_data.get(param, None)
+        for param in get_resource_binding_mock_data:
+            get_resource_binding_mock_data[param] = mock_data.get(param, None)
 
-        get_resource_key_mock.assert_called_once()
-        get_resource_key_processed_result = post_process_result(get_resource_key_mock_data, get_resource_key_mock.call_args.kwargs)
-        assert get_resource_key_mock_data == get_resource_key_processed_result
+        get_resource_binding_mock.assert_called_once()
+        get_resource_binding_processed_result = post_process_result(get_resource_binding_mock_data, get_resource_binding_mock.call_args.kwargs)
+        assert get_resource_binding_mock_data == get_resource_binding_processed_result
 
-        get_resource_key_patcher.stop()
+        get_resource_binding_patcher.stop()
         patcher.stop()
 
-    def test_delete_ibm_resource_key_not_exists(self):
+    def test_delete_ibm_resource_binding_not_exists(self):
         """Test the "delete" path - not exists."""
-        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_key.ResourceControllerV2.delete_resource_key')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_binding.ResourceControllerV2.delete_resource_binding')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock()
 
-        get_resource_key_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_key.ResourceControllerV2.get_resource_key')
-        get_resource_key_mock = get_resource_key_patcher.start()
-        get_resource_key_mock.side_effect = ApiException(404)
+        get_resource_binding_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_binding.ResourceControllerV2.get_resource_binding')
+        get_resource_binding_mock = get_resource_binding_patcher.start()
+        get_resource_binding_mock.side_effect = ApiException(404)
 
         args = {
             'id': 'testString',
@@ -374,7 +379,7 @@ class TestResourceKeyPostModule(ModuleTestCase):
 
         with self.assertRaises(AnsibleExitJson) as result:
             os.environ['RESOURCE_CONTROLLER_AUTH_TYPE'] = 'noAuth'
-            ibm_resource_key.main()
+            ibm_resource_binding.main()
 
         assert result.exception.args[0]['changed'] is False
         assert result.exception.args[0]['msg']['id'] == 'testString'
@@ -386,30 +391,30 @@ class TestResourceKeyPostModule(ModuleTestCase):
 
         mock.assert_not_called()
 
-        get_resource_key_mock_data = dict(
+        get_resource_binding_mock_data = dict(
             id='testString',
         )
         # Set the variables that belong to the "read" path to `None`
         # since we test the "delete" path here.
-        for param in get_resource_key_mock_data:
-            get_resource_key_mock_data[param] = mock_data.get(param, None)
+        for param in get_resource_binding_mock_data:
+            get_resource_binding_mock_data[param] = mock_data.get(param, None)
 
-        get_resource_key_mock.assert_called_once()
-        get_resource_key_processed_result = post_process_result(get_resource_key_mock_data, get_resource_key_mock.call_args.kwargs)
-        assert get_resource_key_mock_data == get_resource_key_processed_result
+        get_resource_binding_mock.assert_called_once()
+        get_resource_binding_processed_result = post_process_result(get_resource_binding_mock_data, get_resource_binding_mock.call_args.kwargs)
+        assert get_resource_binding_mock_data == get_resource_binding_processed_result
 
-        get_resource_key_patcher.stop()
+        get_resource_binding_patcher.stop()
         patcher.stop()
 
-    def test_delete_ibm_resource_key_failed(self):
+    def test_delete_ibm_resource_binding_failed(self):
         """Test the "delete" path - failed."""
-        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_key.ResourceControllerV2.delete_resource_key')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_binding.ResourceControllerV2.delete_resource_binding')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='Delete ibm_resource_key error')
+        mock.side_effect = ApiException(400, message='Delete ibm_resource_binding error')
 
-        get_resource_key_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_key.ResourceControllerV2.get_resource_key')
-        get_resource_key_mock = get_resource_key_patcher.start()
-        get_resource_key_mock.return_value = DetailedResponseMock()
+        get_resource_binding_patcher = patch('ansible.modules.cloud.ibm.ibm_resource_binding.ResourceControllerV2.get_resource_binding')
+        get_resource_binding_mock = get_resource_binding_patcher.start()
+        get_resource_binding_mock.return_value = DetailedResponseMock()
 
         set_module_args({
             'id': 'testString',
@@ -418,9 +423,9 @@ class TestResourceKeyPostModule(ModuleTestCase):
 
         with self.assertRaises(AnsibleFailJson) as result:
             os.environ['RESOURCE_CONTROLLER_AUTH_TYPE'] = 'noAuth'
-            ibm_resource_key.main()
+            ibm_resource_binding.main()
 
-        assert result.exception.args[0]['msg'] == 'Delete ibm_resource_key error'
+        assert result.exception.args[0]['msg'] == 'Delete ibm_resource_binding error'
 
         mock_data = dict(
             id='testString',
@@ -430,17 +435,17 @@ class TestResourceKeyPostModule(ModuleTestCase):
         processed_result = post_process_result(mock_data, mock.call_args.kwargs)
         assert mock_data == processed_result
 
-        get_resource_key_mock_data = dict(
+        get_resource_binding_mock_data = dict(
             id='testString',
         )
         # Set the variables that belong to the "read" path to `None`
         # since we test the "delete" path here.
-        for param in get_resource_key_mock_data:
-            get_resource_key_mock_data[param] = mock_data.get(param, None)
+        for param in get_resource_binding_mock_data:
+            get_resource_binding_mock_data[param] = mock_data.get(param, None)
 
-        get_resource_key_mock.assert_called_once()
-        get_resource_key_processed_result = post_process_result(get_resource_key_mock_data, get_resource_key_mock.call_args.kwargs)
-        assert get_resource_key_mock_data == get_resource_key_processed_result
+        get_resource_binding_mock.assert_called_once()
+        get_resource_binding_processed_result = post_process_result(get_resource_binding_mock_data, get_resource_binding_mock.call_args.kwargs)
+        assert get_resource_binding_mock_data == get_resource_binding_processed_result
 
-        get_resource_key_patcher.stop()
+        get_resource_binding_patcher.stop()
         patcher.stop()

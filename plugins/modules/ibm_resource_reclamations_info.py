@@ -22,22 +22,22 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = r'''
 ---
-module: ibm_iam_access_group_rules_info
-short_description: Manage ibm_iam_access_group_rules info.
+module: ibm_resource_reclamations_info
+short_description: Manage ibm_resource_reclamations info.
 author: IBM SDK Generator
 version_added: "0.1"
 description:
-    - This module retrieves one or more ibm_iam_access_group_rules(s).
+    - This module retrieves one or more ibm_resource_reclamations(s).
 requirements:
-    - "IamAccessGroupsV2"
+    - "ResourceControllerV2"
 options:
-    access_group_id:
+    account_id:
         description:
-            - The access group identifier.
+            - An alpha-numeric value identifying the account ID.
         type: str
-    transaction_id:
+    resource_instance_id:
         description:
-            - An optional transaction ID can be passed to your request, which can be useful for tracking calls through multiple services by using one identifier. The header key must be set to Transaction-Id and the value is anything that you choose. If no transaction ID is passed in, then a random ID is generated.
+            - The ID of the resource instance.
         type: str
 '''
 
@@ -48,17 +48,17 @@ Examples coming soon.
 
 from ansible.module_utils.basic import AnsibleModule
 from ibm_cloud_sdk_core import ApiException
-from ibm_platform_services import IamAccessGroupsV2
+from ibm_platform_services import ResourceControllerV2
 
 from ..module_utils.auth import get_authenticator
 
 
 def run_module():
     module_args = dict(
-        access_group_id=dict(
+        account_id=dict(
             type='str',
             required=False),
-        transaction_id=dict(
+        resource_instance_id=dict(
             type='str',
             required=False),
     )
@@ -68,22 +68,22 @@ def run_module():
         supports_check_mode=False
     )
 
-    access_group_id = module.params["access_group_id"]
-    transaction_id = module.params["transaction_id"]
+    account_id = module.params["account_id"]
+    resource_instance_id = module.params["resource_instance_id"]
 
-    authenticator = get_authenticator(service_name='iam_access_groups')
+    authenticator = get_authenticator(service_name='resource_controller')
     if authenticator is None:
         module.fail_json(msg='Cannot create the authenticator.')
 
-    sdk = IamAccessGroupsV2(
+    sdk = ResourceControllerV2(
         authenticator=authenticator,
     )
 
     # list
     try:
-        response = sdk.list_access_group_rules(
-            access_group_id=access_group_id,
-            transaction_id=transaction_id
+        response = sdk.list_reclamations(
+            account_id=account_id,
+            resource_instance_id=resource_instance_id
         )
         module.exit_json(msg=response.get_result())
     except ApiException as ex:
