@@ -22,35 +22,15 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = r'''
 ---
-module: ibm_resource_groups_info
-short_description: Manage ibm_resource_groups info.
+module: ibm_resource_quotas_info
+short_description: Manage ibm_resource_quotas info.
 author: IBM SDK Generator
 version_added: "0.1"
 description:
-    - This module retrieves one or more ibm_resource_groups(s).
+    - This module retrieves one or more ibm_resource_quotas(s).
 requirements:
     - "ResourceManagerV2"
 options:
-    date:
-        description:
-            - The date in the format of YYYY-MM which returns resource groups. Deleted resource groups will be excluded before this month.
-        type: str
-    default:
-        description:
-            - Boolean value to specify whether or not to list default resource groups.
-        type: bool
-    account_id:
-        description:
-            - The ID of the account that contains the resource groups that you want to get.
-        type: str
-    name:
-        description:
-            - The name of the resource group.
-        type: str
-    include_deleted:
-        description:
-            - Boolean value to specify whether or not to list default resource groups.
-        type: bool
 '''
 
 EXAMPLES = r'''
@@ -67,21 +47,6 @@ from ..module_utils.auth import get_authenticator
 
 def run_module():
     module_args = dict(
-        date=dict(
-            type='str',
-            required=False),
-        default=dict(
-            type='bool',
-            required=False),
-        account_id=dict(
-            type='str',
-            required=False),
-        name=dict(
-            type='str',
-            required=False),
-        include_deleted=dict(
-            type='bool',
-            required=False),
     )
 
     module = AnsibleModule(
@@ -89,11 +54,6 @@ def run_module():
         supports_check_mode=False
     )
 
-    date = module.params["date"]
-    default = module.params["default"]
-    account_id = module.params["account_id"]
-    name = module.params["name"]
-    include_deleted = module.params["include_deleted"]
 
     authenticator = get_authenticator(service_name='resource_manager')
     if authenticator is None:
@@ -105,12 +65,7 @@ def run_module():
 
     # list
     try:
-        response = sdk.list_resource_groups(
-            account_id=account_id,
-            date=date,
-            name=name,
-            default=default,
-            include_deleted=include_deleted
+        response = sdk.list_quota_definitions(
         )
         module.exit_json(msg=response.get_result())
     except ApiException as ex:

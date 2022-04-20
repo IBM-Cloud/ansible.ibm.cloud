@@ -22,23 +22,27 @@ from units.compat.mock import patch
 from units.modules.utils import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
 
 from .common import DetailedResponseMock
-from ansible.modules.cloud.ibm import ibm_resource_groups_info
+from ansible.modules.cloud.ibm import ibm_resource_quota_info
 
 
-class TestResourceGroupListModuleInfo(ModuleTestCase):
+class TestQuotaDefinitionModuleInfo(ModuleTestCase):
     """
-    Test class for ResourceGroupList module testing.
+    Test class for QuotaDefinition module testing.
     """
 
-    def test_list_ibm_resource_groups_success(self):
+    def test_list_ibm_resource_quota_success(self):
         """Test the "list" path - successful."""
-        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_groups_info.ResourceManagerV2.list_resource_groups')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_quota_info.ResourceManagerV2.get_quota_definition')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock([])
 
+        set_module_args({
+            'id': 'testString',
+        })
+
         with self.assertRaises(AnsibleExitJson) as result:
             os.environ['RESOURCE_MANAGER_AUTH_TYPE'] = 'noAuth'
-            ibm_resource_groups_info.main()
+            ibm_resource_quota_info.main()
 
         assert result.exception.args[0]['msg'] == []
 
@@ -46,17 +50,21 @@ class TestResourceGroupListModuleInfo(ModuleTestCase):
 
         patcher.stop()
 
-    def test_list_ibm_resource_groups_failed(self):
+    def test_list_ibm_resource_quota_failed(self):
         """Test the "list" path - failed."""
-        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_groups_info.ResourceManagerV2.list_resource_groups')
+        patcher = patch('ansible.modules.cloud.ibm.ibm_resource_quota_info.ResourceManagerV2.get_quota_definition')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='List ibm_resource_groups error')
+        mock.side_effect = ApiException(400, message='List ibm_resource_quota error')
+
+        set_module_args({
+            'id': 'testString',
+        })
 
         with self.assertRaises(AnsibleFailJson) as result:
             os.environ['RESOURCE_MANAGER_AUTH_TYPE'] = 'noAuth'
-            ibm_resource_groups_info.main()
+            ibm_resource_quota_info.main()
 
-        assert result.exception.args[0]['msg'] == 'List ibm_resource_groups error'
+        assert result.exception.args[0]['msg'] == 'List ibm_resource_quota error'
 
         mock.assert_called_once()
 

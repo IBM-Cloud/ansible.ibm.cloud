@@ -14,15 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=missing-function-docstring,too-many-branches
-
-
-from ibm_cloud_sdk_core import ApiException
-
-from ansible.module_utils.basic import AnsibleModule
-# pylint: disable=line-too-long,fixme
-from ibm_platform_services import ResourceManagerV2 # Todo: change this to external python package format
-
 ANSIBLE_METADATA = {
     'metadata_version': '1.1',
     'status': ['preview'],
@@ -69,6 +60,14 @@ EXAMPLES = r'''
 Examples coming soon.
 '''
 
+
+from ansible.module_utils.basic import AnsibleModule
+from ibm_cloud_sdk_core import ApiException
+from ibm_platform_services import ResourceManagerV2
+
+from ..module_utils.auth import get_authenticator
+
+
 def run_module():
     module_args = dict(
         account_id=dict(
@@ -101,7 +100,13 @@ def run_module():
     id = module.params["id"]
     state = module.params["state"]
 
-    sdk = ResourceManagerV2.new_instance()
+    authenticator = get_authenticator(service_name='resource_manager')
+    if authenticator is None:
+        module.fail_json(msg='Cannot create the authenticator.')
+
+    sdk = ResourceManagerV2(
+        authenticator=authenticator,
+    )
 
     resource_exists=True
 
@@ -161,8 +166,10 @@ def run_module():
             else:
                 module.exit_json(changed=True, msg=result)
 
+
 def main():
     run_module()
+
 
 if __name__ == '__main__':
     main()
