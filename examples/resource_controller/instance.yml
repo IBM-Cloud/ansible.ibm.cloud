@@ -27,6 +27,7 @@
         plan: "{{ plan }}"
         service: "{{ service }}"
         location: "{{ location }}"
+        parameters: "{{ params}}"
       register: instance_create_output
       when: resource_instance.id is not defined
 

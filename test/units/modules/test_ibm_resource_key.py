@@ -18,13 +18,11 @@
 import os
 
 from ibm_cloud_sdk_core import ApiException
-
-from ansible.modules.cloud.ibm import ibm_resource_key
-from ibm_platform_services import *  # pylint: disable=wildcard-import,unused-wildcard-import
 from units.compat.mock import patch
 from units.modules.utils import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
 
 from .common import DetailedResponseMock
+from ansible.modules.cloud.ibm import ibm_resource_key
 
 
 def post_process_result(expected: dict, result: dict) -> dict:

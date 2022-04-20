@@ -18,12 +18,11 @@
 import os
 
 from ibm_cloud_sdk_core import ApiException
-
-from ansible.modules.cloud.ibm import ibm_resource_instance_info
 from units.compat.mock import patch
 from units.modules.utils import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
 
 from .common import DetailedResponseMock
+from ansible.modules.cloud.ibm import ibm_resource_instance_info
 
 
 class TestResourceInstanceModuleInfo(ModuleTestCase):
