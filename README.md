@@ -34,4 +34,4 @@ pip install requirements.txt
 |IAM Access Group |ibm_iam_access_group<br>ibm_iam_access_group_info<br>ibm_iam_access_group_members<br>ibm_iam_access_group_members_info<br>ibm_iam_access_group_rule<br>ibm_iam_access_group_rule_info<br>ibm_iam_access_group_rules_info<br>ibm_iam_access_groups_info |
 |Resource Manager |ibm_resource_group<br>ibm_resource_group_info<br>ibm_resource_groups_info <br>ibm_resource_quota_info<br>ibm_resource_quotas_info |
 |Resource Controller |ibm_resource_instance<br>ibm_resource_instance_info<br>ibm_resource_instances_info<br> ibm_resource_key<br>ibm_resource_key_info<br>ibm_resource_keys_info <br> ibm_resource_alias<br>ibm_resource_alias_info<br>ibm_resource_aliases_info <br> ibm_resource_binding<br>ibm_resource_binding_info<br>ibm_resource_bindings_info<br>ibm_resource_reclamations_info |
-|Schematics |schematics_schematics_action<br>schematics_schematics_inventory<br>schematics_schematics_job<br>schematics_schematics_resource_query<br>schematics_schematics_workspace |
+
