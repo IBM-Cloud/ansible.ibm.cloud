@@ -31,25 +31,8 @@ The below requirements are needed on the host that executes this module.
 
 
 
-
 Authors
 ~~~~~~~
 
-- I
-- B
-- M
--  
-- S
-- D
-- K
--  
-- G
-- e
-- n
-- e
-- r
-- a
-- t
-- o
-- r
+- IBM SDK Generator
 
