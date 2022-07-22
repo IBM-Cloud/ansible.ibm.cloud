@@ -1,5 +1,5 @@
-namespace: "ibm-cloud"
-name: "ibmcollection"
+namespace: "ibm"
+name: "ibm-cloud"
 version: "1.0.0"
 readme: "README.md"
 authors:

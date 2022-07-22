@@ -150,21 +150,5 @@ Parameters
 Authors
 ~~~~~~~
 
-- I
-- B
-- M
--  
-- S
-- D
-- K
--  
-- G
-- e
-- n
-- e
-- r
-- a
-- t
-- o
-- r
+- IBM SDK Generator
 
