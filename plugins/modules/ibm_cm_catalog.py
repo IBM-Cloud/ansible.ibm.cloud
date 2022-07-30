@@ -27,7 +27,7 @@ short_description: Manage ibm_cm_catalog resources.
 author: IBM SDK Generator
 version_added: "0.1"
 description:
-    - This module creates, updates, or deletes a ibm_cm_catalog.
+    - This module creates, updates, C(resource_alias) or deletes a ibm_cm_catalog.
     - By default the module will look for an existing ibm_cm_catalog.
 requirements:
     - "CatalogManagementV1"
@@ -264,7 +264,7 @@ from ansible.module_utils.basic import AnsibleModule
 from ibm_cloud_sdk_core import ApiException
 from ibm_platform_services import CatalogManagementV1
 
-from ansible.module_utils.cloud.ibm.auth import get_authenticator
+from ..module_utils.auth import get_authenticator
 
 
 def run_module():
