@@ -755,7 +755,7 @@ from ansible.module_utils.basic import AnsibleModule
 from ibm_cloud_sdk_core import ApiException
 from ibm_platform_services import CatalogManagementV1
 
-from ansible.module_utils.cloud.ibm.auth import get_authenticator
+from ..module_utils.auth import get_authenticator
 
 
 def run_module():
