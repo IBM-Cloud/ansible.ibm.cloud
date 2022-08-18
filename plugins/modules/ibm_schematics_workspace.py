@@ -311,7 +311,98 @@ options:
         description:
           - List of values metadata.
         type: list
-        elements: dict
+        suboptions:
+          type:
+            description:
+              - Type of the variable.
+            type: str
+            choices:
+              - boolean
+              - string
+              - integer
+              - date
+              - array
+              - list
+              - map
+              - complex
+              - link
+          aliases:
+            description:
+              - The list of aliases for the variable name.
+            type: list
+            elements: str
+          description:
+            description:
+              - The description of the meta data.
+            type: str
+          cloud_data_type:
+            description:
+              - Cloud data type of the variable. eg. resourceI(group)id, region, vpcI(id.
+            type: str
+          default_value:
+            description:
+              - Default value for the variable only if the override value is not specified.
+            type: str
+          link_status:
+            description:
+              - The status of the link.
+            type: str
+            choices:
+              - normal
+              - broken
+          secure:
+            description:
+              - Is the variable secure or sensitive ?.
+            type: bool
+          immutable:
+            description:
+              - Is the variable readonly ?.
+            type: bool
+          hidden:
+            description:
+              - If B(true), the variable is not displayed on UI or Command line.
+            type: bool
+          required:
+            description:
+              - If the variable required?.
+            type: bool
+          options:
+            description:
+              - The list of possible values for this variable.  If type is B(integer) or B(date), then the array of string is  converted to array of integers or date during the runtime.
+            type: list
+            elements: str
+          min_value:
+            description:
+              - The minimum value of the variable. Applicable for the integer type.
+            type: int
+          max_value:
+            description:
+              - The maximum value of the variable. Applicable for the integer type.
+            type: int
+          min_length:
+            description:
+              - The minimum length of the variable value. Applicable for the string type.
+            type: int
+          max_length:
+            description:
+              - The maximum length of the variable value. Applicable for the string type.
+            type: int
+          matches:
+            description:
+              - The regex for the variable value.
+            type: str
+          position:
+            description:
+              - The relative position of this variable in a list.
+            type: int
+          group_by:
+            description:
+              - The display name of the group this variable belongs to.
+            type: str
+          source:
+            description:
+              - The source of this meta-data.
+            type: str
       variablestore:
         description:
           - VariablesRequest -.
@@ -471,6 +562,7 @@ EXAMPLES = r'''
     environment_values_metadata_model:
     inject_terraform_template_inner_tft_parameters_item_model:
     inject_terraform_template_inner_model:
+    variable_metadata_model:
     workspace_variable_request_model:
     template_source_data_request_model:
     template_repo_request_model:
@@ -485,6 +577,7 @@ EXAMPLES = r'''
     environment_values_metadata_model:
     inject_terraform_template_inner_tft_parameters_item_model:
     inject_terraform_template_inner_model:
+    variable_metadata_model:
     workspace_variable_request_model:
     template_source_data_request_model:
     template_repo_update_request_model:
@@ -741,7 +834,69 @@ def run_module():
                     required=False),
                 values_metadata=dict(
                     type='list',
-                    elements='dict',
+                    options=dict(
+                        type=dict(
+                            type='str',
+                            choices=['boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
+                            required=False),
+                        aliases=dict(
+                            type='list',
+                            elements='str',
+                            required=False),
+                        description=dict(
+                            type='str',
+                            required=False),
+                        cloud_data_type=dict(
+                            type='str',
+                            required=False),
+                        default_value=dict(
+                            type='str',
+                            required=False),
+                        link_status=dict(
+                            type='str',
+                            choices=['normal', 'broken'],
+                            required=False),
+                        secure=dict(
+                            type='bool',
+                            required=False),
+                        immutable=dict(
+                            type='bool',
+                            required=False),
+                        hidden=dict(
+                            type='bool',
+                            required=False),
+                        required=dict(
+                            type='bool',
+                            required=False),
+                        options=dict(
+                            type='list',
+                            elements='str',
+                            required=False),
+                        min_value=dict(
+                            type='int',
+                            required=False),
+                        max_value=dict(
+                            type='int',
+                            required=False),
+                        min_length=dict(
+                            type='int',
+                            required=False),
+                        max_length=dict(
+                            type='int',
+                            required=False),
+                        matches=dict(
+                            type='str',
+                            required=False),
+                        position=dict(
+                            type='int',
+                            required=False),
+                        group_by=dict(
+                            type='str',
+                            required=False),
+                        source=dict(
+                            type='str',
+                            required=False),
+                    ),
                     required=False),
                 variablestore=dict(
                     type='list',
