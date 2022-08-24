@@ -2,7 +2,7 @@
 - name: Resource Group Creation.
   hosts: localhost
   collections:
-   - ibm.cloudcollection
+   - ibm.cloud
   tasks:
     - name: Fetch the variables from var file
       include_vars:
@@ -14,7 +14,8 @@
       failed_when: 
          - resource_group_output.msg.id is not defined
          - '"Invalid Id" not in resource_group_output.msg'  
-         - '"missing" not in resource_group_output.msg'  
+         - '"missing" not in resource_group_output.msg' 
+         - '"Failed to get a resource group." not in resource_group_output.msg' 
       register: resource_group_output
     
     - name: Save existing resource group info as fact

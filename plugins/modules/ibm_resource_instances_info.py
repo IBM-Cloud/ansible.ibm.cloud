@@ -23,7 +23,9 @@ from ansible.module_utils.basic import AnsibleModule
 from ..module_utils import catalog
 # pylint: disable=line-too-long,fixme
 from ibm_platform_services import ResourceControllerV2 # Todo: change this to external python package format
-from ..module_utils.auth import get_authenticator
+
+from ..module_utils import config
+
 ANSIBLE_METADATA = {
     'metadata_version': '1.1',
     'status': ['preview'],
@@ -154,19 +156,17 @@ def run_module():
     updated_to = module.params["updated_to"]
 
     # sdk = ResourceControllerV2.new_instance()
-    authenticator = get_authenticator(service_name='resource_controller')
-    if authenticator is None:
-        module.fail_json(msg='Cannot create the authenticator.')
 
-    sdk = ResourceControllerV2(
-        authenticator=authenticator,
-    )
+    sdk=config.get_resource_contollerV2_sdk()
     # list
     try:
-        serviceID = catalog.get_serviceID(service)
+        serviceID=""
         servicePlanID=""
-        if plan != "" and plan != None and plan != "None":
-            serviceID,servicePlanID = catalog.get_planID(service,plan)
+        if service !=None:
+            serviceID = catalog.get_serviceID(service)
+            servicePlanID=""
+            if plan != "" and plan != None and plan != "None":
+                serviceID,servicePlanID = catalog.get_planID(service,plan)
         response = sdk.list_resource_instances(
             guid=guid,
             name=name,

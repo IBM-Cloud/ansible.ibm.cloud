@@ -54,9 +54,8 @@ from ansible.module_utils.basic import AnsibleModule
 from ibm_cloud_sdk_core import ApiException
 from ibm_platform_services import IamIdentityV1
 
-from ..module_utils.auth import get_authenticator
 
-
+from ..module_utils import config
 def run_module():
     module_args = dict(
         include_history=dict(
@@ -79,13 +78,8 @@ def run_module():
     id = module.params["id"]
     include_activity = module.params["include_activity"]
 
-    authenticator = get_authenticator(service_name='iam_identity')
-    if authenticator is None:
-        module.fail_json(msg='Cannot create the authenticator.')
 
-    sdk = IamIdentityV1(
-        authenticator=authenticator,
-    )
+    sdk = config.get_iam_identity_sdk()
 
     if id:
         # read

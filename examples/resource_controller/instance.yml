@@ -2,7 +2,7 @@
 - name: Resource Instance Creation.
   hosts: localhost
   collections:
-   - ibm.cloudcollection
+   - ibm.cloud
   tasks:
     - name: Fetch the variables from var file
       include_vars:
@@ -27,7 +27,7 @@
         plan: "{{ plan }}"
         service: "{{ service }}"
         location: "{{ location }}"
-        parameters: "{{ params}}"
+        # parameters: "{{ params}}"
       register: instance_create_output
       when: resource_instance.id is not defined
 

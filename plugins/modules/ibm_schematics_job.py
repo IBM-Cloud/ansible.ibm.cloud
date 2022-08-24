@@ -2778,10 +2778,11 @@ msg:
 '''
 
 from ansible.module_utils.basic import AnsibleModule
-from ..module_utils.auth import get_authenticator
+
+from ..module_utils import config
 
 try:
-    from ibm_cloud import SchematicsV1
+    from ibm_schematics import SchematicsV1
     from ibm_cloud_sdk_core import ApiException
 except ImportError:
     pass
@@ -4654,13 +4655,8 @@ def run_module():
     force = module.params["force"]
     state = module.params["state"]
 
-    authenticator = get_authenticator(service_name='schematics')
-    if authenticator is None:
-        module.fail_json(msg='Cannot create the authenticator.')
 
-    sdk = SchematicsV1(
-        authenticator=authenticator,
-    )
+    sdk= config.get_schematicsv1_sdk()
 
     resource_exists = True
 
