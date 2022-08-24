@@ -2,19 +2,8 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 from ibm_platform_services import GlobalCatalogV1
-from .auth import get_authenticator
+from ..module_utils import config
 
-# catalog_sdk = GlobalCatalogV1.new_instance()
-authenticator = get_authenticator(service_name='global_catalog')
-if authenticator is None:
-    raise ValueError("[ERROR] Cannot create the authenticator.")
-catalog_sdk = GlobalCatalogV1(
-    authenticator=authenticator,
-)
-
-# service_name = "logdna"
-# location="us-south"
-# plan ="14-day"
 
 def get_serviceID_targetCRN_planID(service_name,plan,location):
 
@@ -35,6 +24,7 @@ def get_serviceID_targetCRN_planID(service_name,plan,location):
         return serviceID, catalogCRN,servicePlanID
     
 def get_child_objects(id):
+    catalog_sdk = config.get_global_catalog_sdk()
     result = catalog_sdk.get_child_objects(
     id = id,
     kind = '*',
@@ -44,6 +34,7 @@ def get_child_objects(id):
     return resources
 
 def get_serviceID(service_name):
+    catalog_sdk = config.get_global_catalog_sdk()
     serviceID_result = catalog_sdk.list_catalog_entries(
     q = service_name+" rc:true",
     include = "true",

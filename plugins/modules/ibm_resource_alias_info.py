@@ -46,9 +46,8 @@ from ansible.module_utils.basic import AnsibleModule
 from ibm_cloud_sdk_core import ApiException
 from ibm_platform_services import ResourceControllerV2
 
-from ..module_utils.auth import get_authenticator
 
-
+from ..module_utils import config
 def run_module():
     module_args = dict(
         id=dict(
@@ -63,13 +62,8 @@ def run_module():
 
     id = module.params["id"]
 
-    authenticator = get_authenticator(service_name='resource_controller')
-    if authenticator is None:
-        module.fail_json(msg='Cannot create the authenticator.')
 
-    sdk = ResourceControllerV2(
-        authenticator=authenticator,
-    )
+    sdk=config.get_resource_contollerV2_sdk()
 
     if id:
         # read

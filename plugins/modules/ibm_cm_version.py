@@ -96,8 +96,7 @@ import base64
 from ansible.module_utils.basic import AnsibleModule
 from ibm_cloud_sdk_core import ApiException
 from ibm_platform_services import CatalogManagementV1
-
-from ..module_utils.auth import get_authenticator
+from ..module_utils import config
 
 
 def run_module():
@@ -166,13 +165,8 @@ def run_module():
     is_vsi = module.params["is_vsi"]
     state = module.params["state"]
 
-    authenticator = get_authenticator(service_name='catalog_management')
-    if authenticator is None:
-        module.fail_json(msg='Cannot create the authenticator.')
 
-    sdk = CatalogManagementV1(
-        authenticator=authenticator,
-    )
+    sdk = config.get_catalog_management_sdk()
 
     resource_exists=True
 

@@ -70,9 +70,8 @@ from ansible.module_utils.basic import AnsibleModule
 from ibm_cloud_sdk_core import ApiException
 from ibm_platform_services import IamAccessGroupsV2
 
-from ..module_utils.auth import get_authenticator
 
-
+from ..module_utils import config
 def run_module():
     module_args = dict(
         access_group_id=dict(
@@ -111,13 +110,8 @@ def run_module():
     type = module.params["type"]
     verbose = module.params["verbose"]
 
-    authenticator = get_authenticator(service_name='iam_access_groups')
-    if authenticator is None:
-        module.fail_json(msg='Cannot create the authenticator.')
 
-    sdk = IamAccessGroupsV2(
-        authenticator=authenticator,
-    )
+    sdk = config.get_iam_access_group_sdk()
 
     # list
     try:
