@@ -14,11 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
-}
+from __future__ import absolute_import, division, print_function
+__metaclass__ = type
 
 DOCUMENTATION = r'''
 ---
