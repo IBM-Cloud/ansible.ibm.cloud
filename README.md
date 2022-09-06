@@ -10,7 +10,7 @@ This collection works with Ansible 2.9+
 2. [RedHat Ansible] 2.9+
 
     ```
-    pip install "ansible>=2.9.2"
+    pip install "ansible>=2.9.10"
     ```
 
 # Installation
