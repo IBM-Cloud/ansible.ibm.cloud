@@ -14,6 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
+
 ANSIBLE_METADATA = {
     'metadata_version': '1.1',
     'status': ['preview'],
@@ -24,8 +27,8 @@ DOCUMENTATION = r'''
 ---
 module: ibm_resource_reclamations_info
 short_description: Manage ibm_resource_reclamations info.
-author: IBM SDK Generator
-version_added: "0.1"
+author: Kavya Handadi (@kavya498)
+version_added: "1.0.0"
 description:
     - This module retrieves one or more ibm_resource_reclamations(s).
 requirements:
@@ -45,13 +48,12 @@ EXAMPLES = r'''
 Examples coming soon.
 '''
 
-
-from ansible.module_utils.basic import AnsibleModule
-from ibm_cloud_sdk_core import ApiException
-from ibm_platform_services import ResourceControllerV2
-
-
 from ..module_utils import config
+from ibm_platform_services import ResourceControllerV2
+from ibm_cloud_sdk_core import ApiException
+from ansible.module_utils.basic import AnsibleModule
+
+
 def run_module():
     module_args = dict(
         account_id=dict(
@@ -70,8 +72,7 @@ def run_module():
     account_id = module.params["account_id"]
     resource_instance_id = module.params["resource_instance_id"]
 
-
-    sdk=config.get_resource_contollerV2_sdk()
+    sdk = config.get_resource_contollerV2_sdk()
 
     # list
     try:

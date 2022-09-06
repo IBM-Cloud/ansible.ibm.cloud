@@ -16,14 +16,9 @@
 
 # pylint: disable=missing-function-docstring
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
-from ibm_cloud_sdk_core import ApiException
-
-from ansible.module_utils.basic import AnsibleModule
-# pylint: disable=line-too-long,fixme
-from ibm_platform_services import ResourceControllerV2 # Todo: change this to external python package format
-
-from ..module_utils import config
 ANSIBLE_METADATA = {
     'metadata_version': '1.1',
     'status': ['preview'],
@@ -34,8 +29,8 @@ DOCUMENTATION = r'''
 ---
 module: ibm_resource_instance_info
 short_description: Manage ibm_resource_instance info.
-author: IBM SDK Generator
-version_added: "0.1"
+author: Kavya Handadi (@kavya498)
+version_added: "1.0.0"
 description:
     - This module retrieves one or more ibm_resource_instance(s).
 requirements:
@@ -51,6 +46,15 @@ EXAMPLES = r'''
 Examples coming soon.
 '''
 
+# pylint: disable=line-too-long,fixme
+
+from ..module_utils import config
+# Todo: change this to external python package format
+from ibm_platform_services import ResourceControllerV2
+from ansible.module_utils.basic import AnsibleModule
+from ibm_cloud_sdk_core import ApiException
+
+
 def run_module():
     module_args = dict(
         id=dict(
@@ -65,8 +69,7 @@ def run_module():
 
     id = module.params["id"]
 
-
-    sdk=config.get_resource_contollerV2_sdk()
+    sdk = config.get_resource_contollerV2_sdk()
     # sdk = ResourceControllerV2.new_instance()
 
     # list
@@ -78,8 +81,10 @@ def run_module():
     except ApiException as ex:
         module.fail_json(msg=ex.message)
 
+
 def main():
     run_module()
+
 
 if __name__ == '__main__':
     main()

@@ -28,16 +28,18 @@ DOCUMENTATION = r'''
 ---
 module: ibm_schematics_state_info
 short_description: Manage C(schematics_state) for Schematics Service API.
-author: IBM SDK Generator
-version_added: "0.1"
+author: Kavya Handadi (@kavya498)
+version_added: "1.0.0"
 description:
   - This module retrieves one or more C(schematics_state) for Schematics Service API.
 requirements:
   - "SchematicsV1"
 options:
   t_id:
-    description:
-      - The ID of the Terraform template for which you want to retrieve the Terraform statefile.  When you create a workspace, the Terraform template that your workspace points to is assigned a unique ID.  To find this ID, use the C(GET /v1/workspaces) API and review the templateI(data.id value.
+    description: |
+      The ID of the Terraform template for which you want to retrieve the Terraform statefile.
+      When you create a workspace, the Terraform template that your workspace points to is assigned a unique ID.
+      To find this ID, use the C(GET /v1/workspaces) API and review the templateI(data.id value.
     type: str
   w_id:
     description:
@@ -48,8 +50,12 @@ seealso:
     description: Use Schematics to run your Ansible playbooks to provision, configure, and manage IBM Cloud resources.
     link: U(https://cloud.ibm.com/docs/schematics)
 notes:
-  - Authenticate this module by using an IBM Cloud API key. For more information about working with IBM Cloud API keys, see I(Managing API keys): U(https://cloud.ibm.com/docs/account?topic=account-manapikey).
-  - To configure the authentication, set your IBM Cloud API key on the C(IC_API_KEY) environment variable. The API key will be used to authenticate all IBM Cloud modules that use this environment variable.
+  - |
+    Authenticate this module by using an IBM Cloud API key.
+    For more information about working with IBM Cloud API keys, see I(Managing API keys): U(https://cloud.ibm.com/docs/account?topic=account-manapikey).
+  - |
+    To configure the authentication, set your IBM Cloud API key on the C(IC_API_KEY) environment variable.
+    The API key will be used to authenticate all IBM Cloud modules that use this environment variable.
 '''
 
 EXAMPLES = r'''
@@ -67,10 +73,8 @@ msg:
   type: dict
 '''
 
-from ansible.module_utils.basic import AnsibleModule
-
 from ..module_utils import config
-
+from ansible.module_utils.basic import AnsibleModule
 try:
     from ibm_schematics import SchematicsV1
     from ibm_cloud_sdk_core import ApiException
@@ -96,8 +100,7 @@ def run_module():
     t_id = module.params["t_id"]
     w_id = module.params["w_id"]
 
-
-    sdk= config.get_schematicsv1_sdk()
+    sdk = config.get_schematicsv1_sdk()
 
     # list
     try:

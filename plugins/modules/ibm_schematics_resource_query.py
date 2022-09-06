@@ -28,8 +28,8 @@ DOCUMENTATION = r'''
 ---
 module: ibm_schematics_resource_query
 short_description: Manage C(schematics_resource_querys) for Schematics Service API.
-author: IBM SDK Generator
-version_added: "0.1"
+author: Kavya Handadi (@kavya498)
+version_added: "1.0.0"
 description:
   - This module creates, updates, or deletes a C(schematics_resource_query) resource for Schematics Service API.
 requirements:
@@ -47,8 +47,9 @@ options:
       - vsi
   queries:
     description:
-      - 
+      - queries
     type: list
+    elements: dict
     suboptions:
       query_type:
         description:
@@ -58,8 +59,9 @@ options:
           - workspaces
       query_condition:
         description:
-          -
+          - query_condition
         type: list
+        elements: dict
         suboptions:
           name:
             description:
@@ -101,8 +103,12 @@ seealso:
     description: Use Schematics to run your Ansible playbooks to provision, configure, and manage IBM Cloud resources.
     link: U(https://cloud.ibm.com/docs/schematics)
 notes:
-  - Authenticate this module by using an IBM Cloud API key. For more information about working with IBM Cloud API keys, see I(Managing API keys): U(https://cloud.ibm.com/docs/account?topic=account-manapikey).
-  - To configure the authentication, set your IBM Cloud API key on the C(IC_API_KEY) environment variable. The API key will be used to authenticate all IBM Cloud modules that use this environment variable.
+  - |
+    Authenticate this module by using an IBM Cloud API key.
+    For more information about working with IBM Cloud API keys, see I(Managing API keys): U(https://cloud.ibm.com/docs/account?topic=account-manapikey).
+  - |
+    To configure the authentication, set your IBM Cloud API key on the C(IC_API_KEY) environment variable.
+    The API key will be used to authenticate all IBM Cloud modules that use this environment variable.
 '''
 
 EXAMPLES = r'''
@@ -133,10 +139,9 @@ msg:
   type: dict
 '''
 
-from ansible.module_utils.basic import AnsibleModule
 
 from ..module_utils import config
-
+from ansible.module_utils.basic import AnsibleModule
 try:
     from ibm_schematics import SchematicsV1
     from ibm_cloud_sdk_core import ApiException
@@ -155,6 +160,7 @@ def run_module():
             required=False),
         queries=dict(
             type='list',
+            elements='dict',
             options=dict(
                 query_type=dict(
                     type='str',
@@ -162,6 +168,7 @@ def run_module():
                     required=False),
                 query_condition=dict(
                     type='list',
+                    elements='dict',
                     options=dict(
                         name=dict(
                             type='str',
@@ -209,8 +216,7 @@ def run_module():
     force = module.params["force"]
     state = module.params["state"]
 
-
-    sdk= config.get_schematicsv1_sdk()
+    sdk = config.get_schematicsv1_sdk()
 
     resource_exists = True
 

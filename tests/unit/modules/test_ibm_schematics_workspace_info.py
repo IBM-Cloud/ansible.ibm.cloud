@@ -22,7 +22,7 @@ import os
 from .common import DetailedResponseMock
 from plugins.modules import ibm_schematics_workspace_info
 from ansible_collections.community.internal_test_tools.tests.unit.compat.mock import patch
-from ansible_collections.community.internal_test_tools.tests.unit.plugins.modules.utils  import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
+from ansible_collections.community.internal_test_tools.tests.unit.plugins.modules.utils import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
 
 try:
     from ibm_cloud_sdk_core import ApiException
@@ -41,7 +41,8 @@ class TestWorkspaceResponseModuleInfo(ModuleTestCase):
             'w_id': 'testString',
         }
 
-        patcher = patch('plugins.modules.ibm_schematics_workspace_info.SchematicsV1.get_workspace')
+        patcher = patch(
+            'plugins.modules.ibm_schematics_workspace_info.SchematicsV1.get_workspace')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock(datasource)
 
@@ -64,9 +65,11 @@ class TestWorkspaceResponseModuleInfo(ModuleTestCase):
 
     def test_read_ibm_schematics_workspace_failed(self):
         """Test the "read" path - failed."""
-        patcher = patch('plugins.modules.ibm_schematics_workspace_info.SchematicsV1.get_workspace')
+        patcher = patch(
+            'plugins.modules.ibm_schematics_workspace_info.SchematicsV1.get_workspace')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='Read ibm_schematics_workspace error')
+        mock.side_effect = ApiException(
+            400, message='Read ibm_schematics_workspace error')
 
         set_module_args({
             'w_id': 'testString',

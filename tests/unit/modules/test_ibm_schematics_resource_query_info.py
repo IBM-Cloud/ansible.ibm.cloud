@@ -22,7 +22,7 @@ import os
 from .common import DetailedResponseMock
 from plugins.modules import ibm_schematics_resource_query_info
 from ansible_collections.community.internal_test_tools.tests.unit.compat.mock import patch
-from ansible_collections.community.internal_test_tools.tests.unit.plugins.modules.utils  import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
+from ansible_collections.community.internal_test_tools.tests.unit.plugins.modules.utils import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
 try:
     from ibm_cloud_sdk_core import ApiException
 except ImportError:
@@ -40,7 +40,8 @@ class TestResourceQueryRecordModuleInfo(ModuleTestCase):
             'query_id': 'testString',
         }
 
-        patcher = patch('plugins.modules.ibm_schematics_resource_query_info.SchematicsV1.get_resources_query')
+        patcher = patch(
+            'plugins.modules.ibm_schematics_resource_query_info.SchematicsV1.get_resources_query')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock(datasource)
 
@@ -63,9 +64,11 @@ class TestResourceQueryRecordModuleInfo(ModuleTestCase):
 
     def test_read_ibm_schematics_resource_query_failed(self):
         """Test the "read" path - failed."""
-        patcher = patch('plugins.modules.ibm_schematics_resource_query_info.SchematicsV1.get_resources_query')
+        patcher = patch(
+            'plugins.modules.ibm_schematics_resource_query_info.SchematicsV1.get_resources_query')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='Read ibm_schematics_resource_query error')
+        mock.side_effect = ApiException(
+            400, message='Read ibm_schematics_resource_query error')
 
         set_module_args({
             'query_id': 'testString',

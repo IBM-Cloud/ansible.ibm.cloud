@@ -22,7 +22,7 @@ import os
 from .common import DetailedResponseMock
 from plugins.modules import ibm_schematics_state_info
 from ansible_collections.community.internal_test_tools.tests.unit.compat.mock import patch
-from ansible_collections.community.internal_test_tools.tests.unit.plugins.modules.utils  import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
+from ansible_collections.community.internal_test_tools.tests.unit.plugins.modules.utils import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
 
 try:
     from ibm_cloud_sdk_core import ApiException
@@ -37,7 +37,8 @@ class TestTemplateStateStoreModuleInfo(ModuleTestCase):
 
     def test_list_ibm_schematics_state_success(self):
         """Test the "list" path - successful."""
-        patcher = patch('plugins.modules.ibm_schematics_state_info.SchematicsV1.get_workspace_template_state')
+        patcher = patch(
+            'plugins.modules.ibm_schematics_state_info.SchematicsV1.get_workspace_template_state')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock([])
 
@@ -58,9 +59,11 @@ class TestTemplateStateStoreModuleInfo(ModuleTestCase):
 
     def test_list_ibm_schematics_state_failed(self):
         """Test the "list" path - failed."""
-        patcher = patch('plugins.modules.ibm_schematics_state_info.SchematicsV1.get_workspace_template_state')
+        patcher = patch(
+            'plugins.modules.ibm_schematics_state_info.SchematicsV1.get_workspace_template_state')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='List ibm_schematics_state error')
+        mock.side_effect = ApiException(
+            400, message='List ibm_schematics_state error')
 
         set_module_args({
             'w_id': 'testString',

@@ -17,18 +17,10 @@
 # pylint: disable=missing-function-docstring,too-many-branches
 
 
-
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 
-from ibm_cloud_sdk_core import ApiException
-from ansible.module_utils.basic import AnsibleModule
-from ..module_utils import catalog
-# pylint: disable=line-too-long,fixme
-from ibm_platform_services import ResourceControllerV2 # Todo: change this to external python package format
-
-from ..module_utils import config
 ANSIBLE_METADATA = {
     'metadata_version': '1.1',
     'status': ['preview'],
@@ -39,8 +31,8 @@ DOCUMENTATION = r'''
 ---
 module: ibm_resource_instance
 short_description: Manage ibm_resource_instance resources.
-author: IBM SDK Generator
-version_added: "0.1"
+author: Kavya Handadi (@kavya498)
+version_added: "1.0.0"
 description:
     - This module creates, updates, or deletes a ibm_resource_instance.
     - By default the module will look for an existing ibm_resource_instance.
@@ -77,8 +69,9 @@ options:
         type: list
         elements: str
     entity_lock:
-        description:
-            - Indicates if the resource instance is locked for further update or delete operations. It does not affect actions performed on child resources like aliases, bindings or keys. False by default.
+        description: |
+            Indicates if the resource instance is locked for further update or delete operations.
+            It does not affect actions performed on child resources like aliases, bindings or keys. False by default.
         type: bool
     id:
         description:
@@ -99,6 +92,16 @@ options:
 EXAMPLES = r'''
 Examples coming soon.
 '''
+
+from ..module_utils import config
+# Todo: change this to external python package format
+from ibm_platform_services import ResourceControllerV2
+from ..module_utils import catalog
+from ansible.module_utils.basic import AnsibleModule
+from ibm_cloud_sdk_core import ApiException
+
+# pylint: disable=line-too-long,fixme
+
 
 def run_module():
     module_args = dict(
@@ -149,21 +152,20 @@ def run_module():
     )
 
     resource_group = module.params["resource_group"]
-    plan = module.params["plan"] #renamed resource_plan_id to plan
+    plan = module.params["plan"]  # renamed resource_plan_id to plan
     allow_cleanup = module.params["allow_cleanup"]
     name = module.params["name"]
     parameters = module.params["parameters"]
-    location = module.params["location"] #renamed target to location
+    location = module.params["location"]  # renamed target to location
     tags = module.params["tags"]
     entity_lock = module.params["entity_lock"]
     id = module.params["id"]
     recursive = module.params["recursive"]
     state = module.params["state"]
-    service = module.params["service"] # handcoded argument
+    service = module.params["service"]  # handcoded argument
 
-
-    sdk=config.get_resource_contollerV2_sdk()
-    resource_exists=True
+    sdk = config.get_resource_contollerV2_sdk()
+    resource_exists = True
 
     # Check for existence
     if id:
@@ -173,12 +175,12 @@ def run_module():
             )
         except ApiException as ex:
             if ex.code == 404:
-                resource_exists=False
+                resource_exists = False
             else:
                 module.fail_json(msg=ex.message)
     else:
         # assume resource does not exist
-        resource_exists=False
+        resource_exists = False
 
     # Delete path
     if state == "absent":
@@ -191,15 +193,18 @@ def run_module():
             except ApiException as ex:
                 module.fail_json(msg=ex.message)
             else:
-                payload = {"id": id , "status": "deleted"}
+                payload = {"id": id, "status": "deleted"}
                 module.exit_json(changed=True, msg=payload)
         else:
-            payload = {"id": id , "status": "not_found"}
+            payload = {"id": id, "status": "not_found"}
             module.exit_json(changed=False, msg=payload)
 
     if state == "present":
+        catalogCRN, servicePlanID = '', ''
         if not resource_exists:
-            _,catalogCRN,servicePlanID = catalog.get_serviceID_targetCRN_planID(service,plan,location)
+            if service is not None:
+                serviceID, catalogCRN, servicePlanID = catalog.get_serviceID_targetCRN_planID(
+                    service, plan, location)
             # Create path
             try:
                 result = sdk.create_resource_instance(
@@ -231,8 +236,10 @@ def run_module():
             else:
                 module.exit_json(changed=True, msg=result)
 
+
 def main():
     run_module()
+
 
 if __name__ == '__main__':
     main()

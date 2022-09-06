@@ -14,6 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
+
 ANSIBLE_METADATA = {
     'metadata_version': '1.1',
     'status': ['preview'],
@@ -24,26 +27,24 @@ DOCUMENTATION = r'''
 ---
 module: ibm_resource_quotas_info
 short_description: Manage ibm_resource_quotas info.
-author: IBM SDK Generator
-version_added: "0.1"
+author: Kavya Handadi (@kavya498)
+version_added: "1.0.0"
 description:
     - This module retrieves one or more ibm_resource_quotas(s).
 requirements:
     - "ResourceManagerV2"
-options:
 '''
 
 EXAMPLES = r'''
 Examples coming soon.
 '''
 
-
-from ansible.module_utils.basic import AnsibleModule
-from ibm_cloud_sdk_core import ApiException
-from ibm_platform_services import ResourceManagerV2
-
-
 from ..module_utils import config
+from ibm_platform_services import ResourceManagerV2
+from ibm_cloud_sdk_core import ApiException
+from ansible.module_utils.basic import AnsibleModule
+
+
 def run_module():
     module_args = dict(
     )
@@ -52,7 +53,6 @@ def run_module():
         argument_spec=module_args,
         supports_check_mode=False
     )
-
 
     sdk = config.get_resource_manager_sdk()
 

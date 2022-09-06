@@ -16,14 +16,8 @@
 
 # pylint: disable=missing-function-docstring,too-many-branches
 
-
-from ibm_cloud_sdk_core import ApiException
-
-from ansible.module_utils.basic import AnsibleModule
-# pylint: disable=line-too-long,fixme
-from ibm_platform_services import ResourceControllerV2 # Todo: change this to external python package format
-
-from ..module_utils import config
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 ANSIBLE_METADATA = {
     'metadata_version': '1.1',
@@ -35,8 +29,8 @@ DOCUMENTATION = r'''
 ---
 module: ibm_resource_key
 short_description: Manage ibm_resource_key resources.
-author: IBM SDK Generator
-version_added: "0.1"
+author: Kavya Handadi (@kavya498)
+version_added: "1.0.0"
 description:
     - This module creates, updates, or deletes a ibm_resource_key.
     - By default the module will look for an existing ibm_resource_key.
@@ -56,8 +50,9 @@ options:
             - The ID of resource instance or alias.
         type: str
     parameters:
-        description:
-            - Configuration options represented as key-value pairs. Service defined options are passed through to the target resource brokers, whereas platform defined options are not.
+        description: |
+            Configuration options represented as key-value pairs.
+            Service defined options are passed through to the target resource brokers, whereas platform defined options are not.
         type: dict
         suboptions:
             serviceid_crn:
@@ -79,6 +74,13 @@ options:
 EXAMPLES = r'''
 Examples coming soon.
 '''
+
+from ..module_utils import config
+# Todo: change this to external python package format
+from ibm_platform_services import ResourceControllerV2
+from ansible.module_utils.basic import AnsibleModule
+from ibm_cloud_sdk_core import ApiException
+
 
 def run_module():
     module_args = dict(
@@ -124,8 +126,8 @@ def run_module():
 
     # sdk = ResourceControllerV2.new_instance()
 
-    sdk=config.get_resource_contollerV2_sdk()
-    resource_exists=True
+    sdk = config.get_resource_contollerV2_sdk()
+    resource_exists = True
 
     # Check for existence
     if id:
@@ -135,12 +137,12 @@ def run_module():
             )
         except ApiException as ex:
             if ex.code == 404:
-                resource_exists=False
+                resource_exists = False
             else:
                 module.fail_json(msg=ex.message)
     else:
         # assume resource does not exist
-        resource_exists=False
+        resource_exists = False
 
     # Delete path
     if state == "absent":
@@ -152,10 +154,10 @@ def run_module():
             except ApiException as ex:
                 module.fail_json(msg=ex.message)
             else:
-                payload = {"id": id , "status": "deleted"}
+                payload = {"id": id, "status": "deleted"}
                 module.exit_json(changed=True, msg=payload)
         else:
-            payload = {"id": id , "status": "not_found"}
+            payload = {"id": id, "status": "not_found"}
             module.exit_json(changed=False, msg=payload)
 
     if state == "present":
@@ -184,8 +186,10 @@ def run_module():
             else:
                 module.exit_json(changed=True, msg=result)
 
+
 def main():
     run_module()
+
 
 if __name__ == '__main__':
     main()

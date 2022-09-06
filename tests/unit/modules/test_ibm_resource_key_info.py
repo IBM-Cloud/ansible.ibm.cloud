@@ -19,7 +19,7 @@ import os
 
 from ibm_cloud_sdk_core import ApiException
 from ansible_collections.community.internal_test_tools.tests.unit.compat.mock import patch
-from ansible_collections.community.internal_test_tools.tests.unit.plugins.modules.utils  import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
+from ansible_collections.community.internal_test_tools.tests.unit.plugins.modules.utils import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
 
 from .common import DetailedResponseMock
 from plugins.modules import ibm_resource_key_info
@@ -36,7 +36,8 @@ class TestResourceKeyModuleInfo(ModuleTestCase):
             'id': 'testString',
         }
 
-        patcher = patch('plugins.modules.ibm_resource_key_info.ResourceControllerV2.get_resource_key')
+        patcher = patch(
+            'plugins.modules.ibm_resource_key_info.ResourceControllerV2.get_resource_key')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock(datasource)
 
@@ -59,9 +60,11 @@ class TestResourceKeyModuleInfo(ModuleTestCase):
 
     def test_read_ibm_resource_key_failed(self):
         """Test the "read" path - failed."""
-        patcher = patch('plugins.modules.ibm_resource_key_info.ResourceControllerV2.get_resource_key')
+        patcher = patch(
+            'plugins.modules.ibm_resource_key_info.ResourceControllerV2.get_resource_key')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='Read ibm_resource_key error')
+        mock.side_effect = ApiException(
+            400, message='Read ibm_resource_key error')
 
         set_module_args({
             'id': 'testString',

@@ -19,7 +19,7 @@ import os
 
 from ibm_cloud_sdk_core import ApiException
 from ansible_collections.community.internal_test_tools.tests.unit.compat.mock import patch
-from ansible_collections.community.internal_test_tools.tests.unit.plugins.modules.utils  import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
+from ansible_collections.community.internal_test_tools.tests.unit.plugins.modules.utils import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
 
 from .common import DetailedResponseMock
 from plugins.modules import ibm_resource_bindings_info
@@ -32,7 +32,8 @@ class TestResourceBindingsListModuleInfo(ModuleTestCase):
 
     def test_list_ibm_resource_bindings_success(self):
         """Test the "list" path - successful."""
-        patcher = patch('plugins.modules.ibm_resource_bindings_info.ResourceControllerV2.list_resource_bindings')
+        patcher = patch(
+            'plugins.modules.ibm_resource_bindings_info.ResourceControllerV2.list_resource_bindings')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock([])
 
@@ -49,9 +50,11 @@ class TestResourceBindingsListModuleInfo(ModuleTestCase):
 
     def test_list_ibm_resource_bindings_failed(self):
         """Test the "list" path - failed."""
-        patcher = patch('plugins.modules.ibm_resource_bindings_info.ResourceControllerV2.list_resource_bindings')
+        patcher = patch(
+            'plugins.modules.ibm_resource_bindings_info.ResourceControllerV2.list_resource_bindings')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='List ibm_resource_bindings error')
+        mock.side_effect = ApiException(
+            400, message='List ibm_resource_bindings error')
 
         with self.assertRaises(AnsibleFailJson) as result:
             os.environ['RESOURCE_CONTROLLER_AUTH_TYPE'] = 'noAuth'
