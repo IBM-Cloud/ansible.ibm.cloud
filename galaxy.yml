@@ -8,7 +8,7 @@ authors:
     - "Kavya Handadi"
 description: "Ansible modules collection for IBM-Cloud."
 license:
-    - "MPL-2.0"
+    - "APL-2.0"
 issues: "https://github.com/IBM-Cloud/ansible.ibm.cloud/issues"
 tags:
     - ibmcloud
