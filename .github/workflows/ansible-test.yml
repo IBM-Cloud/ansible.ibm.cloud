@@ -59,11 +59,18 @@ jobs:
       - name: Run sanity tests on tests
         run: ansible-test sanity --python=3.9 --requirements --skip-test import tests/ --color --coverage
         working-directory: ./ansible_collections/${{env.NAMESPACE}}/${{env.COLLECTION_NAME}}
+
+        
       # run ansible-test units on modules
       - name: Install dependant packages for unit tests
-        run: pip install -r requirements.txt && ansible-galaxy collection install community.internal_test_tools
+        run: pip install -r requirements.txt
         working-directory: ./ansible_collections/${{env.NAMESPACE}}/${{env.COLLECTION_NAME}}
+      # Install dependant ansible plugins for unit tests
+      - name: Install dependant ansible plugins for unit tests
+        run: mkdir -p community/internal_test_tools && git clone https://github.com/ansible-collections/community.internal_test_tools.git && mv ./community.internal_test_tools/*  ./community/internal_test_tools
+        working-directory: ./ansible_collections
+      
       # run ansible-test units on modules
-      # - name: Run unit tests on modules
-      #   run: ansible-test units --python=3.9 --requirements tests/unit/modules/ --color --coverage
-      #   working-directory: ./ansible_collections/${{env.NAMESPACE}}/${{env.COLLECTION_NAME}}
+      - name: Run unit tests on modules
+        run: ansible-test units --python=3.9 --requirements tests/unit/modules/ --color --coverage
+        working-directory: ./ansible_collections/${{env.NAMESPACE}}/${{env.COLLECTION_NAME}}
