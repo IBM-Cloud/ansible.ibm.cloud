@@ -14,18 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
-}
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
+
 
 DOCUMENTATION = r'''
 ---
 module: ibm_iam_service_id_info
 short_description: Manage ibm_iam_service_id info.
-author: IBM SDK Generator
-version_added: "0.1"
+author: Kavya Handadi (@kavya498)
+version_added: "1.0.0"
 description:
     - This module retrieves one or more ibm_iam_service_id(s).
 requirements:
@@ -40,8 +38,9 @@ options:
             - Unique ID of the service ID.
         type: str
     include_activity:
-        description:
-            - Defines if the entity's activity is included in the response. Retrieving activity data is an expensive operation, so please only request this when needed.
+        description: |
+            Defines if the entity's activity is included in the response.
+            Retrieving activity data is an expensive operation, so please only request this when needed.
         type: bool
 '''
 
@@ -50,12 +49,12 @@ Examples coming soon.
 '''
 
 
-from ansible.module_utils.basic import AnsibleModule
-from ibm_cloud_sdk_core import ApiException
-from ibm_platform_services import IamIdentityV1
-
-
 from ..module_utils import config
+from ibm_platform_services import IamIdentityV1
+from ibm_cloud_sdk_core import ApiException
+from ansible.module_utils.basic import AnsibleModule
+
+
 def run_module():
     module_args = dict(
         include_history=dict(
@@ -77,7 +76,6 @@ def run_module():
     include_history = module.params["include_history"]
     id = module.params["id"]
     include_activity = module.params["include_activity"]
-
 
     sdk = config.get_iam_identity_sdk()
 

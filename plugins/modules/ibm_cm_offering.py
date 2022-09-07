@@ -14,18 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
-}
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
+
 
 DOCUMENTATION = r'''
 ---
 module: ibm_cm_offering
 short_description: Manage ibm_cm_offering resources.
-author: IBM SDK Generator
-version_added: "0.1"
+author: Kavya Handadi (@kavya498)
+version_added: "1.0.0"
 description:
     - This module creates, updates, or deletes a ibm_cm_offering.
     - By default the module will look for an existing ibm_cm_offering.
@@ -37,8 +35,9 @@ options:
             - Short description in the requested language.
         type: str
     offering_support_url:
-        description:
-            - [deprecated] - Use offering.support instead.  URL to be displayed in the Consumption UI for getting support on this offering.
+        description: |
+            [deprecated] Use offering.support instead.
+            URL to be displayed in the Consumption UI for getting support on this offering.
         type: str
     metadata:
         description:
@@ -90,6 +89,7 @@ options:
         description:
             - Array of kind.
         type: list
+        elements: dict
         suboptions:
             id:
                 description:
@@ -120,6 +120,7 @@ options:
                 description:
                     - List of features associated with this offering.
                 type: list
+                elements: dict
                 suboptions:
                     title:
                         description:
@@ -141,6 +142,7 @@ options:
                 description:
                     - list of versions.
                 type: list
+                elements: dict
                 suboptions:
                     id:
                         description:
@@ -197,12 +199,13 @@ options:
                         type: str
                     tgz_url:
                         description:
-                            - File used to on-board this version.
+                            - File used to onboard this version.
                         type: str
                     configuration:
                         description:
                             - List of user solicited overrides.
                         type: list
+                        elements: dict
                         suboptions:
                             key:
                                 description:
@@ -213,12 +216,14 @@ options:
                                     - Value type (string, boolean, int).
                                 type: str
                             default_value:
-                                description:
-                                    - The default value.  To use a secret when the type is password, specify a JSON encoded value of $ref:#/components/schemas/SecretInstance, prefixed with `cmsm_v1:`.
-                                type: object
+                                description: |
+                                    The default value.
+                                    To use a secret when the type is password,
+                                    specify a JSON encoded value of $ref:#/components/schemas/SecretInstance, prefixed with `cmsm_v1:`.
+                                type: raw
                             value_constraint:
                                 description:
-                                    - Constraint associated with value, e.g., for string type - regx:[a-z].
+                                    - Constraint associated with value, e.g., for string type regx [a-z].
                                 type: str
                             description:
                                 description:
@@ -232,7 +237,7 @@ options:
                                 description:
                                     - List of options of type.
                                 type: list
-                                elements: object
+                                elements: raw
                             hidden:
                                 description:
                                     - Hide values.
@@ -255,8 +260,8 @@ options:
                                     - Date and time of last validation was requested.
                                 type: str
                             state_:
-                                description:
-                                    - Current validation state - <empty>, in_progress, valid, invalid, expired.
+                                description: |
+                                    Current validation state in_progress, valid, invalid, expired.
                                 type: str
                             last_operation:
                                 description:
@@ -270,6 +275,7 @@ options:
                         description:
                             - Resource requirments for installation.
                         type: list
+                        elements: dict
                         suboptions:
                             type:
                                 description:
@@ -278,7 +284,7 @@ options:
                             value:
                                 description:
                                     - mem, disk, cores, and nodes can be parsed as an int.  targetVersion will be a semver range value.
-                                type: object
+                                type: raw
                     single_instance:
                         description:
                             - Denotes if single instance can be deployed to a given cluster.
@@ -310,8 +316,9 @@ options:
                                 type: str
                     pre_install:
                         description:
-                            - Optional pre-install instructions.
+                            - Optional pre install instructions.
                         type: list
+                        elements: dict
                         suboptions:
                             instructions:
                                 description:
@@ -319,7 +326,7 @@ options:
                                 type: str
                             script:
                                 description:
-                                    - Optional script that needs to be run post any pre-condition script.
+                                    - Optional script that needs to be run post any pre condition script.
                                 type: str
                             script_permission:
                                 description:
@@ -363,6 +370,7 @@ options:
                         description:
                             - List of licenses the product was built with.
                         type: list
+                        elements: dict
                         suboptions:
                             id:
                                 description:
@@ -403,7 +411,7 @@ options:
                         suboptions:
                             current:
                                 description:
-                                    - one of: new, validated, account-published, ibm-published, public-published.
+                                    - one of new, validated, 'account-published', 'ibm-published', 'public-published'.
                                 type: str
                             current_entered:
                                 description:
@@ -411,7 +419,7 @@ options:
                                 type: str
                             pending:
                                 description:
-                                    - one of: new, validated, account-published, ibm-published, public-published.
+                                    - one of new, validated, 'account-published', 'ibm-published', 'public-published'.
                                 type: str
                             pending_requested:
                                 description:
@@ -419,7 +427,7 @@ options:
                                 type: str
                             previous:
                                 description:
-                                    - one of: new, validated, account-published, ibm-published, public-published.
+                                    - one of new, validated, 'account-published', 'ibm-published', 'public-published'.
                                 type: str
                     version_locator:
                         description:
@@ -442,6 +450,7 @@ options:
                 description:
                     - list of plans.
                 type: list
+                elements: dict
                 suboptions:
                     id:
                         description:
@@ -476,6 +485,7 @@ options:
                         description:
                             - list of features associated with this offering.
                         type: list
+                        elements: dict
                         suboptions:
                             title:
                                 description:
@@ -497,6 +507,7 @@ options:
                         description:
                             - list of deployments.
                         type: list
+                        elements: dict
                         suboptions:
                             id:
                                 description:
@@ -539,6 +550,7 @@ options:
         description:
             - A list of media items related to this offering.
         type: list
+        elements: dict
         suboptions:
             url:
                 description:
@@ -564,6 +576,7 @@ options:
         description:
             - list of features associated with this offering.
         type: list
+        elements: dict
         suboptions:
             title:
                 description:
@@ -579,7 +592,7 @@ options:
         type: bool
     provider:
         description:
-            - Deprecated - Provider of this offering.
+            - Deprecated Provider of this offering.
         type: str
     portal_approval_record:
         description:
@@ -732,8 +745,26 @@ options:
         type: str
     updates:
         description:
-            - 
-        type: List[JsonPatchOperation]
+            - "Updates"
+        type: list
+        elements: dict
+        suboptions:
+            op:
+                description:
+                    - op.
+                type: str
+            path:
+                description:
+                    - path
+                type: str
+            from_:
+                description:
+                    - from_.
+                type: str
+            value:
+                description:
+                    - value
+                type: raw
     offering_id:
         description:
             - Offering identification.
@@ -749,12 +780,10 @@ options:
 EXAMPLES = r'''
 Examples coming soon.
 '''
-
-
-from ansible.module_utils.basic import AnsibleModule
-from ibm_cloud_sdk_core import ApiException
-from ibm_platform_services import CatalogManagementV1
 from ..module_utils import config
+from ibm_platform_services import CatalogManagementV1
+from ibm_cloud_sdk_core import ApiException
+from ansible.module_utils.basic import AnsibleModule
 
 
 def run_module():
@@ -804,6 +833,7 @@ def run_module():
             required=False),
         kinds=dict(
             type='list',
+            elements='dict',
             options=dict(
                 id=dict(
                     type='str',
@@ -826,6 +856,7 @@ def run_module():
                     required=False),
                 additional_features=dict(
                     type='list',
+                    elements='dict',
                     options=dict(
                         title=dict(
                             type='str',
@@ -843,6 +874,7 @@ def run_module():
                     required=False),
                 versions=dict(
                     type='list',
+                    elements='dict',
                     options=dict(
                         id=dict(
                             type='str',
@@ -889,6 +921,7 @@ def run_module():
                             required=False),
                         configuration=dict(
                             type='list',
+                            elements='dict',
                             options=dict(
                                 key=dict(
                                     type='str',
@@ -897,7 +930,7 @@ def run_module():
                                     type='str',
                                     required=False),
                                 default_value=dict(
-                                    type='object',
+                                    type='raw',
                                     required=False),
                                 value_constraint=dict(
                                     type='str',
@@ -910,7 +943,7 @@ def run_module():
                                     required=False),
                                 options=dict(
                                     type='list',
-                                    elements=object,
+                                    elements='raw',
                                     required=False),
                                 hidden=dict(
                                     type='bool',
@@ -942,12 +975,13 @@ def run_module():
                             required=False),
                         required_resources=dict(
                             type='list',
+                            elements='dict',
                             options=dict(
                                 type=dict(
                                     type='str',
                                     required=False),
                                 value=dict(
-                                    type='object',
+                                    type='raw',
                                     required=False),
                             ),
                             required=False),
@@ -976,6 +1010,7 @@ def run_module():
                             required=False),
                         pre_install=dict(
                             type='list',
+                            elements='dict',
                             options=dict(
                                 instructions=dict(
                                     type='str',
@@ -1017,6 +1052,7 @@ def run_module():
                             required=False),
                         licenses=dict(
                             type='list',
+                            elements='dict',
                             options=dict(
                                 id=dict(
                                     type='str',
@@ -1081,6 +1117,7 @@ def run_module():
                     required=False),
                 plans=dict(
                     type='list',
+                    elements='dict',
                     options=dict(
                         id=dict(
                             type='str',
@@ -1106,6 +1143,7 @@ def run_module():
                             required=False),
                         additional_features=dict(
                             type='list',
+                            elements='dict',
                             options=dict(
                                 title=dict(
                                     type='str',
@@ -1123,6 +1161,7 @@ def run_module():
                             required=False),
                         deployments=dict(
                             type='list',
+                            elements='dict',
                             options=dict(
                                 id=dict(
                                     type='str',
@@ -1160,6 +1199,7 @@ def run_module():
             required=False),
         media=dict(
             type='list',
+            elements='dict',
             options=dict(
                 url=dict(
                     type='str',
@@ -1180,6 +1220,7 @@ def run_module():
             required=False),
         features=dict(
             type='list',
+            elements='dict',
             options=dict(
                 title=dict(
                     type='str',
@@ -1327,7 +1368,7 @@ def run_module():
                     type='str',
                     required=False),
                 value=dict(
-                    type='object',
+                    type='raw',
                     required=False),
             ),
             required=False),
@@ -1394,9 +1435,8 @@ def run_module():
     offering_id = module.params["offering_id"]
     state = module.params["state"]
 
-
     sdk = config.get_catalog_management_sdk()
-    resource_exists=True
+    resource_exists = True
 
     # Check for existence
     if offering_id:
@@ -1409,12 +1449,12 @@ def run_module():
             )
         except ApiException as ex:
             if ex.code == 404:
-                resource_exists=False
+                resource_exists = False
             else:
                 module.fail_json(msg=ex.message)
     else:
         # assume resource does not exist
-        resource_exists=False
+        resource_exists = False
 
     # Delete path
     if state == "absent":
@@ -1427,10 +1467,10 @@ def run_module():
             except ApiException as ex:
                 module.fail_json(msg=ex.message)
             else:
-                payload = {"id": offering_id , "status": "deleted"}
+                payload = {"id": offering_id, "status": "deleted"}
                 module.exit_json(changed=True, msg=payload)
         else:
-            payload = {"id": offering_id , "status": "not_found"}
+            payload = {"id": offering_id, "status": "not_found"}
             module.exit_json(changed=False, msg=payload)
 
     if state == "present":

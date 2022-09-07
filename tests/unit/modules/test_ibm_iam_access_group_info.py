@@ -19,7 +19,7 @@ import os
 
 from ibm_cloud_sdk_core import ApiException
 from ansible_collections.community.internal_test_tools.tests.unit.compat.mock import patch
-from ansible_collections.community.internal_test_tools.tests.unit.plugins.modules.utils  import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
+from ansible_collections.community.internal_test_tools.tests.unit.plugins.modules.utils import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
 
 from .common import DetailedResponseMock
 from plugins.modules import ibm_iam_access_group_info
@@ -38,7 +38,8 @@ class TestGroupModuleInfo(ModuleTestCase):
             'show_federated': False,
         }
 
-        patcher = patch('plugins.modules.ibm_iam_access_group_info.IamAccessGroupsV2.get_access_group')
+        patcher = patch(
+            'plugins.modules.ibm_iam_access_group_info.IamAccessGroupsV2.get_access_group')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock(datasource)
 
@@ -65,9 +66,11 @@ class TestGroupModuleInfo(ModuleTestCase):
 
     def test_read_ibm_iam_access_group_failed(self):
         """Test the "read" path - failed."""
-        patcher = patch('plugins.modules.ibm_iam_access_group_info.IamAccessGroupsV2.get_access_group')
+        patcher = patch(
+            'plugins.modules.ibm_iam_access_group_info.IamAccessGroupsV2.get_access_group')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='Read ibm_iam_access_group error')
+        mock.side_effect = ApiException(
+            400, message='Read ibm_iam_access_group error')
 
         set_module_args({
             'access_group_id': 'testString',

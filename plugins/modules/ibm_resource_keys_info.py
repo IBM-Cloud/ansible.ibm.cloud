@@ -16,27 +16,16 @@
 
 # pylint: disable=missing-function-docstring
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
-from ibm_cloud_sdk_core import ApiException
-
-from ansible.module_utils.basic import AnsibleModule
-# pylint: disable=line-too-long,fixme
-from ibm_platform_services import ResourceControllerV2 # Todo: change this to external python package format
-
-from ..module_utils import config
-
-ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
-}
 
 DOCUMENTATION = r'''
 ---
 module: ibm_resource_keys_info
 short_description: Manage ibm_resource_keys info.
-author: IBM SDK Generator
-version_added: "0.1"
+author: Kavya Handadi (@kavya498)
+version_added: "1.0.0"
 description:
     - This module retrieves one or more ibm_resource_keys(s).
 requirements:
@@ -59,8 +48,10 @@ options:
             - Limit on how many items should be returned.
         type: int
     start:
-        description:
-            - An optional token that indicates the beginning of the page of results to be returned. Any additional query parameters are ignored if a page token is present. If omitted, the first page of results is returned. This value is obtained from the 'next_url' field of the operation response.
+        description: |
+            An optional token that indicates the beginning of the page of results to be returned.
+            Any additional query parameters are ignored if a page token is present.
+            If omitted, the first page of results is returned. This value is obtained from the 'next_url' field of the operation response.
         type: str
     guid:
         description:
@@ -79,6 +70,14 @@ options:
 EXAMPLES = r'''
 Examples coming soon.
 '''
+
+
+from ..module_utils import config
+# Todo: change this to external python package format
+from ibm_platform_services import ResourceControllerV2
+from ansible.module_utils.basic import AnsibleModule
+from ibm_cloud_sdk_core import ApiException
+
 
 def run_module():
     module_args = dict(
@@ -124,7 +123,7 @@ def run_module():
 
     # sdk = ResourceControllerV2.new_instance()
 
-    sdk=config.get_resource_contollerV2_sdk()
+    sdk = config.get_resource_contollerV2_sdk()
 
     # list
     try:
@@ -142,8 +141,10 @@ def run_module():
     except ApiException as ex:
         module.fail_json(msg=ex.message)
 
+
 def main():
     run_module()
+
 
 if __name__ == '__main__':
     main()

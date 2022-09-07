@@ -18,18 +18,12 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
-}
-
 DOCUMENTATION = r'''
 ---
 module: ibm_schematics_job
 short_description: Manage C(schematics_jobs) for Schematics Service API.
-author: IBM SDK Generator
-version_added: "0.1"
+author: Kavya Handadi (@kavya498)
+version_added: "1.0.0"
 description:
   - This module creates, updates, or deletes a C(schematics_job) resource for Schematics Service API.
 requirements:
@@ -39,14 +33,17 @@ options:
     description:
       - Environment variables used by the Job while performing Action or Workspace.
     type: list
+    elements: dict
     suboptions:
       name:
         description:
           - The name of the variable. For example, C(name = "inventory username").
         type: str
       value:
-        description:
-          - The value for the variable or reference to the value. For example, C(value = "<provide your sshI(key)value with \n>"). B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
+        description: |
+          The value for the variable or reference to the value.
+          For example, C(value = "<provide your sshI(key)value with \n>").
+          B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
         type: str
       use_default:
         description:
@@ -112,8 +109,9 @@ options:
               - If the variable required?.
             type: bool
           options:
-            description:
-              - The list of possible values for this variable.  If type is B(integer) or B(date), then the array of string is  converted to array of integers or date during the runtime.
+            description: |
+              The list of possible values for this variable.
+              If type is B(integer) or B(date), then the array of string is converted to array of integers or date during the runtime.
             type: list
             elements: str
           min_value:
@@ -188,14 +186,17 @@ options:
             description:
               - Input variables data used by the Workspace Job.
             type: list
+            elements: dict
             suboptions:
               name:
                 description:
                   - The name of the variable. For example, C(name = "inventory username").
                 type: str
               value:
-                description:
-                  - The value for the variable or reference to the value. For example, C(value = "<provide your sshI(key)value with \n>"). B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
+                description: |
+                  The value for the variable or reference to the value.
+                  For example, C(value = "<provide your sshI(key)value with \n>").
+                  B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
                 type: str
               use_default:
                 description:
@@ -261,8 +262,9 @@ options:
                       - If the variable required?.
                     type: bool
                   options:
-                    description:
-                      - The list of possible values for this variable.  If type is B(integer) or B(date), then the array of string is  converted to array of integers or date during the runtime.
+                    description: |
+                      The list of possible values for this variable.
+                      If type is B(integer) or B(date), then the array of string is converted to array of integers or date during the runtime.
                     type: list
                     elements: str
                   min_value:
@@ -305,14 +307,17 @@ options:
             description:
               - Output variables data from the Workspace Job.
             type: list
+            elements: dict
             suboptions:
               name:
                 description:
                   - The name of the variable. For example, C(name = "inventory username").
                 type: str
               value:
-                description:
-                  - The value for the variable or reference to the value. For example, C(value = "<provide your sshI(key)value with \n>"). B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
+                description: |
+                  The value for the variable or reference to the value.
+                  For example, C(value = "<provide your sshI(key)value with \n>").
+                  B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
                 type: str
               use_default:
                 description:
@@ -378,8 +383,9 @@ options:
                       - If the variable required?.
                     type: bool
                   options:
-                    description:
-                      - The list of possible values for this variable.  If type is B(integer) or B(date), then the array of string is  converted to array of integers or date during the runtime.
+                    description: |
+                      The list of possible values for this variable.
+                      If type is B(integer) or B(date), then the array of string is converted to array of integers or date during the runtime.
                     type: list
                     elements: str
                   min_value:
@@ -422,14 +428,17 @@ options:
             description:
               - Environment variables used by all the templates in the Workspace.
             type: list
+            elements: dict
             suboptions:
               name:
                 description:
                   - The name of the variable. For example, C(name = "inventory username").
                 type: str
               value:
-                description:
-                  - The value for the variable or reference to the value. For example, C(value = "<provide your sshI(key)value with \n>"). B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
+                description: |
+                  The value for the variable or reference to the value.
+                  For example, C(value = "<provide your sshI(key)value with \n>").
+                  B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
                 type: str
               use_default:
                 description:
@@ -495,8 +504,9 @@ options:
                       - If the variable required?.
                     type: bool
                   options:
-                    description:
-                      - The list of possible values for this variable.  If type is B(integer) or B(date), then the array of string is  converted to array of integers or date during the runtime.
+                    description: |
+                      The list of possible values for this variable.
+                      If type is B(integer) or B(date), then the array of string is converted to array of integers or date during the runtime.
                     type: list
                     elements: str
                   min_value:
@@ -539,6 +549,7 @@ options:
             description:
               - Input / output data of the Template in the Workspace Job.
             type: list
+            elements: dict
             suboptions:
               template_id:
                 description:
@@ -556,14 +567,17 @@ options:
                 description:
                   - Job inputs used by the Templates.
                 type: list
+                elements: dict
                 suboptions:
                   name:
                     description:
                       - The name of the variable. For example, C(name = "inventory username").
                     type: str
                   value:
-                    description:
-                      - The value for the variable or reference to the value. For example, C(value = "<provide your sshI(key)value with \n>"). B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
+                    description: |
+                      The value for the variable or reference to the value.
+                      For example, C(value = "<provide your sshI(key)value with \n>").
+                      B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
                     type: str
                   use_default:
                     description:
@@ -629,8 +643,9 @@ options:
                           - If the variable required?.
                         type: bool
                       options:
-                        description:
-                          - The list of possible values for this variable.  If type is B(integer) or B(date), then the array of string is  converted to array of integers or date during the runtime.
+                        description: |
+                          The list of possible values for this variable.
+                          If type is B(integer) or B(date), then the array of string is converted to array of integers or date during the runtime.
                         type: list
                         elements: str
                       min_value:
@@ -673,14 +688,17 @@ options:
                 description:
                   - Job output from the Templates.
                 type: list
+                elements: dict
                 suboptions:
                   name:
                     description:
                       - The name of the variable. For example, C(name = "inventory username").
                     type: str
                   value:
-                    description:
-                      - The value for the variable or reference to the value. For example, C(value = "<provide your sshI(key)value with \n>"). B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
+                    description: |
+                      The value for the variable or reference to the value.
+                      For example, C(value = "<provide your sshI(key)value with \n>").
+                      B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
                     type: str
                   use_default:
                     description:
@@ -746,8 +764,9 @@ options:
                           - If the variable required?.
                         type: bool
                       options:
-                        description:
-                          - The list of possible values for this variable.  If type is B(integer) or B(date), then the array of string is  converted to array of integers or date during the runtime.
+                        description: |
+                          The list of possible values for this variable.
+                          If type is B(integer) or B(date), then the array of string is converted to array of integers or date during the runtime.
                         type: list
                         elements: str
                       min_value:
@@ -790,14 +809,17 @@ options:
                 description:
                   - Environment variables used by the template.
                 type: list
+                elements: dict
                 suboptions:
                   name:
                     description:
                       - The name of the variable. For example, C(name = "inventory username").
                     type: str
                   value:
-                    description:
-                      - The value for the variable or reference to the value. For example, C(value = "<provide your sshI(key)value with \n>"). B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
+                    description: |
+                      The value for the variable or reference to the value.
+                      For example, C(value = "<provide your sshI(key)value with \n>").
+                      B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
                     type: str
                   use_default:
                     description:
@@ -863,8 +885,9 @@ options:
                           - If the variable required?.
                         type: bool
                       options:
-                        description:
-                          - The list of possible values for this variable.  If type is B(integer) or B(date), then the array of string is  converted to array of integers or date during the runtime.
+                        description: |
+                          The list of possible values for this variable.
+                          If type is B(integer) or B(date), then the array of string is converted to array of integers or date during the runtime.
                         type: list
                         elements: str
                       min_value:
@@ -924,14 +947,17 @@ options:
             description:
               - Input variables data used by the Action Job.
             type: list
+            elements: dict
             suboptions:
               name:
                 description:
                   - The name of the variable. For example, C(name = "inventory username").
                 type: str
               value:
-                description:
-                  - The value for the variable or reference to the value. For example, C(value = "<provide your sshI(key)value with \n>"). B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
+                description: |
+                  The value for the variable or reference to the value.
+                  For example, C(value = "<provide your sshI(key)value with \n>").
+                  B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
                 type: str
               use_default:
                 description:
@@ -997,8 +1023,9 @@ options:
                       - If the variable required?.
                     type: bool
                   options:
-                    description:
-                      - The list of possible values for this variable.  If type is B(integer) or B(date), then the array of string is  converted to array of integers or date during the runtime.
+                    description: |
+                      The list of possible values for this variable.
+                      If type is B(integer) or B(date), then the array of string is converted to array of integers or date during the runtime.
                     type: list
                     elements: str
                   min_value:
@@ -1041,14 +1068,17 @@ options:
             description:
               - Output variables data from the Action Job.
             type: list
+            elements: dict
             suboptions:
               name:
                 description:
                   - The name of the variable. For example, C(name = "inventory username").
                 type: str
               value:
-                description:
-                  - The value for the variable or reference to the value. For example, C(value = "<provide your sshI(key)value with \n>"). B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
+                description: |
+                  The value for the variable or reference to the value.
+                  For example, C(value = "<provide your sshI(key)value with \n>").
+                  B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
                 type: str
               use_default:
                 description:
@@ -1114,8 +1144,9 @@ options:
                       - If the variable required?.
                     type: bool
                   options:
-                    description:
-                      - The list of possible values for this variable.  If type is B(integer) or B(date), then the array of string is  converted to array of integers or date during the runtime.
+                    description: |
+                      The list of possible values for this variable.
+                      If type is B(integer) or B(date), then the array of string is converted to array of integers or date during the runtime.
                     type: list
                     elements: str
                   min_value:
@@ -1158,14 +1189,17 @@ options:
             description:
               - Environment variables used by all the templates in the Action.
             type: list
+            elements: dict
             suboptions:
               name:
                 description:
                   - The name of the variable. For example, C(name = "inventory username").
                 type: str
               value:
-                description:
-                  - The value for the variable or reference to the value. For example, C(value = "<provide your sshI(key)value with \n>"). B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
+                description: |
+                  The value for the variable or reference to the value.
+                  For example, C(value = "<provide your sshI(key)value with \n>").
+                  B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
                 type: str
               use_default:
                 description:
@@ -1231,8 +1265,9 @@ options:
                       - If the variable required?.
                     type: bool
                   options:
-                    description:
-                      - The list of possible values for this variable.  If type is B(integer) or B(date), then the array of string is  converted to array of integers or date during the runtime.
+                    description: |
+                      The list of possible values for this variable.
+                      If type is B(integer) or B(date), then the array of string is converted to array of integers or date during the runtime.
                     type: list
                     elements: str
                   min_value:
@@ -1281,8 +1316,9 @@ options:
             type: dict
             suboptions:
               name:
-                description:
-                  - The unique name of your Inventory.  The name can be up to 128 characters long and can include alphanumeric  characters, spaces, dashes, and underscores.
+                description: |
+                  The unique name of your Inventory.
+                  The name can be up to 128 characters long and can include alphanumeric characters, spaces, dashes, and underscores.
                 type: str
               id:
                 description:
@@ -1293,8 +1329,10 @@ options:
                   - The description of your Inventory.  The description can be up to 2048 characters long in size.
                 type: str
               location:
-                description:
-                  - List of locations supported by IBM Cloud Schematics service.  While creating your workspace or action, choose the right region, since it cannot be changed.  Note, this does not limit the location of the IBM Cloud resources, provisioned using Schematics.
+                description: |
+                  List of locations supported by IBM Cloud Schematics service.
+                  While creating your workspace or action, choose the right region, since it cannot be changed.
+                  Note, this does not limit the location of the IBM Cloud resources, provisioned using Schematics.
                 type: str
                 choices:
                   - us-south
@@ -1369,6 +1407,7 @@ options:
             description:
               - Job data used by each workitem Job.
             type: list
+            elements: dict
             suboptions:
               command_object_id:
                 description:
@@ -1483,14 +1522,17 @@ options:
                 description:
                   - Input variables data for the workItem used in FlowJob.
                 type: list
+                elements: dict
                 suboptions:
                   name:
                     description:
                       - The name of the variable. For example, C(name = "inventory username").
                     type: str
                   value:
-                    description:
-                      - The value for the variable or reference to the value. For example, C(value = "<provide your sshI(key)value with \n>"). B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
+                    description: |
+                      The value for the variable or reference to the value.
+                      For example, C(value = "<provide your sshI(key)value with \n>").
+                      B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
                     type: str
                   use_default:
                     description:
@@ -1556,8 +1598,9 @@ options:
                           - If the variable required?.
                         type: bool
                       options:
-                        description:
-                          - The list of possible values for this variable.  If type is B(integer) or B(date), then the array of string is  converted to array of integers or date during the runtime.
+                        description: |
+                          The list of possible values for this variable.
+                          If type is B(integer) or B(date), then the array of string is converted to array of integers or date during the runtime.
                         type: list
                         elements: str
                       min_value:
@@ -1600,14 +1643,17 @@ options:
                 description:
                   - Output variables for the workItem.
                 type: list
+                elements: dict
                 suboptions:
                   name:
                     description:
                       - The name of the variable. For example, C(name = "inventory username").
                     type: str
                   value:
-                    description:
-                      - The value for the variable or reference to the value. For example, C(value = "<provide your sshI(key)value with \n>"). B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
+                    description: |
+                      The value for the variable or reference to the value.
+                      For example, C(value = "<provide your sshI(key)value with \n>").
+                      B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
                     type: str
                   use_default:
                     description:
@@ -1673,8 +1719,9 @@ options:
                           - If the variable required?.
                         type: bool
                       options:
-                        description:
-                          - The list of possible values for this variable.  If type is B(integer) or B(date), then the array of string is  converted to array of integers or date during the runtime.
+                        description: |
+                          The list of possible values for this variable.
+                          If type is B(integer) or B(date), then the array of string is converted to array of integers or date during the runtime.
                         type: list
                         elements: str
                       min_value:
@@ -1717,14 +1764,17 @@ options:
                 description:
                   - Environment variables for the workItem.
                 type: list
+                elements: dict
                 suboptions:
                   name:
                     description:
                       - The name of the variable. For example, C(name = "inventory username").
                     type: str
                   value:
-                    description:
-                      - The value for the variable or reference to the value. For example, C(value = "<provide your sshI(key)value with \n>"). B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
+                    description: |
+                      The value for the variable or reference to the value.
+                      For example, C(value = "<provide your sshI(key)value with \n>").
+                      B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
                     type: str
                   use_default:
                     description:
@@ -1790,8 +1840,9 @@ options:
                           - If the variable required?.
                         type: bool
                       options:
-                        description:
-                          - The list of possible values for this variable.  If type is B(integer) or B(date), then the array of string is  converted to array of integers or date during the runtime.
+                        description: |
+                          The list of possible values for this variable.
+                          If type is B(integer) or B(date), then the array of string is converted to array of integers or date during the runtime.
                         type: list
                         elements: str
                       min_value:
@@ -1918,14 +1969,17 @@ options:
     description:
       - Job inputs used by Action or Workspace.
     type: list
+    elements: dict
     suboptions:
       name:
         description:
           - The name of the variable. For example, C(name = "inventory username").
         type: str
       value:
-        description:
-          - The value for the variable or reference to the value. For example, C(value = "<provide your sshI(key)value with \n>"). B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
+        description: |
+          The value for the variable or reference to the value.
+          For example, C(value = "<provide your sshI(key)value with \n>").
+          B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
         type: str
       use_default:
         description:
@@ -1991,8 +2045,9 @@ options:
               - If the variable required?.
             type: bool
           options:
-            description:
-              - The list of possible values for this variable.  If type is B(integer) or B(date), then the array of string is  converted to array of integers or date during the runtime.
+            description: |
+              The list of possible values for this variable.
+              If type is B(integer) or B(date), then the array of string is converted to array of integers or date during the runtime.
             type: list
             elements: str
           min_value:
@@ -2133,6 +2188,7 @@ options:
         description:
           - Job log errors.
         type: list
+        elements: dict
         suboptions:
           error_code:
             description:
@@ -2207,8 +2263,9 @@ options:
             type: float
           workitems:
             description:
-              -
+              - workitems
             type: list
+            elements: dict
             suboptions:
               workspace_id:
                 description:
@@ -2299,8 +2356,10 @@ options:
               - Number of failed.
             type: float
   location:
-    description:
-      - List of locations supported by IBM Cloud Schematics service.  While creating your workspace or action, choose the right region, since it cannot be changed.  Note, this does not limit the location of the IBM Cloud resources, provisioned using Schematics.
+    description: |
+      List of locations supported by IBM Cloud Schematics service.
+      While creating your workspace or action, choose the right region, since it cannot be changed.
+      Note, this does not limit the location of the IBM Cloud resources, provisioned using Schematics.
     type: str
     choices:
       - us-south
@@ -2387,6 +2446,7 @@ options:
                 description:
                   - Environment's individual workItem status details;.
                 type: list
+                elements: dict
                 suboptions:
                   workspace_id:
                     description:
@@ -2426,6 +2486,7 @@ options:
             description:
               - Workspace Flow Template job status.
             type: list
+            elements: dict
             suboptions:
               template_id:
                 description:
@@ -2465,6 +2526,7 @@ options:
             description:
               - List of terraform commands executed and their status.
             type: list
+            elements: dict
             suboptions:
               name:
                 description:
@@ -2550,6 +2612,7 @@ options:
             description:
               - job staus for each schematics resource.
             type: list
+            elements: dict
             suboptions:
               status_code:
                 description:
@@ -2608,6 +2671,7 @@ options:
             description:
               - Environment's individual workItem status details;.
             type: list
+            elements: dict
             suboptions:
               workspace_id:
                 description:
@@ -2644,17 +2708,16 @@ options:
               - Job status updation timestamp.
             type: str
   refresh_token:
-    description:
-      - The IAM refresh token for the user or service identity.
-
-  B(Retrieving refresh token): 
-  I( Use C(export IBMCLOUDI(API)KEY=<ibmcloudI(api)key>), and execute C(curl -X POST "https://iam.cloud.ibm.com/identity/token" -H "Content-Type: application/x-www-form-urlencoded" -d "grantI(type=urn:ibm:params:oauth:grant-type:apikey&apikey=$IBMCLOUD)APII(KEY" -u bx:bx). 
-  ) For more information, about creating IAM access token and API Docs, refer, [IAM access token](/apidocs/iam-identity-token-api#gettoken-password) and [Create API key](/apidocs/iam-identity-token-api#create-api-key).  
-
-  B(Limitation): 
-  I( If the token is expired, you can use C(refresh token) to get a new IAM access token. 
-  ) The C(refresh)token) parameter cannot be used to retrieve a new IAM access token. 
-  I( When the IAM access token is about to expire, use the API key to create a new access token.
+    description: |
+      The IAM refresh token for the user or service identity.
+      B(Retrieving refresh token) I( Use C(export IBMCLOUDI(API)KEY=<ibmcloudI(api)key>),and execute
+      C(curl -X POST "https://iam.cloud.ibm.com/identity/token" -H "Content-Type: application/x-www-form-urlencoded"
+      -d "grantI(type=urn:ibm:params:oauth:grant-type:apikey&apikey=$IBMCLOUD)APII(KEY" -u bx:bx).)
+      For more information, about creating IAM access token and API Docs, refer,
+      [IAM access token](/apidocs/iam-identity-token-api#gettoken-password) and [Create API key](/apidocs/iam-identity-token-api#create-api-key).
+      B(Limitation): I( If the token is expired, you can use C(refresh token) to get a new IAM access token.)
+      The C(refresh token) parameter cannot be used to retrieve a new IAM access token.
+      I( When the IAM access token is about to expire, use the API key to create a new access token.)
     type: str
   job_id:
     description:
@@ -2687,8 +2750,12 @@ seealso:
     description: Use Schematics to run your Ansible playbooks to provision, configure, and manage IBM Cloud resources.
     link: U(https://cloud.ibm.com/docs/schematics)
 notes:
-  - Authenticate this module by using an IBM Cloud API key. For more information about working with IBM Cloud API keys, see I(Managing API keys): U(https://cloud.ibm.com/docs/account?topic=account-manapikey).
-  - To configure the authentication, set your IBM Cloud API key on the C(IC_API_KEY) environment variable. The API key will be used to authenticate all IBM Cloud modules that use this environment variable.
+  - |
+    Authenticate this module by using an IBM Cloud API key.
+    For more information about working with IBM Cloud API keys, see I(Managing API keys): U(https://cloud.ibm.com/docs/account?topic=account-manapikey).
+  - |
+    To configure the authentication, set your IBM Cloud API key on the C(IC_API_KEY) environment variable.
+    The API key will be used to authenticate all IBM Cloud modules that use this environment variable.
 '''
 
 EXAMPLES = r'''
@@ -2777,10 +2844,8 @@ msg:
   type: dict
 '''
 
-from ansible.module_utils.basic import AnsibleModule
-
 from ..module_utils import config
-
+from ansible.module_utils.basic import AnsibleModule
 try:
     from ibm_schematics import SchematicsV1
     from ibm_cloud_sdk_core import ApiException
@@ -2792,6 +2857,7 @@ def run_module():
     module_args = dict(
         settings=dict(
             type='list',
+            elements='dict',
             options=dict(
                 name=dict(
                     type='str',
@@ -2807,7 +2873,8 @@ def run_module():
                     options=dict(
                         type=dict(
                             type='str',
-                            choices=['boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
+                            choices=['boolean', 'string', 'integer', 'date',
+                                     'array', 'list', 'map', 'complex', 'link'],
                             required=False),
                         aliases=dict(
                             type='list',
@@ -2879,7 +2946,8 @@ def run_module():
             options=dict(
                 job_type=dict(
                     type='str',
-                    choices=['repo_download_job', 'workspace_job', 'action_job', 'system_job', 'flow-job'],
+                    choices=['repo_download_job', 'workspace_job',
+                             'action_job', 'system_job', 'flow-job'],
                     required=False),
                 workspace_job_data=dict(
                     type='dict',
@@ -2895,6 +2963,7 @@ def run_module():
                             required=False),
                         inputs=dict(
                             type='list',
+                            elements='dict',
                             options=dict(
                                 name=dict(
                                     type='str',
@@ -2910,7 +2979,8 @@ def run_module():
                                     options=dict(
                                         type=dict(
                                             type='str',
-                                            choices=['boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
+                                            choices=[
+                                                'boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
                                             required=False),
                                         aliases=dict(
                                             type='list',
@@ -2978,6 +3048,7 @@ def run_module():
                             required=False),
                         outputs=dict(
                             type='list',
+                            elements='dict',
                             options=dict(
                                 name=dict(
                                     type='str',
@@ -2993,7 +3064,8 @@ def run_module():
                                     options=dict(
                                         type=dict(
                                             type='str',
-                                            choices=['boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
+                                            choices=[
+                                                'boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
                                             required=False),
                                         aliases=dict(
                                             type='list',
@@ -3061,6 +3133,7 @@ def run_module():
                             required=False),
                         settings=dict(
                             type='list',
+                            elements='dict',
                             options=dict(
                                 name=dict(
                                     type='str',
@@ -3076,7 +3149,8 @@ def run_module():
                                     options=dict(
                                         type=dict(
                                             type='str',
-                                            choices=['boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
+                                            choices=[
+                                                'boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
                                             required=False),
                                         aliases=dict(
                                             type='list',
@@ -3144,6 +3218,7 @@ def run_module():
                             required=False),
                         template_data=dict(
                             type='list',
+                            elements='dict',
                             options=dict(
                                 template_id=dict(
                                     type='str',
@@ -3156,6 +3231,7 @@ def run_module():
                                     required=False),
                                 inputs=dict(
                                     type='list',
+                                    elements='dict',
                                     options=dict(
                                         name=dict(
                                             type='str',
@@ -3171,7 +3247,8 @@ def run_module():
                                             options=dict(
                                                 type=dict(
                                                     type='str',
-                                                    choices=['boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
+                                                    choices=[
+                                                        'boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
                                                     required=False),
                                                 aliases=dict(
                                                     type='list',
@@ -3188,7 +3265,8 @@ def run_module():
                                                     required=False),
                                                 link_status=dict(
                                                     type='str',
-                                                    choices=['normal', 'broken'],
+                                                    choices=[
+                                                        'normal', 'broken'],
                                                     required=False),
                                                 secure=dict(
                                                     type='bool',
@@ -3239,6 +3317,7 @@ def run_module():
                                     required=False),
                                 outputs=dict(
                                     type='list',
+                                    elements='dict',
                                     options=dict(
                                         name=dict(
                                             type='str',
@@ -3254,7 +3333,8 @@ def run_module():
                                             options=dict(
                                                 type=dict(
                                                     type='str',
-                                                    choices=['boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
+                                                    choices=[
+                                                        'boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
                                                     required=False),
                                                 aliases=dict(
                                                     type='list',
@@ -3271,7 +3351,8 @@ def run_module():
                                                     required=False),
                                                 link_status=dict(
                                                     type='str',
-                                                    choices=['normal', 'broken'],
+                                                    choices=[
+                                                        'normal', 'broken'],
                                                     required=False),
                                                 secure=dict(
                                                     type='bool',
@@ -3322,6 +3403,7 @@ def run_module():
                                     required=False),
                                 settings=dict(
                                     type='list',
+                                    elements='dict',
                                     options=dict(
                                         name=dict(
                                             type='str',
@@ -3337,7 +3419,8 @@ def run_module():
                                             options=dict(
                                                 type=dict(
                                                     type='str',
-                                                    choices=['boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
+                                                    choices=[
+                                                        'boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
                                                     required=False),
                                                 aliases=dict(
                                                     type='list',
@@ -3354,7 +3437,8 @@ def run_module():
                                                     required=False),
                                                 link_status=dict(
                                                     type='str',
-                                                    choices=['normal', 'broken'],
+                                                    choices=[
+                                                        'normal', 'broken'],
                                                     required=False),
                                                 secure=dict(
                                                     type='bool',
@@ -3421,6 +3505,7 @@ def run_module():
                             required=False),
                         inputs=dict(
                             type='list',
+                            elements='dict',
                             options=dict(
                                 name=dict(
                                     type='str',
@@ -3436,7 +3521,8 @@ def run_module():
                                     options=dict(
                                         type=dict(
                                             type='str',
-                                            choices=['boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
+                                            choices=[
+                                                'boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
                                             required=False),
                                         aliases=dict(
                                             type='list',
@@ -3504,6 +3590,7 @@ def run_module():
                             required=False),
                         outputs=dict(
                             type='list',
+                            elements='dict',
                             options=dict(
                                 name=dict(
                                     type='str',
@@ -3519,7 +3606,8 @@ def run_module():
                                     options=dict(
                                         type=dict(
                                             type='str',
-                                            choices=['boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
+                                            choices=[
+                                                'boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
                                             required=False),
                                         aliases=dict(
                                             type='list',
@@ -3587,6 +3675,7 @@ def run_module():
                             required=False),
                         settings=dict(
                             type='list',
+                            elements='dict',
                             options=dict(
                                 name=dict(
                                     type='str',
@@ -3602,7 +3691,8 @@ def run_module():
                                     options=dict(
                                         type=dict(
                                             type='str',
-                                            choices=['boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
+                                            choices=[
+                                                'boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
                                             required=False),
                                         aliases=dict(
                                             type='list',
@@ -3685,7 +3775,8 @@ def run_module():
                                     required=False),
                                 location=dict(
                                     type='str',
-                                    choices=['us-south', 'us-east', 'eu-gb', 'eu-de'],
+                                    choices=['us-south', 'us-east',
+                                             'eu-gb', 'eu-de'],
                                     required=False),
                                 resource_group=dict(
                                     type='str',
@@ -3742,6 +3833,7 @@ def run_module():
                             required=False),
                         workitems=dict(
                             type='list',
+                            elements='dict',
                             options=dict(
                                 command_object_id=dict(
                                     type='str',
@@ -3754,14 +3846,16 @@ def run_module():
                                     required=False),
                                 source_type=dict(
                                     type='str',
-                                    choices=['local', 'git_hub', 'git_hub_enterprise', 'git_lab', 'ibm_git_lab', 'ibm_cloud_catalog'],
+                                    choices=['local', 'git_hub', 'git_hub_enterprise',
+                                             'git_lab', 'ibm_git_lab', 'ibm_cloud_catalog'],
                                     required=False),
                                 source=dict(
                                     type='dict',
                                     options=dict(
                                         source_type=dict(
                                             type='str',
-                                            choices=['local', 'git_hub', 'git_hub_enterprise', 'git_lab', 'ibm_git_lab', 'ibm_cloud_catalog'],
+                                            choices=['local', 'git_hub', 'git_hub_enterprise',
+                                                     'git_lab', 'ibm_git_lab', 'ibm_cloud_catalog'],
                                             required=False),
                                         git=dict(
                                             type='dict',
@@ -3822,6 +3916,7 @@ def run_module():
                                     required=False),
                                 inputs=dict(
                                     type='list',
+                                    elements='dict',
                                     options=dict(
                                         name=dict(
                                             type='str',
@@ -3837,7 +3932,8 @@ def run_module():
                                             options=dict(
                                                 type=dict(
                                                     type='str',
-                                                    choices=['boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
+                                                    choices=[
+                                                        'boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
                                                     required=False),
                                                 aliases=dict(
                                                     type='list',
@@ -3854,7 +3950,8 @@ def run_module():
                                                     required=False),
                                                 link_status=dict(
                                                     type='str',
-                                                    choices=['normal', 'broken'],
+                                                    choices=[
+                                                        'normal', 'broken'],
                                                     required=False),
                                                 secure=dict(
                                                     type='bool',
@@ -3905,6 +4002,7 @@ def run_module():
                                     required=False),
                                 outputs=dict(
                                     type='list',
+                                    elements='dict',
                                     options=dict(
                                         name=dict(
                                             type='str',
@@ -3920,7 +4018,8 @@ def run_module():
                                             options=dict(
                                                 type=dict(
                                                     type='str',
-                                                    choices=['boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
+                                                    choices=[
+                                                        'boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
                                                     required=False),
                                                 aliases=dict(
                                                     type='list',
@@ -3937,7 +4036,8 @@ def run_module():
                                                     required=False),
                                                 link_status=dict(
                                                     type='str',
-                                                    choices=['normal', 'broken'],
+                                                    choices=[
+                                                        'normal', 'broken'],
                                                     required=False),
                                                 secure=dict(
                                                     type='bool',
@@ -3988,6 +4088,7 @@ def run_module():
                                     required=False),
                                 settings=dict(
                                     type='list',
+                                    elements='dict',
                                     options=dict(
                                         name=dict(
                                             type='str',
@@ -4003,7 +4104,8 @@ def run_module():
                                             options=dict(
                                                 type=dict(
                                                     type='str',
-                                                    choices=['boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
+                                                    choices=[
+                                                        'boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
                                                     required=False),
                                                 aliases=dict(
                                                     type='list',
@@ -4020,7 +4122,8 @@ def run_module():
                                                     required=False),
                                                 link_status=dict(
                                                     type='str',
-                                                    choices=['normal', 'broken'],
+                                                    choices=[
+                                                        'normal', 'broken'],
                                                     required=False),
                                                 secure=dict(
                                                     type='bool',
@@ -4084,7 +4187,14 @@ def run_module():
                                             required=False),
                                         command_name=dict(
                                             type='str',
-                                            choices=['workspace_plan', 'workspace_apply', 'workspace_destroy', 'workspace_refresh', 'ansible_playbook_run', 'ansible_playbook_check', 'create_action', 'put_action', 'patch_action', 'delete_action', 'system_key_enable', 'system_key_delete', 'system_key_disable', 'system_key_rotate', 'system_key_restore', 'create_workspace', 'put_workspace', 'patch_workspace', 'delete_workspace', 'create_cart', 'create_environment', 'put_environment', 'delete_environment', 'environment_create_init', 'environment_update_init', 'environment_install', 'environment_uninstall', 'blueprint_create_init', 'blueprint_update_init', 'blueprint_install', 'blueprint_destroy', 'blueprint_delete', 'repository_process', 'terraform_commands'],
+                                            choices=['workspace_plan', 'workspace_apply', 'workspace_destroy', 'workspace_refresh',
+                                                     'ansible_playbook_run', 'ansible_playbook_check', 'create_action', 'put_action',
+                                                     'patch_action', 'delete_action', 'system_key_enable', 'system_key_delete',
+                                                     'system_key_disable', 'system_key_rotate', 'system_key_restore', 'create_workspace',
+                                                     'put_workspace', 'patch_workspace', 'delete_workspace', 'create_cart', 'create_environment',
+                                                     'put_environment', 'delete_environment', 'environment_create_init', 'environment_update_init',
+                                                     'environment_install', 'environment_uninstall', 'blueprint_create_init', 'blueprint_update_init',
+                                                     'blueprint_install', 'blueprint_destroy', 'blueprint_delete', 'repository_process', 'terraform_commands'],
                                             required=False),
                                         job_id=dict(
                                             type='str',
@@ -4109,6 +4219,7 @@ def run_module():
             required=False),
         inputs=dict(
             type='list',
+            elements='dict',
             options=dict(
                 name=dict(
                     type='str',
@@ -4124,7 +4235,8 @@ def run_module():
                     options=dict(
                         type=dict(
                             type='str',
-                            choices=['boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
+                            choices=['boolean', 'string', 'integer', 'date',
+                                     'array', 'list', 'map', 'complex', 'link'],
                             required=False),
                         aliases=dict(
                             type='list',
@@ -4192,7 +4304,14 @@ def run_module():
             required=False),
         command_name=dict(
             type='str',
-            choices=['workspace_plan', 'workspace_apply', 'workspace_destroy', 'workspace_refresh', 'ansible_playbook_run', 'ansible_playbook_check', 'create_action', 'put_action', 'patch_action', 'delete_action', 'system_key_enable', 'system_key_delete', 'system_key_disable', 'system_key_rotate', 'system_key_restore', 'create_workspace', 'put_workspace', 'patch_workspace', 'delete_workspace', 'create_cart', 'create_environment', 'put_environment', 'delete_environment', 'environment_create_init', 'environment_update_init', 'environment_install', 'environment_uninstall', 'blueprint_create_init', 'blueprint_update_init', 'blueprint_install', 'blueprint_destroy', 'blueprint_delete', 'repository_process', 'terraform_commands'],
+            choices=['workspace_plan', 'workspace_apply', 'workspace_destroy', 'workspace_refresh',
+                     'ansible_playbook_run', 'ansible_playbook_check', 'create_action', 'put_action', 'patch_action', 'delete_action',
+                     'system_key_enable', 'system_key_delete', 'system_key_disable', 'system_key_rotate', 'system_key_restore',
+                     'create_workspace', 'put_workspace', 'patch_workspace', 'delete_workspace', 'create_cart',
+                     'create_environment', 'put_environment', 'delete_environment',
+                     'environment_create_init', 'environment_update_init', 'environment_install', 'environment_uninstall',
+                     'blueprint_create_init', 'blueprint_update_init', 'blueprint_install', 'blueprint_destroy', 'blueprint_delete',
+                     'repository_process', 'terraform_commands'],
             required=False),
         command_object=dict(
             type='str',
@@ -4221,7 +4340,8 @@ def run_module():
                     required=False),
                 job_type=dict(
                     type='str',
-                    choices=['repo_download_job', 'workspace_job', 'action_job', 'system_job', 'flow_job'],
+                    choices=['repo_download_job', 'workspace_job',
+                             'action_job', 'system_job', 'flow_job'],
                     required=False),
                 log_start_at=dict(
                     type='str',
@@ -4234,6 +4354,7 @@ def run_module():
                     required=False),
                 log_errors=dict(
                     type='list',
+                    elements='dict',
                     options=dict(
                         error_code=dict(
                             type='str',
@@ -4294,6 +4415,7 @@ def run_module():
                             required=False),
                         workitems=dict(
                             type='list',
+                            elements='dict',
                             options=dict(
                                 workspace_id=dict(
                                     type='str',
@@ -4405,7 +4527,8 @@ def run_module():
                             required=False),
                         status_code=dict(
                             type='str',
-                            choices=['job_pending', 'job_in_progress', 'job_finished', 'job_failed', 'job_cancelled'],
+                            choices=['job_pending', 'job_in_progress',
+                                     'job_finished', 'job_failed', 'job_cancelled'],
                             required=False),
                         status_message=dict(
                             type='str',
@@ -4421,13 +4544,15 @@ def run_module():
                                     required=False),
                                 status_code=dict(
                                     type='str',
-                                    choices=['job_pending', 'job_in_progress', 'job_finished', 'job_failed', 'job_cancelled'],
+                                    choices=['job_pending', 'job_in_progress',
+                                             'job_finished', 'job_failed', 'job_cancelled'],
                                     required=False),
                                 status_message=dict(
                                     type='str',
                                     required=False),
                                 workitems=dict(
                                     type='list',
+                                    elements='dict',
                                     options=dict(
                                         workspace_id=dict(
                                             type='str',
@@ -4440,7 +4565,8 @@ def run_module():
                                             required=False),
                                         status_code=dict(
                                             type='str',
-                                            choices=['job_pending', 'job_in_progress', 'job_finished', 'job_failed', 'job_cancelled'],
+                                            choices=[
+                                                'job_pending', 'job_in_progress', 'job_finished', 'job_failed', 'job_cancelled'],
                                             required=False),
                                         status_message=dict(
                                             type='str',
@@ -4457,6 +4583,7 @@ def run_module():
                             required=False),
                         template_status=dict(
                             type='list',
+                            elements='dict',
                             options=dict(
                                 template_id=dict(
                                     type='str',
@@ -4469,7 +4596,8 @@ def run_module():
                                     required=False),
                                 status_code=dict(
                                     type='str',
-                                    choices=['job_pending', 'job_in_progress', 'job_finished', 'job_failed', 'job_cancelled'],
+                                    choices=['job_pending', 'job_in_progress',
+                                             'job_finished', 'job_failed', 'job_cancelled'],
                                     required=False),
                                 status_message=dict(
                                     type='str',
@@ -4484,6 +4612,7 @@ def run_module():
                             required=False),
                         commands=dict(
                             type='list',
+                            elements='dict',
                             options=dict(
                                 name=dict(
                                     type='str',
@@ -4503,7 +4632,8 @@ def run_module():
                             required=False),
                         status_code=dict(
                             type='str',
-                            choices=['job_pending', 'job_in_progress', 'job_finished', 'job_failed', 'job_cancelled'],
+                            choices=['job_pending', 'job_in_progress',
+                                     'job_finished', 'job_failed', 'job_cancelled'],
                             required=False),
                         status_message=dict(
                             type='str',
@@ -4535,14 +4665,17 @@ def run_module():
                             required=False),
                         system_status_code=dict(
                             type='str',
-                            choices=['job_pending', 'job_in_progress', 'job_finished', 'job_failed', 'job_cancelled'],
+                            choices=['job_pending', 'job_in_progress',
+                                     'job_finished', 'job_failed', 'job_cancelled'],
                             required=False),
                         schematics_resource_status=dict(
                             type='list',
+                            elements='dict',
                             options=dict(
                                 status_code=dict(
                                     type='str',
-                                    choices=['job_pending', 'job_in_progress', 'job_finished', 'job_failed', 'job_cancelled'],
+                                    choices=['job_pending', 'job_in_progress',
+                                             'job_finished', 'job_failed', 'job_cancelled'],
                                     required=False),
                                 status_message=dict(
                                     type='str',
@@ -4571,13 +4704,15 @@ def run_module():
                             required=False),
                         status_code=dict(
                             type='str',
-                            choices=['job_pending', 'job_in_progress', 'job_finished', 'job_failed', 'job_cancelled'],
+                            choices=['job_pending', 'job_in_progress',
+                                     'job_finished', 'job_failed', 'job_cancelled'],
                             required=False),
                         status_message=dict(
                             type='str',
                             required=False),
                         workitems=dict(
                             type='list',
+                            elements='dict',
                             options=dict(
                                 workspace_id=dict(
                                     type='str',
@@ -4590,7 +4725,8 @@ def run_module():
                                     required=False),
                                 status_code=dict(
                                     type='str',
-                                    choices=['job_pending', 'job_in_progress', 'job_finished', 'job_failed', 'job_cancelled'],
+                                    choices=['job_pending', 'job_in_progress',
+                                             'job_finished', 'job_failed', 'job_cancelled'],
                                     required=False),
                                 status_message=dict(
                                     type='str',
@@ -4655,8 +4791,7 @@ def run_module():
     force = module.params["force"]
     state = module.params["state"]
 
-
-    sdk= config.get_schematicsv1_sdk()
+    sdk = config.get_schematicsv1_sdk()
 
     resource_exists = True
 

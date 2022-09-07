@@ -18,18 +18,12 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
-}
-
 DOCUMENTATION = r'''
 ---
 module: ibm_schematics_workspace
 short_description: Manage C(schematics_workspaces) for Schematics Service API.
-author: IBM SDK Generator
-version_added: "0.1"
+author: Kavya Handadi (@kavya498)
+version_added: "1.0.0"
 description:
   - This module creates, updates, or deletes a C(schematics_workspace) resource for Schematics Service API.
 requirements:
@@ -54,8 +48,9 @@ options:
     type: list
     elements: str
   shared_data:
-    description:
-      - Information about the Target used by the templates originating from the  IBM Cloud catalog offerings. This information is not relevant for workspace created using your own Terraform template.
+    description: |
+      Information about the Target used by the templates originating from the IBM Cloud catalog offerings.
+      This information is not relevant for workspace created using your own Terraform template.
     type: dict
     suboptions:
       cluster_created_on:
@@ -63,8 +58,8 @@ options:
           - Cluster created on.
         type: str
       cluster_id:
-        description:
-          - The ID of the cluster where you want to provision the resources of all IBM Cloud catalog templates that are included in the catalog offering.
+        description: |
+          The ID of the cluster where you want to provision the resources of all IBM Cloud catalog templates that are included in the catalog offering.
         type: str
       cluster_name:
         description:
@@ -80,8 +75,9 @@ options:
         type: list
         elements: dict
       namespace:
-        description:
-          - The Kubernetes namespace or OpenShift project where the resources of all IBM Cloud catalog templates that are included in the catalog offering are deployed into.
+        description: |
+          The Kubernetes namespace or OpenShift project
+          where the resources of all IBM Cloud catalog templates that are included in the catalog offering are deployed into.
         type: str
       region:
         description:
@@ -222,16 +218,23 @@ options:
     description:
       - Input data for the Template.
     type: list
+    elements: dict
     suboptions:
       env_values:
-        description:
-          - A list of environment variables that you want to apply during the execution of a bash script or Terraform job. This field must be provided as a list of key-value pairs, for example, B(TFI(LOG=debug). Each entry will be a map with one entry where C(key is the environment variable name and value is value). You can define environment variables for IBM Cloud catalog offerings that are provisioned by using a bash script. See [example to use special environment variable](https://cloud.ibm.com/docs/schematics?topic=schematics-set-parallelism#parallelism-example)  that are supported by Schematics.
+        description: |
+          A list of environment variables that you want to apply during the execution of a bash script or Terraform job.
+          This field must be provided as a list of key-value pairs,
+          for example, B(TFI(LOG=debug). Each entry will be a map with one entry where C(key is the environment variable name and value is value).
+          You can define environment variables for IBM Cloud catalog offerings that are provisioned by using a bash script.
+          See [example to use special environment variable](https://cloud.ibm.com/docs/schematics?topic=schematics-set-parallelism#parallelism-example)
+          that are supported by Schematics.
         type: list
         elements: dict
       env_values_metadata:
         description:
           - Environment variables metadata.
         type: list
+        elements: dict
         suboptions:
           hidden:
             description:
@@ -250,17 +253,22 @@ options:
           - The subfolder in your GitHub or GitLab repository where your Terraform template is stored.
         type: str
       compact:
-        description:
-          - True, to use the files from the specified folder & subfolder in your GitHub or GitLab repository and ignore the other folders in the repository. For more information, see [Compact download for Schematics workspace](https://cloud.ibm.com/docs/schematics?topic=schematics-compact-download&interface=ui).
+        description: |
+          True, to use the files from the specified folder & subfolder in your GitHub or GitLab repository
+          and ignore the other folders in the repository. For more information,
+          see [Compact download for Schematics workspace](https://cloud.ibm.com/docs/schematics?topic=schematics-compact-download&interface=ui).
         type: bool
       init_state_file:
-        description:
-          - The content of an existing Terraform statefile that you want to import in to your workspace. To get the content of a Terraform statefile for a specific Terraform template in an existing workspace, run C(ibmcloud terraform state pull --id <workspaceI(id> --template <template)id>).
+        description: |
+          The content of an existing Terraform statefile that you want to import in to your workspace.
+          To get the content of a Terraform statefile for a specific Terraform template in an existing workspace,
+          run C(ibmcloud terraform state pull --id <workspaceI(id> --template <template)id>).
         type: str
       injectors:
         description:
           - Array of injectable terraform blocks.
         type: list
+        elements: dict
         suboptions:
           tft_git_url:
             description:
@@ -284,8 +292,9 @@ options:
             type: str
           tft_parameters:
             description:
-              -
+              - tft parameters
             type: list
+            elements: dict
             suboptions:
               name:
                 description:
@@ -296,21 +305,27 @@ options:
                   - Value to replace.
                 type: str
       type:
-        description:
-          - The Terraform version that you want to use to run your Terraform code. Enter C(terraformI(v1.1) to use Terraform version 1.1, and C(terraform)v1.0) to use Terraform version 1.0. This is a required variable. If the Terraform version is not specified, By default, Schematics selects the version from your template. For more information, refer to [Terraform version](https://cloud.ibm.com/docs/schematics?topic=schematics-workspace-setup&interface=ui#create-workspaceI(ui).
+        description: |
+          The Terraform version that you want to use to run your Terraform code.
+          Enter C(terraformI(v1.1)) to use Terraform version 1.1, and C(terraform)v1.0) to use Terraform version 1.0. This is a required variable.
+          If the Terraform version is not specified, By default, Schematics selects the version from your template. For more information,
+          refer to [Terraform version](https://cloud.ibm.com/docs/schematics?topic=schematics-workspace-setup&interface=ui#create-workspaceI(ui).
         type: str
       uninstall_script_name:
         description:
           - Uninstall script name.
         type: str
       values:
-        description:
-          - A list of variable values that you want to apply during the Helm chart installation. The list must be provided in JSON format, such as C("autoscaling: enabled: true minReplicas: 2"). The values that you define here override the default Helm chart values. This field is supported only for IBM Cloud catalog offerings that are provisioned by using the Terraform Helm provider.
+        description: |
+          A list of variable values that you want to apply during the Helm chart installation.
+          The list must be provided in JSON format.The values that you define here override the default Helm chart values.
+          This field is supported only for IBM Cloud catalog offerings that are provisioned by using the Terraform Helm provider.
         type: str
       values_metadata:
         description:
           - List of values metadata.
         type: list
+        elements: dict
         suboptions:
           type:
             description:
@@ -367,8 +382,9 @@ options:
               - If the variable required?.
             type: bool
           options:
-            description:
-              - The list of possible values for this variable.  If type is B(integer) or B(date), then the array of string is  converted to array of integers or date during the runtime.
+            description: |
+              The list of possible values for this variable.
+              If type is B(integer) or B(date), then the array of string is converted to array of integers or date during the runtime.
             type: list
             elements: str
           min_value:
@@ -407,6 +423,7 @@ options:
         description:
           - VariablesRequest -.
         type: list
+        elements: dict
         suboptions:
           description:
             description:
@@ -421,18 +438,24 @@ options:
               - If set to C(true), the value of your input variable is protected and not returned in your API response.
             type: bool
           type:
-            description:
-              - C(Terraform v0.11) supports C(string), C(list), C(map) data type. For more information, about the syntax, see [Configuring input variables](https://www.terraform.io/docs/configuration-0-11/variables.html).
-          <br> C(Terraform v0.12) additionally, supports C(bool), C(number) and complex data types such as C(list(type)), C(map(type)),
-          C(object({attribute name=type,..})), C(set(type)), C(tuple([type])). For more information, about the syntax to use the complex data type, see [Configuring variables](https://www.terraform.io/docs/configuration/variables.html#type-constraints).
+            description: |
+              C(Terraform v0.11) supports C(string), C(list), C(map) data type.
+              For more information, about the syntax, see [Configuring input variables](https://www.terraform.io/docs/configuration-0-11/variables.html).
+              C(Terraform v0.12) additionally, supports C(bool), C(number) and complex data types such as
+              C(list(type)), C(map(type)), C(object({attribute name=type,..})), C(set(type)), C(tuple([type])).
+              For more information, about the syntax to use the complex data type,
+              see [Configuring variables](https://www.terraform.io/docs/configuration/variables.html#type-constraints).
             type: str
           use_default:
             description:
               - Variable uses default value; and is not over-ridden.
             type: bool
           value:
-            description:
-              - Enter the value as a string for the primitive types such as C(bool), C(number), C(string), and C(HCL) format for the complex variables, as you provide in a C(.tfvars) file. B(You need to enter escaped string of C(HCL) format for the complex variable value). For more information, about how to declare variables in a terraform configuration file and provide value to schematics, see [Providing values for the declared variables](https://cloud.ibm.com/docs/schematics?topic=schematics-create-tf-config#declare-variable).
+            description: |
+              Enter the value as a string for the primitive types such as C(bool), C(number), C(string), and C(HCL) format for the complex variables,
+              as you provide in a C(.tfvars) file B(You need to enter escaped string of C(HCL) format for the complex variable value).
+              For more information, about how to declare variables in a terraform configuration file and provide value to schematics,
+              see [Providing values for the declared variables](https://cloud.ibm.com/docs/schematics?topic=schematics-create-tf-config#declare-variable).
             type: str
   resource_group:
     description:
@@ -506,25 +529,32 @@ options:
           - The source URL.
         type: str
   name:
-    description:
-      - The name of your workspace. The name can be up to 128 characters long and can include alphanumeric characters, spaces, dashes, and underscores. When you create a workspace for your own Terraform template, consider including the microservice component that you set up with your Terraform template and the IBM Cloud environment where you want to deploy your resources in your name.
+    description: |
+      The name of your workspace. The name can be up to 128 characters long and can include alphanumeric characters, spaces, dashes, and underscores.
+      When you create a workspace for your own Terraform template,
+      consider including the microservice component that you set up with your Terraform template and
+      the IBM Cloud environment where you want to deploy your resources in your name.
     type: str
   location:
-    description:
-      - The location where you want to create your Schematics workspace and run the Schematics jobs. The location that you enter must match the API endpoint that you use. For example, if you use the Frankfurt API endpoint, you must specify C(eu-de) as your location. If you use an API endpoint for a geography and you do not specify a location, Schematics determines the location based on availability.
+    description: |
+      The location where you want to create your Schematics workspace and run the Schematics jobs.
+      The location that you enter must match the API endpoint that you use.
+      For example, if you use the Frankfurt API endpoint, you must specify C(eu-de) as your location.
+      If you use an API endpoint for a geography and you do not specify a location, Schematics determines the location based on availability.
     type: str
   refresh_token:
-    description:
-      - The IAM refresh token for the user or service identity. The IAM refresh token is required only if you want to destroy the Terraform resources before deleting the Schematics workspace. If you want to delete the workspace only and keep all your Terraform resources, refresh token is not required. 
-
-  B(Retrieving refresh token): 
-  I( Use C(export IBMCLOUDI(API)KEY=<ibmcloudI(api)key>), and execute C(curl -X POST "https://iam.cloud.ibm.com/identity/token" -H "Content-Type: application/x-www-form-urlencoded" -d "grantI(type=urn:ibm:params:oauth:grant-type:apikey&apikey=$IBMCLOUD)APII(KEY" -u bx:bx). 
-  ) For more information, about creating IAM access token and API Docs, refer, [IAM access token](/apidocs/iam-identity-token-api#gettoken-password) and [Create API key](/apidocs/iam-identity-token-api#create-api-key).  
-
-  B(Limitation): 
-  I( If the token is expired, you can use C(refresh token) to get a new IAM access token. 
-  ) The C(refresh)token) parameter cannot be used to retrieve a new IAM access token. 
-  I( When the IAM access token is about to expire, use the API key to create a new access token.
+    description: |
+      The IAM refresh token for the user or service identity.
+      The IAM refresh token is required only if you want to destroy the Terraform resources before deleting the Schematics workspace.
+      If you want to delete the workspace only and keep all your Terraform resources, refresh token is not required.
+      B(Retrieving refresh token)I( Use C(export IBMCLOUDI(API)KEY=<ibmcloudI(api)key>),
+      and execute C(curl -X POST "https://iam.cloud.ibm.com/identity/token" -H "Content-Type: application/x-www-form-urlencoded"
+      -d "grantI(type=urn:ibm:params:oauth:grant-type:apikey&apikey=$IBMCLOUD)APII(KEY" -u bx:bx).)
+      For more information, about creating IAM access token and API Docs, refer, [IAM access token](/apidocs/iam-identity-token-api#gettoken-password)
+      and [Create API key](/apidocs/iam-identity-token-api#create-api-key).
+      B(Limitation) I( If the token is expired, you can use C(refresh token) to get a new IAM access token.)
+      The C(refresh)token) parameter cannot be used to retrieve a new IAM access token.
+      I( When the IAM access token is about to expire, use the API key to create a new access token.)
     type: str
   w_id:
     description:
@@ -535,8 +565,10 @@ options:
       - The personal access token to authenticate with your private GitHub or GitLab repository and access your Terraform template.
     type: str
   destroy_resources:
-    description:
-      - If set to C(true), refreshI(token header configuration is required to delete all the Terraform resources, and the Schematics workspace. If set to C(false), you can remove only the workspace. Your Terraform resources are still available and must be managed with the resource dashboard or CLI.
+    description: |
+      If set to C(true), refreshI(token header configuration is required to delete all the Terraform resources, and the Schematics workspace.
+      If set to C(false), you can remove only the workspace.
+      Your Terraform resources are still available and must be managed with the resource dashboard or CLI.
     type: str
   state:
     description:
@@ -549,8 +581,12 @@ seealso:
     description: Use Schematics to run your Ansible playbooks to provision, configure, and manage IBM Cloud resources.
     link: U(https://cloud.ibm.com/docs/schematics)
 notes:
-  - Authenticate this module by using an IBM Cloud API key. For more information about working with IBM Cloud API keys, see I(Managing API keys): U(https://cloud.ibm.com/docs/account?topic=account-manapikey).
-  - To configure the authentication, set your IBM Cloud API key on the C(IC_API_KEY) environment variable. The API key will be used to authenticate all IBM Cloud modules that use this environment variable.
+  - |
+    Authenticate this module by using an IBM Cloud API key.
+    For more information about working with IBM Cloud API keys, see I(Managing API keys): U(https://cloud.ibm.com/docs/account?topic=account-manapikey).
+  - |
+    To configure the authentication, set your IBM Cloud API key on the C(IC_API_KEY) environment variable.
+    The API key will be used to authenticate all IBM Cloud modules that use this environment variable.
 '''
 
 EXAMPLES = r'''
@@ -600,10 +636,8 @@ msg:
   type: dict
 '''
 
-from ansible.module_utils.basic import AnsibleModule
-
 from ..module_utils import config
-
+from ansible.module_utils.basic import AnsibleModule
 try:
     from ibm_schematics import SchematicsV1
     from ibm_cloud_sdk_core import ApiException
@@ -765,6 +799,7 @@ def run_module():
             required=False),
         template_data=dict(
             type='list',
+            elements='dict',
             options=dict(
                 env_values=dict(
                     type='list',
@@ -772,6 +807,7 @@ def run_module():
                     required=False),
                 env_values_metadata=dict(
                     type='list',
+                    elements='dict',
                     options=dict(
                         hidden=dict(
                             type='bool',
@@ -795,6 +831,7 @@ def run_module():
                     required=False),
                 injectors=dict(
                     type='list',
+                    elements='dict',
                     options=dict(
                         tft_git_url=dict(
                             type='str',
@@ -813,6 +850,7 @@ def run_module():
                             required=False),
                         tft_parameters=dict(
                             type='list',
+                            elemets='dict',
                             options=dict(
                                 name=dict(
                                     type='str',
@@ -835,10 +873,12 @@ def run_module():
                     required=False),
                 values_metadata=dict(
                     type='list',
+                    elements='dict',
                     options=dict(
                         type=dict(
                             type='str',
-                            choices=['boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
+                            choices=['boolean', 'string', 'integer', 'date',
+                                     'array', 'list', 'map', 'complex', 'link'],
                             required=False),
                         aliases=dict(
                             type='list',
@@ -901,6 +941,7 @@ def run_module():
                     required=False),
                 variablestore=dict(
                     type='list',
+                    elements='dict',
                     options=dict(
                         description=dict(
                             type='str',
@@ -1019,7 +1060,8 @@ def run_module():
     type = module.params["type"]
     applied_shareddata_ids = module.params["applied_shareddata_ids"]
     shared_data = module.params["shared_data"]
-    workspace_status_update_request_workspace_status = module.params["workspace_status_update_request_workspace_status"]
+    workspace_status_update_request_workspace_status = module.params[
+        "workspace_status_update_request_workspace_status"]
     dependencies = module.params["dependencies"]
     tags = module.params["tags"]
     workspace_status = module.params["workspace_status"]
@@ -1029,7 +1071,8 @@ def run_module():
     template_repo = module.params["template_repo"]
     workspace_status_msg = module.params["workspace_status_msg"]
     template_ref = module.params["template_ref"]
-    template_repo_update_request_template_repo = module.params["template_repo_update_request_template_repo"]
+    template_repo_update_request_template_repo = module.params[
+        "template_repo_update_request_template_repo"]
     name = module.params["name"]
     location = module.params["location"]
     refresh_token = module.params["refresh_token"]
@@ -1038,8 +1081,7 @@ def run_module():
     destroy_resources = module.params["destroy_resources"]
     state = module.params["state"]
 
-
-    sdk= config.get_schematicsv1_sdk()
+    sdk = config.get_schematicsv1_sdk()
 
     resource_exists = True
 

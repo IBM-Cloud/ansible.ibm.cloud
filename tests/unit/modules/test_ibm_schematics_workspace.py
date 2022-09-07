@@ -22,7 +22,7 @@ import os
 from .common import DetailedResponseMock
 from plugins.modules import ibm_schematics_workspace
 from ansible_collections.community.internal_test_tools.tests.unit.compat.mock import patch
-from ansible_collections.community.internal_test_tools.tests.unit.plugins.modules.utils  import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
+from ansible_collections.community.internal_test_tools.tests.unit.plugins.modules.utils import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
 
 try:
     from ibm_cloud_sdk_core import ApiException
@@ -55,7 +55,8 @@ def post_process_result(expected: dict, result: dict) -> dict:
         else:
             # We need to recursively check nested dictionaries as well.
             if isinstance(res_value, dict):
-                new_result[res_key] = post_process_result(mock_value, res_value)
+                new_result[res_key] = post_process_result(
+                    mock_value, res_value)
             # Just like lists.
             elif isinstance(res_value, list) and len(res_value) > 0:
                 # We use an inner function for recursive list processing.
@@ -66,7 +67,8 @@ def post_process_result(expected: dict, result: dict) -> dict:
                     for mock_elem, res_elem in zip(m, r):
                         # If both items are dict use the outer function to process them.
                         if isinstance(mock_elem, dict) and isinstance(res_elem, dict):
-                            new_list.append(post_process_result(mock_elem, res_elem))
+                            new_list.append(
+                                post_process_result(mock_elem, res_elem))
                         # If both items are list, use this function to process them.
                         elif isinstance(mock_elem, list) and isinstance(res_elem, list):
                             new_list.append(process_list(mock_elem, res_elem))
@@ -93,7 +95,8 @@ class TestWorkspaceResponseModule(ModuleTestCase):
     def test_read_ibm_schematics_workspace_failed(self):
         """Test the inner "read" path in this module with a server error response."""
 
-        patcher = patch('plugins.modules.ibm_schematics_workspace.SchematicsV1.get_workspace')
+        patcher = patch(
+            'plugins.modules.ibm_schematics_workspace.SchematicsV1.get_workspace')
         mock = patcher.start()
         mock.side_effect = ApiException(500, message='Something went wrong...')
 
@@ -113,7 +116,8 @@ class TestWorkspaceResponseModule(ModuleTestCase):
         )
 
         mock.assert_called_once()
-        processed_result = post_process_result(mock_data, mock.call_args.kwargs)
+        processed_result = post_process_result(
+            mock_data, mock.call_args.kwargs)
         assert mock_data == processed_result
 
         patcher.stop()
@@ -142,7 +146,7 @@ class TestWorkspaceResponseModule(ModuleTestCase):
             'cluster_id': 'testString',
             'cluster_name': 'testString',
             'cluster_type': 'testString',
-            'entitlement_keys': [{'foo': 'bar'}],
+            # 'entitlement_keys': [{'foo': 'bar'}],
             'namespace': 'testString',
             'region': 'testString',
             'resource_group_id': 'testString',
@@ -180,7 +184,7 @@ class TestWorkspaceResponseModule(ModuleTestCase):
         }
 
         template_source_data_request_model = {
-            'env_values': [{'foo': 'bar'}],
+            # 'env_values': [{'foo': 'bar'}],
             'env_values_metadata': [environment_values_metadata_model],
             'folder': 'testString',
             'compact': True,
@@ -189,7 +193,7 @@ class TestWorkspaceResponseModule(ModuleTestCase):
             'type': 'testString',
             'uninstall_script_name': 'testString',
             'values': 'testString',
-            'values_metadata': [{'foo': 'bar'}],
+            # 'values_metadata': [{'foo': 'bar'}],
             'variablestore': [workspace_variable_request_model],
         }
 
@@ -229,11 +233,13 @@ class TestWorkspaceResponseModule(ModuleTestCase):
             'x_github_token': 'testString',
         }
 
-        patcher = patch('plugins.modules.ibm_schematics_workspace.SchematicsV1.create_workspace')
+        patcher = patch(
+            'plugins.modules.ibm_schematics_workspace.SchematicsV1.create_workspace')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock(resource)
 
-        get_workspace_patcher = patch('plugins.modules.ibm_schematics_workspace.SchematicsV1.get_workspace')
+        get_workspace_patcher = patch(
+            'plugins.modules.ibm_schematics_workspace.SchematicsV1.get_workspace')
         get_workspace_mock = get_workspace_patcher.start()
 
         set_module_args({
@@ -283,7 +289,8 @@ class TestWorkspaceResponseModule(ModuleTestCase):
         )
 
         mock.assert_called_once()
-        processed_result = post_process_result(mock_data, mock.call_args.kwargs)
+        processed_result = post_process_result(
+            mock_data, mock.call_args.kwargs)
         assert mock_data == processed_result
 
         get_workspace_mock.assert_not_called()
@@ -294,12 +301,15 @@ class TestWorkspaceResponseModule(ModuleTestCase):
     def test_create_ibm_schematics_workspace_failed(self):
         """Test the "create" path - failed."""
 
-        get_workspace_patcher = patch('plugins.modules.ibm_schematics_workspace.SchematicsV1.get_workspace')
+        get_workspace_patcher = patch(
+            'plugins.modules.ibm_schematics_workspace.SchematicsV1.get_workspace')
         get_workspace_mock = get_workspace_patcher.start()
 
-        patcher = patch('plugins.modules.ibm_schematics_workspace.SchematicsV1.create_workspace')
+        patcher = patch(
+            'plugins.modules.ibm_schematics_workspace.SchematicsV1.create_workspace')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='Create ibm_schematics_workspace error')
+        mock.side_effect = ApiException(
+            400, message='Create ibm_schematics_workspace error')
 
         catalog_ref_model = {
             'dry_run': True,
@@ -323,7 +333,7 @@ class TestWorkspaceResponseModule(ModuleTestCase):
             'cluster_id': 'testString',
             'cluster_name': 'testString',
             'cluster_type': 'testString',
-            'entitlement_keys': [{'foo': 'bar'}],
+            # 'entitlement_keys': [{'foo': 'bar'}],
             'namespace': 'testString',
             'region': 'testString',
             'resource_group_id': 'testString',
@@ -361,7 +371,7 @@ class TestWorkspaceResponseModule(ModuleTestCase):
         }
 
         template_source_data_request_model = {
-            'env_values': [{'foo': 'bar'}],
+            # 'env_values': [{'foo': 'bar'}],
             'env_values_metadata': [environment_values_metadata_model],
             'folder': 'testString',
             'compact': True,
@@ -370,7 +380,7 @@ class TestWorkspaceResponseModule(ModuleTestCase):
             'type': 'testString',
             'uninstall_script_name': 'testString',
             'values': 'testString',
-            'values_metadata': [{'foo': 'bar'}],
+            # 'values_metadata': [{'foo': 'bar'}],
             'variablestore': [workspace_variable_request_model],
         }
 
@@ -437,7 +447,8 @@ class TestWorkspaceResponseModule(ModuleTestCase):
         )
 
         mock.assert_called_once()
-        processed_result = post_process_result(mock_data, mock.call_args.kwargs)
+        processed_result = post_process_result(
+            mock_data, mock.call_args.kwargs)
         assert mock_data == processed_result
 
         get_workspace_mock.assert_not_called()
@@ -469,7 +480,7 @@ class TestWorkspaceResponseModule(ModuleTestCase):
             'cluster_id': 'testString',
             'cluster_name': 'testString',
             'cluster_type': 'testString',
-            'entitlement_keys': [{'foo': 'bar'}],
+            # 'entitlement_keys': [{'foo': 'bar'}],
             'namespace': 'testString',
             'region': 'testString',
             'resource_group_id': 'testString',
@@ -507,7 +518,7 @@ class TestWorkspaceResponseModule(ModuleTestCase):
         }
 
         template_source_data_request_model = {
-            'env_values': [{'foo': 'bar'}],
+            # 'env_values': [{'foo': 'bar'}],
             'env_values_metadata': [environment_values_metadata_model],
             'folder': 'testString',
             'compact': True,
@@ -516,7 +527,7 @@ class TestWorkspaceResponseModule(ModuleTestCase):
             'type': 'testString',
             'uninstall_script_name': 'testString',
             'values': 'testString',
-            'values_metadata': [{'foo': 'bar'}],
+            # 'values_metadata': [{'foo': 'bar'}],
             'variablestore': [workspace_variable_request_model],
         }
 
@@ -558,11 +569,13 @@ class TestWorkspaceResponseModule(ModuleTestCase):
             'agent_id': 'testString',
         }
 
-        patcher = patch('plugins.modules.ibm_schematics_workspace.SchematicsV1.update_workspace')
+        patcher = patch(
+            'plugins.modules.ibm_schematics_workspace.SchematicsV1.update_workspace')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock(resource)
 
-        get_workspace_patcher = patch('plugins.modules.ibm_schematics_workspace.SchematicsV1.get_workspace')
+        get_workspace_patcher = patch(
+            'plugins.modules.ibm_schematics_workspace.SchematicsV1.get_workspace')
         get_workspace_mock = get_workspace_patcher.start()
         get_workspace_mock.return_value = DetailedResponseMock(resource)
 
@@ -607,7 +620,8 @@ class TestWorkspaceResponseModule(ModuleTestCase):
         )
 
         mock.assert_called_once()
-        processed_result = post_process_result(mock_data, mock.call_args.kwargs)
+        processed_result = post_process_result(
+            mock_data, mock.call_args.kwargs)
         assert mock_data == processed_result
 
         get_workspace_mock_data = dict(
@@ -619,7 +633,8 @@ class TestWorkspaceResponseModule(ModuleTestCase):
             get_workspace_mock_data[param] = mock_data.get(param, None)
 
         get_workspace_mock.assert_called_once()
-        get_workspace_processed_result = post_process_result(get_workspace_mock_data, get_workspace_mock.call_args.kwargs)
+        get_workspace_processed_result = post_process_result(
+            get_workspace_mock_data, get_workspace_mock.call_args.kwargs)
         assert get_workspace_mock_data == get_workspace_processed_result
         get_workspace_patcher.stop()
         patcher.stop()
@@ -648,7 +663,7 @@ class TestWorkspaceResponseModule(ModuleTestCase):
             'cluster_id': 'testString',
             'cluster_name': 'testString',
             'cluster_type': 'testString',
-            'entitlement_keys': [{'foo': 'bar'}],
+            # 'entitlement_keys': [{'foo': 'bar'}],
             'namespace': 'testString',
             'region': 'testString',
             'resource_group_id': 'testString',
@@ -686,7 +701,7 @@ class TestWorkspaceResponseModule(ModuleTestCase):
         }
 
         template_source_data_request_model = {
-            'env_values': [{'foo': 'bar'}],
+            # 'env_values': [{'foo': 'bar'}],
             'env_values_metadata': [environment_values_metadata_model],
             'folder': 'testString',
             'compact': True,
@@ -695,7 +710,7 @@ class TestWorkspaceResponseModule(ModuleTestCase):
             'type': 'testString',
             'uninstall_script_name': 'testString',
             'values': 'testString',
-            'values_metadata': [{'foo': 'bar'}],
+            # 'values_metadata': [{'foo': 'bar'}],
             'variablestore': [workspace_variable_request_model],
         }
 
@@ -737,11 +752,14 @@ class TestWorkspaceResponseModule(ModuleTestCase):
             'agent_id': 'testString',
         }
 
-        patcher = patch('plugins.modules.ibm_schematics_workspace.SchematicsV1.update_workspace')
+        patcher = patch(
+            'plugins.modules.ibm_schematics_workspace.SchematicsV1.update_workspace')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='Update ibm_schematics_workspace error')
+        mock.side_effect = ApiException(
+            400, message='Update ibm_schematics_workspace error')
 
-        get_workspace_patcher = patch('plugins.modules.ibm_schematics_workspace.SchematicsV1.get_workspace')
+        get_workspace_patcher = patch(
+            'plugins.modules.ibm_schematics_workspace.SchematicsV1.get_workspace')
         get_workspace_mock = get_workspace_patcher.start()
         get_workspace_mock.return_value = DetailedResponseMock(resource)
 
@@ -785,7 +803,8 @@ class TestWorkspaceResponseModule(ModuleTestCase):
         )
 
         mock.assert_called_once()
-        processed_result = post_process_result(mock_data, mock.call_args.kwargs)
+        processed_result = post_process_result(
+            mock_data, mock.call_args.kwargs)
         assert mock_data == processed_result
 
         get_workspace_mock_data = dict(
@@ -797,7 +816,8 @@ class TestWorkspaceResponseModule(ModuleTestCase):
             get_workspace_mock_data[param] = mock_data.get(param, None)
 
         get_workspace_mock.assert_called_once()
-        get_workspace_processed_result = post_process_result(get_workspace_mock_data, get_workspace_mock.call_args.kwargs)
+        get_workspace_processed_result = post_process_result(
+            get_workspace_mock_data, get_workspace_mock.call_args.kwargs)
         assert get_workspace_mock_data == get_workspace_processed_result
 
         get_workspace_patcher.stop()
@@ -805,11 +825,13 @@ class TestWorkspaceResponseModule(ModuleTestCase):
 
     def test_delete_ibm_schematics_workspace_success(self):
         """Test the "delete" path - successfull."""
-        patcher = patch('plugins.modules.ibm_schematics_workspace.SchematicsV1.delete_workspace')
+        patcher = patch(
+            'plugins.modules.ibm_schematics_workspace.SchematicsV1.delete_workspace')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock()
 
-        get_workspace_patcher = patch('plugins.modules.ibm_schematics_workspace.SchematicsV1.get_workspace')
+        get_workspace_patcher = patch(
+            'plugins.modules.ibm_schematics_workspace.SchematicsV1.get_workspace')
         get_workspace_mock = get_workspace_patcher.start()
         get_workspace_mock.return_value = DetailedResponseMock()
 
@@ -838,7 +860,8 @@ class TestWorkspaceResponseModule(ModuleTestCase):
         )
 
         mock.assert_called_once()
-        processed_result = post_process_result(mock_data, mock.call_args.kwargs)
+        processed_result = post_process_result(
+            mock_data, mock.call_args.kwargs)
         assert mock_data == processed_result
 
         get_workspace_mock_data = dict(
@@ -850,7 +873,8 @@ class TestWorkspaceResponseModule(ModuleTestCase):
             get_workspace_mock_data[param] = mock_data.get(param, None)
 
         get_workspace_mock.assert_called_once()
-        get_workspace_processed_result = post_process_result(get_workspace_mock_data, get_workspace_mock.call_args.kwargs)
+        get_workspace_processed_result = post_process_result(
+            get_workspace_mock_data, get_workspace_mock.call_args.kwargs)
         assert get_workspace_mock_data == get_workspace_processed_result
 
         get_workspace_patcher.stop()
@@ -858,11 +882,13 @@ class TestWorkspaceResponseModule(ModuleTestCase):
 
     def test_delete_ibm_schematics_workspace_not_exists(self):
         """Test the "delete" path - not exists."""
-        patcher = patch('plugins.modules.ibm_schematics_workspace.SchematicsV1.delete_workspace')
+        patcher = patch(
+            'plugins.modules.ibm_schematics_workspace.SchematicsV1.delete_workspace')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock()
 
-        get_workspace_patcher = patch('plugins.modules.ibm_schematics_workspace.SchematicsV1.get_workspace')
+        get_workspace_patcher = patch(
+            'plugins.modules.ibm_schematics_workspace.SchematicsV1.get_workspace')
         get_workspace_mock = get_workspace_patcher.start()
         get_workspace_mock.side_effect = ApiException(404)
 
@@ -901,7 +927,8 @@ class TestWorkspaceResponseModule(ModuleTestCase):
             get_workspace_mock_data[param] = mock_data.get(param, None)
 
         get_workspace_mock.assert_called_once()
-        get_workspace_processed_result = post_process_result(get_workspace_mock_data, get_workspace_mock.call_args.kwargs)
+        get_workspace_processed_result = post_process_result(
+            get_workspace_mock_data, get_workspace_mock.call_args.kwargs)
         assert get_workspace_mock_data == get_workspace_processed_result
 
         get_workspace_patcher.stop()
@@ -909,11 +936,14 @@ class TestWorkspaceResponseModule(ModuleTestCase):
 
     def test_delete_ibm_schematics_workspace_failed(self):
         """Test the "delete" path - failed."""
-        patcher = patch('plugins.modules.ibm_schematics_workspace.SchematicsV1.delete_workspace')
+        patcher = patch(
+            'plugins.modules.ibm_schematics_workspace.SchematicsV1.delete_workspace')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='Delete ibm_schematics_workspace error')
+        mock.side_effect = ApiException(
+            400, message='Delete ibm_schematics_workspace error')
 
-        get_workspace_patcher = patch('plugins.modules.ibm_schematics_workspace.SchematicsV1.get_workspace')
+        get_workspace_patcher = patch(
+            'plugins.modules.ibm_schematics_workspace.SchematicsV1.get_workspace')
         get_workspace_mock = get_workspace_patcher.start()
         get_workspace_mock.return_value = DetailedResponseMock()
 
@@ -938,7 +968,8 @@ class TestWorkspaceResponseModule(ModuleTestCase):
         )
 
         mock.assert_called_once()
-        processed_result = post_process_result(mock_data, mock.call_args.kwargs)
+        processed_result = post_process_result(
+            mock_data, mock.call_args.kwargs)
         assert mock_data == processed_result
 
         get_workspace_mock_data = dict(
@@ -950,7 +981,8 @@ class TestWorkspaceResponseModule(ModuleTestCase):
             get_workspace_mock_data[param] = mock_data.get(param, None)
 
         get_workspace_mock.assert_called_once()
-        get_workspace_processed_result = post_process_result(get_workspace_mock_data, get_workspace_mock.call_args.kwargs)
+        get_workspace_processed_result = post_process_result(
+            get_workspace_mock_data, get_workspace_mock.call_args.kwargs)
         assert get_workspace_mock_data == get_workspace_processed_result
 
         get_workspace_patcher.stop()

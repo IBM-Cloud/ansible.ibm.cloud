@@ -14,15 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import, division, print_function
+from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
+
 
 DOCUMENTATION = r'''
 ---
 module: ibm_cm_catalog
 short_description: Manage ibm_cm_catalog resources.
-author: IBM SDK Generator
-version_added: "0.1"
+author: Kavya Handadi (@kavya498)
+version_added: "1.0.0"
 description:
     - This module creates, updates, C(resource_alias) or deletes a ibm_cm_catalog.
     - By default the module will look for an existing ibm_cm_catalog.
@@ -66,6 +67,7 @@ options:
         description:
             - List of features associated with this catalog.
         type: list
+        elements: dict
         suboptions:
             title:
                 description:
@@ -89,8 +91,11 @@ options:
         type: dict
         suboptions:
             include_all:
-                description:
-                    - -> true - Include all of the public catalog when filtering. Further settings will specifically exclude some offerings. false - Exclude all of the public catalog when filtering. Further settings will specifically include some offerings.
+                description: |
+                    true - Include all of the public catalog when filtering.
+                    Further settings will specifically exclude some offerings.
+                    false - Exclude all of the public catalog when filtering.
+                    Further settings will specifically include some offerings.
                 type: bool
             category_filters:
                 description:
@@ -107,8 +112,10 @@ options:
                         type: dict
                         suboptions:
                             filter_terms:
-                                description:
-                                    - List of values to match against. If include is true, then if the offering has one of the values then the offering is included. If include is false, then if the offering has one of the values then the offering is excluded.
+                                description: |
+                                    List of values to match against.
+                                    If include is true, then if the offering has one of the values then the offering is included.
+                                    If include is false, then if the offering has one of the values then the offering is excluded.
                                 type: list
                                 elements: str
             id_filters:
@@ -122,8 +129,10 @@ options:
                         type: dict
                         suboptions:
                             filter_terms:
-                                description:
-                                    - List of values to match against. If include is true, then if the offering has one of the values then the offering is included. If include is false, then if the offering has one of the values then the offering is excluded.
+                                description: |
+                                    List of values to match against.
+                                    If include is true, then if the offering has one of the values then the offering is included.
+                                    If include is false, then if the offering has one of the values then the offering is excluded.
                                 type: list
                                 elements: str
                     exclude:
@@ -132,8 +141,10 @@ options:
                         type: dict
                         suboptions:
                             filter_terms:
-                                description:
-                                    - List of values to match against. If include is true, then if the offering has one of the values then the offering is included. If include is false, then if the offering has one of the values then the offering is excluded.
+                                description: |
+                                    List of values to match against.
+                                    If include is true, then if the offering has one of the values then the offering is included.
+                                    If include is false, then if the offering has one of the values then the offering is excluded.
                                 type: list
                                 elements: str
     syndication_settings:
@@ -149,6 +160,7 @@ options:
                 description:
                     - Syndication clusters.
                 type: list
+                elements: dict
                 suboptions:
                     region:
                         description:
@@ -193,6 +205,7 @@ options:
                         description:
                             - Array of syndicated namespaces.
                         type: list
+                        elements: dict
                         suboptions:
                             region:
                                 description:
@@ -256,11 +269,10 @@ EXAMPLES = r'''
 Examples coming soon.
 '''
 
-
-from ansible.module_utils.basic import AnsibleModule
-from ibm_cloud_sdk_core import ApiException
-from ibm_platform_services import CatalogManagementV1
 from ..module_utils import config
+from ibm_platform_services import CatalogManagementV1
+from ibm_cloud_sdk_core import ApiException
+from ansible.module_utils.basic import AnsibleModule
 
 
 def run_module():
@@ -292,6 +304,7 @@ def run_module():
             required=False),
         features=dict(
             type='list',
+            elements='dict',
             options=dict(
                 title=dict(
                     type='str',
@@ -365,6 +378,7 @@ def run_module():
                     required=False),
                 clusters=dict(
                     type='list',
+                    elements='dict',
                     options=dict(
                         region=dict(
                             type='str',
@@ -399,6 +413,7 @@ def run_module():
                             required=False),
                         clusters=dict(
                             type='list',
+                            elements='dict',
                             options=dict(
                                 region=dict(
                                     type='str',
@@ -473,9 +488,8 @@ def run_module():
     catalog_identifier = module.params["catalog_identifier"]
     state = module.params["state"]
 
-
     sdk = config.get_catalog_management_sdk()
-    resource_exists=True
+    resource_exists = True
 
     # Check for existence
     if catalog_identifier:
@@ -485,12 +499,12 @@ def run_module():
             )
         except ApiException as ex:
             if ex.code == 404:
-                resource_exists=False
+                resource_exists = False
             else:
                 module.fail_json(msg=ex.message)
     else:
         # assume resource does not exist
-        resource_exists=False
+        resource_exists = False
 
     # Delete path
     if state == "absent":
@@ -502,10 +516,10 @@ def run_module():
             except ApiException as ex:
                 module.fail_json(msg=ex.message)
             else:
-                payload = {"id": catalog_identifier , "status": "deleted"}
+                payload = {"id": catalog_identifier, "status": "deleted"}
                 module.exit_json(changed=True, msg=payload)
         else:
-            payload = {"id": catalog_identifier , "status": "not_found"}
+            payload = {"id": catalog_identifier, "status": "not_found"}
             module.exit_json(changed=False, msg=payload)
 
     if state == "present":

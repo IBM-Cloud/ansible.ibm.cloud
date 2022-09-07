@@ -14,18 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
-}
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
+
 
 DOCUMENTATION = r'''
 ---
 module: ibm_resource_bindings_info
 short_description: Manage ibm_resource_bindings info.
-author: IBM SDK Generator
-version_added: "0.1"
+author: Kavya Handadi (@kavya498)
+version_added: "1.0.0"
 description:
     - This module retrieves one or more ibm_resource_bindings(s).
 requirements:
@@ -48,8 +46,10 @@ options:
             - Limit on how many items should be returned.
         type: int
     start:
-        description:
-            - An optional token that indicates the beginning of the page of results to be returned. Any additional query parameters are ignored if a page token is present. If omitted, the first page of results is returned. This value is obtained from the 'next_url' field of the operation response.
+        description: |
+            An optional token that indicates the beginning of the page of results to be returned.
+            Any additional query parameters are ignored if a page token is present.
+            If omitted, the first page of results is returned. This value is obtained from the 'next_url' field of the operation response.
         type: str
     guid:
         description:
@@ -73,13 +73,12 @@ EXAMPLES = r'''
 Examples coming soon.
 '''
 
-
-from ansible.module_utils.basic import AnsibleModule
-from ibm_cloud_sdk_core import ApiException
-from ibm_platform_services import ResourceControllerV2
-
-
 from ..module_utils import config
+from ibm_platform_services import ResourceControllerV2
+from ibm_cloud_sdk_core import ApiException
+from ansible.module_utils.basic import AnsibleModule
+
+
 def run_module():
     module_args = dict(
         resource_group_id=dict(
@@ -126,8 +125,7 @@ def run_module():
     updated_to = module.params["updated_to"]
     region_binding_id = module.params["region_binding_id"]
 
-
-    sdk=config.get_resource_contollerV2_sdk()
+    sdk = config.get_resource_contollerV2_sdk()
 
     # list
     try:

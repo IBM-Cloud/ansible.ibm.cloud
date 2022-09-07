@@ -14,26 +14,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
-}
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
+
 
 DOCUMENTATION = r'''
 ---
 module: ibm_iam_access_groups_info
 short_description: Manage ibm_iam_access_groups info.
-author: IBM SDK Generator
-version_added: "0.1"
+author: Kavya Handadi (@kavya498)
+version_added: "1.0.0"
 description:
     - This module retrieves one or more ibm_iam_access_groups(s).
 requirements:
     - "IamAccessGroupsV2"
 options:
     account_id:
-        description:
-            - Account ID of the API keys(s) to query. If a service IAM ID is specified in iam_id then account_id must match the account of the IAM ID. If a user IAM ID is specified in iam_id then then account_id must match the account of the Authorization token.
+        description: |
+            Account ID of the API keys(s) to query.
+            If a service IAM ID is specified in iam_id then account_id must match the account of the IAM ID.
+            If a user IAM ID is specified in iam_id then then account_id must match the account of the Authorization token.
         type: str
     iam_id:
         description:
@@ -44,8 +44,10 @@ options:
             - The offset of the first result item to be returned.
         type: int
     transaction_id:
-        description:
-            - An optional transaction ID can be passed to your request, which can be useful for tracking calls through multiple services by using one identifier. The header key must be set to Transaction-Id and the value is anything that you choose. If no transaction ID is passed in, then a random ID is generated.
+        description: |
+            An optional transaction ID can be passed to your request, which can be useful for tracking calls through multiple services by using one identifier.
+            The header key must be set to Transaction-Id and the value is anything that you choose.
+            If no transaction ID is passed in, then a random ID is generated.
         type: str
     limit:
         description:
@@ -69,13 +71,12 @@ EXAMPLES = r'''
 Examples coming soon.
 '''
 
-
-from ansible.module_utils.basic import AnsibleModule
-from ibm_cloud_sdk_core import ApiException
-from ibm_platform_services import IamAccessGroupsV2
-
-
 from ..module_utils import config
+from ibm_platform_services import IamAccessGroupsV2
+from ibm_cloud_sdk_core import ApiException
+from ansible.module_utils.basic import AnsibleModule
+
+
 def run_module():
     module_args = dict(
         account_id=dict(
@@ -117,7 +118,6 @@ def run_module():
     show_federated = module.params["show_federated"]
     sort = module.params["sort"]
     hide_public_access = module.params["hide_public_access"]
-
 
     sdk = config.get_iam_access_group_sdk()
 

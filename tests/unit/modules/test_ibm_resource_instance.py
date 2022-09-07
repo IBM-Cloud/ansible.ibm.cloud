@@ -19,7 +19,7 @@ import os
 
 from ibm_cloud_sdk_core import ApiException
 from ansible_collections.community.internal_test_tools.tests.unit.compat.mock import patch
-from ansible_collections.community.internal_test_tools.tests.unit.plugins.modules.utils  import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
+from ansible_collections.community.internal_test_tools.tests.unit.plugins.modules.utils import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
 
 from .common import DetailedResponseMock
 from plugins.modules import ibm_resource_instance
@@ -50,7 +50,8 @@ def post_process_result(expected: dict, result: dict) -> dict:
         else:
             # We need to recursively check nested dictionaries as well.
             if isinstance(res_value, dict):
-                new_result[res_key] = post_process_result(mock_value, res_value)
+                new_result[res_key] = post_process_result(
+                    mock_value, res_value)
             # Just like lists.
             elif isinstance(res_value, list) and len(res_value) > 0:
                 # We use an inner function for recursive list processing.
@@ -61,7 +62,8 @@ def post_process_result(expected: dict, result: dict) -> dict:
                     for mock_elem, res_elem in zip(m, r):
                         # If both items are dict use the outer function to process them.
                         if isinstance(mock_elem, dict) and isinstance(res_elem, dict):
-                            new_list.append(post_process_result(mock_elem, res_elem))
+                            new_list.append(
+                                post_process_result(mock_elem, res_elem))
                         # If both items are list, use this function to process them.
                         elif isinstance(mock_elem, list) and isinstance(res_elem, list):
                             new_list.append(process_list(mock_elem, res_elem))
@@ -88,7 +90,8 @@ class TestResourceInstancePostModule(ModuleTestCase):
     def test_read_ibm_resource_instance_failed(self):
         """Test the inner "read" path in this module with a server error response."""
 
-        patcher = patch('plugins.modules.ibm_resource_instance.ResourceControllerV2.get_resource_instance')
+        patcher = patch(
+            'plugins.modules.ibm_resource_instance.ResourceControllerV2.get_resource_instance')
         mock = patcher.start()
         mock.side_effect = ApiException(500, message='Something went wrong...')
 
@@ -109,7 +112,8 @@ class TestResourceInstancePostModule(ModuleTestCase):
         )
 
         mock.assert_called_once()
-        processed_result = post_process_result(mock_data, mock.call_args.kwargs)
+        processed_result = post_process_result(
+            mock_data, mock.call_args.kwargs)
         assert mock_data == processed_result
 
         patcher.stop()
@@ -118,31 +122,35 @@ class TestResourceInstancePostModule(ModuleTestCase):
         """Test the "create" path - successful."""
         resource = {
             'name': 'my-instance',
-            'target': 'bluemix-us-south',
+            'location': 'bluemix-us-south',
             'resource_group': '5c49eabc-f5e8-5881-a37e-2d100a33b3df',
-            'resource_plan_id': 'cloudant-standard',
+            'plan': 'cloudant-standard',
             'tags': ['testString'],
             'allow_cleanup': False,
             'parameters': {'key1': 'testString'},
             'entity_lock': False,
+            # 'service': 'test',
         }
 
-        patcher = patch('plugins.modules.ibm_resource_instance.ResourceControllerV2.create_resource_instance')
+        patcher = patch(
+            'plugins.modules.ibm_resource_instance.ResourceControllerV2.create_resource_instance')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock(resource)
 
-        get_resource_instance_patcher = patch('plugins.modules.ibm_resource_instance.ResourceControllerV2.get_resource_instance')
+        get_resource_instance_patcher = patch(
+            'plugins.modules.ibm_resource_instance.ResourceControllerV2.get_resource_instance')
         get_resource_instance_mock = get_resource_instance_patcher.start()
 
         set_module_args({
             'name': 'my-instance',
-            'target': 'bluemix-us-south',
+            'location': 'bluemix-us-south',
             'resource_group': '5c49eabc-f5e8-5881-a37e-2d100a33b3df',
-            'resource_plan_id': 'cloudant-standard',
+            'plan': 'cloudant-standard',
             'tags': ['testString'],
             'allow_cleanup': False,
             'parameters': {'key1': 'testString'},
             'entity_lock': False,
+            # 'service':'test',
         })
 
         with self.assertRaises(AnsibleExitJson) as result:
@@ -156,9 +164,9 @@ class TestResourceInstancePostModule(ModuleTestCase):
 
         mock_data = dict(
             name='my-instance',
-            target='bluemix-us-south',
+            target='',
             resource_group='5c49eabc-f5e8-5881-a37e-2d100a33b3df',
-            resource_plan_id='cloudant-standard',
+            resource_plan_id='',
             tags=['testString'],
             allow_cleanup=False,
             parameters={'key1': 'testString'},
@@ -166,7 +174,8 @@ class TestResourceInstancePostModule(ModuleTestCase):
         )
 
         mock.assert_called_once()
-        processed_result = post_process_result(mock_data, mock.call_args.kwargs)
+        processed_result = post_process_result(
+            mock_data, mock.call_args.kwargs)
         assert mock_data == processed_result
 
         get_resource_instance_mock.assert_not_called()
@@ -177,22 +186,26 @@ class TestResourceInstancePostModule(ModuleTestCase):
     def test_create_ibm_resource_instance_failed(self):
         """Test the "create" path - failed."""
 
-        get_resource_instance_patcher = patch('plugins.modules.ibm_resource_instance.ResourceControllerV2.get_resource_instance')
+        get_resource_instance_patcher = patch(
+            'plugins.modules.ibm_resource_instance.ResourceControllerV2.get_resource_instance')
         get_resource_instance_mock = get_resource_instance_patcher.start()
 
-        patcher = patch('plugins.modules.ibm_resource_instance.ResourceControllerV2.create_resource_instance')
+        patcher = patch(
+            'plugins.modules.ibm_resource_instance.ResourceControllerV2.create_resource_instance')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='Create ibm_resource_instance error')
+        mock.side_effect = ApiException(
+            400, message='Create ibm_resource_instance error')
 
         set_module_args({
             'name': 'my-instance',
-            'target': 'bluemix-us-south',
+            'location': 'bluemix-us-south',
             'resource_group': '5c49eabc-f5e8-5881-a37e-2d100a33b3df',
-            'resource_plan_id': 'cloudant-standard',
+            'plan': 'cloudant-standard',
             'tags': ['testString'],
             'allow_cleanup': False,
             'parameters': {'key1': 'testString'},
             'entity_lock': False,
+            # 'service':'test',
         })
 
         with self.assertRaises(AnsibleFailJson) as result:
@@ -205,9 +218,9 @@ class TestResourceInstancePostModule(ModuleTestCase):
 
         mock_data = dict(
             name='my-instance',
-            target='bluemix-us-south',
+            target='',
             resource_group='5c49eabc-f5e8-5881-a37e-2d100a33b3df',
-            resource_plan_id='cloudant-standard',
+            resource_plan_id='',
             tags=['testString'],
             allow_cleanup=False,
             parameters={'key1': 'testString'},
@@ -215,7 +228,8 @@ class TestResourceInstancePostModule(ModuleTestCase):
         )
 
         mock.assert_called_once()
-        processed_result = post_process_result(mock_data, mock.call_args.kwargs)
+        processed_result = post_process_result(
+            mock_data, mock.call_args.kwargs)
         assert mock_data == processed_result
 
         get_resource_instance_mock.assert_not_called()
@@ -229,23 +243,26 @@ class TestResourceInstancePostModule(ModuleTestCase):
             'id': 'testString',
             'name': 'my-new-instance-name',
             'parameters': {'key1': 'testString'},
-            'resource_plan_id': 'a8dff6d3-d287-4668-a81d-c87c55c2656d',
+            'plan': 'a8dff6d3-d287-4668-a81d-c87c55c2656d',
             'allow_cleanup': True,
         }
 
-        patcher = patch('plugins.modules.ibm_resource_instance.ResourceControllerV2.update_resource_instance')
+        patcher = patch(
+            'plugins.modules.ibm_resource_instance.ResourceControllerV2.update_resource_instance')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock(resource)
 
-        get_resource_instance_patcher = patch('plugins.modules.ibm_resource_instance.ResourceControllerV2.get_resource_instance')
+        get_resource_instance_patcher = patch(
+            'plugins.modules.ibm_resource_instance.ResourceControllerV2.get_resource_instance')
         get_resource_instance_mock = get_resource_instance_patcher.start()
-        get_resource_instance_mock.return_value = DetailedResponseMock(resource)
+        get_resource_instance_mock.return_value = DetailedResponseMock(
+            resource)
 
         set_module_args({
             'id': 'testString',
             'name': 'my-new-instance-name',
             'parameters': {'key1': 'testString'},
-            'resource_plan_id': 'a8dff6d3-d287-4668-a81d-c87c55c2656d',
+            'plan': 'a8dff6d3-d287-4668-a81d-c87c55c2656d',
             'allow_cleanup': True,
         })
 
@@ -267,7 +284,8 @@ class TestResourceInstancePostModule(ModuleTestCase):
         )
 
         mock.assert_called_once()
-        processed_result = post_process_result(mock_data, mock.call_args.kwargs)
+        processed_result = post_process_result(
+            mock_data, mock.call_args.kwargs)
         assert mock_data == processed_result
 
         get_resource_instance_mock_data = dict(
@@ -279,7 +297,8 @@ class TestResourceInstancePostModule(ModuleTestCase):
             get_resource_instance_mock_data[param] = mock_data.get(param, None)
 
         get_resource_instance_mock.assert_called_once()
-        get_resource_instance_processed_result = post_process_result(get_resource_instance_mock_data, get_resource_instance_mock.call_args.kwargs)
+        get_resource_instance_processed_result = post_process_result(
+            get_resource_instance_mock_data, get_resource_instance_mock.call_args.kwargs)
         assert get_resource_instance_mock_data == get_resource_instance_processed_result
         get_resource_instance_patcher.stop()
         patcher.stop()
@@ -290,23 +309,27 @@ class TestResourceInstancePostModule(ModuleTestCase):
             'id': 'testString',
             'name': 'my-new-instance-name',
             'parameters': {'key1': 'testString'},
-            'resource_plan_id': 'a8dff6d3-d287-4668-a81d-c87c55c2656d',
+            'plan': 'a8dff6d3-d287-4668-a81d-c87c55c2656d',
             'allow_cleanup': True,
         }
 
-        patcher = patch('plugins.modules.ibm_resource_instance.ResourceControllerV2.update_resource_instance')
+        patcher = patch(
+            'plugins.modules.ibm_resource_instance.ResourceControllerV2.update_resource_instance')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='Update ibm_resource_instance error')
+        mock.side_effect = ApiException(
+            400, message='Update ibm_resource_instance error')
 
-        get_resource_instance_patcher = patch('plugins.modules.ibm_resource_instance.ResourceControllerV2.get_resource_instance')
+        get_resource_instance_patcher = patch(
+            'plugins.modules.ibm_resource_instance.ResourceControllerV2.get_resource_instance')
         get_resource_instance_mock = get_resource_instance_patcher.start()
-        get_resource_instance_mock.return_value = DetailedResponseMock(resource)
+        get_resource_instance_mock.return_value = DetailedResponseMock(
+            resource)
 
         set_module_args({
             'id': 'testString',
             'name': 'my-new-instance-name',
             'parameters': {'key1': 'testString'},
-            'resource_plan_id': 'a8dff6d3-d287-4668-a81d-c87c55c2656d',
+            'plan': 'a8dff6d3-d287-4668-a81d-c87c55c2656d',
             'allow_cleanup': True,
         })
 
@@ -327,7 +350,8 @@ class TestResourceInstancePostModule(ModuleTestCase):
         )
 
         mock.assert_called_once()
-        processed_result = post_process_result(mock_data, mock.call_args.kwargs)
+        processed_result = post_process_result(
+            mock_data, mock.call_args.kwargs)
         assert mock_data == processed_result
 
         get_resource_instance_mock_data = dict(
@@ -339,7 +363,8 @@ class TestResourceInstancePostModule(ModuleTestCase):
             get_resource_instance_mock_data[param] = mock_data.get(param, None)
 
         get_resource_instance_mock.assert_called_once()
-        get_resource_instance_processed_result = post_process_result(get_resource_instance_mock_data, get_resource_instance_mock.call_args.kwargs)
+        get_resource_instance_processed_result = post_process_result(
+            get_resource_instance_mock_data, get_resource_instance_mock.call_args.kwargs)
         assert get_resource_instance_mock_data == get_resource_instance_processed_result
 
         get_resource_instance_patcher.stop()
@@ -347,11 +372,13 @@ class TestResourceInstancePostModule(ModuleTestCase):
 
     def test_delete_ibm_resource_instance_success(self):
         """Test the "delete" path - successfull."""
-        patcher = patch('plugins.modules.ibm_resource_instance.ResourceControllerV2.delete_resource_instance')
+        patcher = patch(
+            'plugins.modules.ibm_resource_instance.ResourceControllerV2.delete_resource_instance')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock()
 
-        get_resource_instance_patcher = patch('plugins.modules.ibm_resource_instance.ResourceControllerV2.get_resource_instance')
+        get_resource_instance_patcher = patch(
+            'plugins.modules.ibm_resource_instance.ResourceControllerV2.get_resource_instance')
         get_resource_instance_mock = get_resource_instance_patcher.start()
         get_resource_instance_mock.return_value = DetailedResponseMock()
 
@@ -379,7 +406,8 @@ class TestResourceInstancePostModule(ModuleTestCase):
         )
 
         mock.assert_called_once()
-        processed_result = post_process_result(mock_data, mock.call_args.kwargs)
+        processed_result = post_process_result(
+            mock_data, mock.call_args.kwargs)
         assert mock_data == processed_result
 
         get_resource_instance_mock_data = dict(
@@ -391,7 +419,8 @@ class TestResourceInstancePostModule(ModuleTestCase):
             get_resource_instance_mock_data[param] = mock_data.get(param, None)
 
         get_resource_instance_mock.assert_called_once()
-        get_resource_instance_processed_result = post_process_result(get_resource_instance_mock_data, get_resource_instance_mock.call_args.kwargs)
+        get_resource_instance_processed_result = post_process_result(
+            get_resource_instance_mock_data, get_resource_instance_mock.call_args.kwargs)
         assert get_resource_instance_mock_data == get_resource_instance_processed_result
 
         get_resource_instance_patcher.stop()
@@ -399,11 +428,13 @@ class TestResourceInstancePostModule(ModuleTestCase):
 
     def test_delete_ibm_resource_instance_not_exists(self):
         """Test the "delete" path - not exists."""
-        patcher = patch('plugins.modules.ibm_resource_instance.ResourceControllerV2.delete_resource_instance')
+        patcher = patch(
+            'plugins.modules.ibm_resource_instance.ResourceControllerV2.delete_resource_instance')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock()
 
-        get_resource_instance_patcher = patch('plugins.modules.ibm_resource_instance.ResourceControllerV2.get_resource_instance')
+        get_resource_instance_patcher = patch(
+            'plugins.modules.ibm_resource_instance.ResourceControllerV2.get_resource_instance')
         get_resource_instance_mock = get_resource_instance_patcher.start()
         get_resource_instance_mock.side_effect = ApiException(404)
 
@@ -441,7 +472,8 @@ class TestResourceInstancePostModule(ModuleTestCase):
             get_resource_instance_mock_data[param] = mock_data.get(param, None)
 
         get_resource_instance_mock.assert_called_once()
-        get_resource_instance_processed_result = post_process_result(get_resource_instance_mock_data, get_resource_instance_mock.call_args.kwargs)
+        get_resource_instance_processed_result = post_process_result(
+            get_resource_instance_mock_data, get_resource_instance_mock.call_args.kwargs)
         assert get_resource_instance_mock_data == get_resource_instance_processed_result
 
         get_resource_instance_patcher.stop()
@@ -449,11 +481,14 @@ class TestResourceInstancePostModule(ModuleTestCase):
 
     def test_delete_ibm_resource_instance_failed(self):
         """Test the "delete" path - failed."""
-        patcher = patch('plugins.modules.ibm_resource_instance.ResourceControllerV2.delete_resource_instance')
+        patcher = patch(
+            'plugins.modules.ibm_resource_instance.ResourceControllerV2.delete_resource_instance')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='Delete ibm_resource_instance error')
+        mock.side_effect = ApiException(
+            400, message='Delete ibm_resource_instance error')
 
-        get_resource_instance_patcher = patch('plugins.modules.ibm_resource_instance.ResourceControllerV2.get_resource_instance')
+        get_resource_instance_patcher = patch(
+            'plugins.modules.ibm_resource_instance.ResourceControllerV2.get_resource_instance')
         get_resource_instance_mock = get_resource_instance_patcher.start()
         get_resource_instance_mock.return_value = DetailedResponseMock()
 
@@ -477,7 +512,8 @@ class TestResourceInstancePostModule(ModuleTestCase):
         )
 
         mock.assert_called_once()
-        processed_result = post_process_result(mock_data, mock.call_args.kwargs)
+        processed_result = post_process_result(
+            mock_data, mock.call_args.kwargs)
         assert mock_data == processed_result
 
         get_resource_instance_mock_data = dict(
@@ -489,7 +525,8 @@ class TestResourceInstancePostModule(ModuleTestCase):
             get_resource_instance_mock_data[param] = mock_data.get(param, None)
 
         get_resource_instance_mock.assert_called_once()
-        get_resource_instance_processed_result = post_process_result(get_resource_instance_mock_data, get_resource_instance_mock.call_args.kwargs)
+        get_resource_instance_processed_result = post_process_result(
+            get_resource_instance_mock_data, get_resource_instance_mock.call_args.kwargs)
         assert get_resource_instance_mock_data == get_resource_instance_processed_result
 
         get_resource_instance_patcher.stop()

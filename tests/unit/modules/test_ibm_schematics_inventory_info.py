@@ -22,7 +22,7 @@ import os
 from .common import DetailedResponseMock
 from plugins.modules import ibm_schematics_inventory_info
 from ansible_collections.community.internal_test_tools.tests.unit.compat.mock import patch
-from ansible_collections.community.internal_test_tools.tests.unit.plugins.modules.utils  import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
+from ansible_collections.community.internal_test_tools.tests.unit.plugins.modules.utils import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
 
 try:
     from ibm_cloud_sdk_core import ApiException
@@ -42,7 +42,8 @@ class TestInventoryResourceRecordModuleInfo(ModuleTestCase):
             'profile': 'summary',
         }
 
-        patcher = patch('plugins.modules.ibm_schematics_inventory_info.SchematicsV1.get_inventory')
+        patcher = patch(
+            'plugins.modules.ibm_schematics_inventory_info.SchematicsV1.get_inventory')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock(datasource)
 
@@ -67,9 +68,11 @@ class TestInventoryResourceRecordModuleInfo(ModuleTestCase):
 
     def test_read_ibm_schematics_inventory_failed(self):
         """Test the "read" path - failed."""
-        patcher = patch('plugins.modules.ibm_schematics_inventory_info.SchematicsV1.get_inventory')
+        patcher = patch(
+            'plugins.modules.ibm_schematics_inventory_info.SchematicsV1.get_inventory')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='Read ibm_schematics_inventory error')
+        mock.side_effect = ApiException(
+            400, message='Read ibm_schematics_inventory error')
 
         set_module_args({
             'inventory_id': 'testString',

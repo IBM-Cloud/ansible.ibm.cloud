@@ -19,7 +19,7 @@ import os
 
 from ibm_cloud_sdk_core import ApiException
 from ansible_collections.community.internal_test_tools.tests.unit.compat.mock import patch
-from ansible_collections.community.internal_test_tools.tests.unit.plugins.modules.utils  import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
+from ansible_collections.community.internal_test_tools.tests.unit.plugins.modules.utils import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
 
 from .common import DetailedResponseMock
 from plugins.modules import ibm_iam_access_group_members_info
@@ -32,7 +32,8 @@ class TestGroupMembersListModuleInfo(ModuleTestCase):
 
     def test_list_ibm_iam_access_group_members_success(self):
         """Test the "list" path - successful."""
-        patcher = patch('plugins.modules.ibm_iam_access_group_members_info.IamAccessGroupsV2.list_access_group_members')
+        patcher = patch(
+            'plugins.modules.ibm_iam_access_group_members_info.IamAccessGroupsV2.list_access_group_members')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock([])
 
@@ -59,9 +60,11 @@ class TestGroupMembersListModuleInfo(ModuleTestCase):
 
     def test_list_ibm_iam_access_group_members_failed(self):
         """Test the "list" path - failed."""
-        patcher = patch('plugins.modules.ibm_iam_access_group_members_info.IamAccessGroupsV2.list_access_group_members')
+        patcher = patch(
+            'plugins.modules.ibm_iam_access_group_members_info.IamAccessGroupsV2.list_access_group_members')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='List ibm_iam_access_group_members error')
+        mock.side_effect = ApiException(
+            400, message='List ibm_iam_access_group_members error')
 
         set_module_args({
             'access_group_id': 'testString',

@@ -14,18 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
-}
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
+
 
 DOCUMENTATION = r'''
 ---
 module: ibm_resource_alias
 short_description: Manage ibm_resource_alias resources.
-author: IBM SDK Generator
-version_added: "0.1"
+author: Kavya Handadi (@kavya498)
+version_added: "1.0.0"
 description:
     - This module creates, updates, or deletes a ibm_resource_alias.
     - By default the module will look for an existing ibm_resource_alias.
@@ -60,13 +58,12 @@ EXAMPLES = r'''
 Examples coming soon.
 '''
 
-
-from ansible.module_utils.basic import AnsibleModule
-from ibm_cloud_sdk_core import ApiException
-from ibm_platform_services import ResourceControllerV2
-
-
 from ..module_utils import config
+from ibm_platform_services import ResourceControllerV2
+from ibm_cloud_sdk_core import ApiException
+from ansible.module_utils.basic import AnsibleModule
+
+
 def run_module():
     module_args = dict(
         name=dict(
@@ -99,10 +96,9 @@ def run_module():
     id = module.params["id"]
     state = module.params["state"]
 
+    sdk = config.get_resource_contollerV2_sdk()
 
-    sdk=config.get_resource_contollerV2_sdk()
-
-    resource_exists=True
+    resource_exists = True
 
     # Check for existence
     if id:
@@ -112,12 +108,12 @@ def run_module():
             )
         except ApiException as ex:
             if ex.code == 404:
-                resource_exists=False
+                resource_exists = False
             else:
                 module.fail_json(msg=ex.message)
     else:
         # assume resource does not exist
-        resource_exists=False
+        resource_exists = False
 
     # Delete path
     if state == "absent":
@@ -129,10 +125,10 @@ def run_module():
             except ApiException as ex:
                 module.fail_json(msg=ex.message)
             else:
-                payload = {"id": id , "status": "deleted"}
+                payload = {"id": id, "status": "deleted"}
                 module.exit_json(changed=True, msg=payload)
         else:
-            payload = {"id": id , "status": "not_found"}
+            payload = {"id": id, "status": "not_found"}
             module.exit_json(changed=False, msg=payload)
 
     if state == "present":

@@ -18,18 +18,12 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
-}
-
 DOCUMENTATION = r'''
 ---
 module: ibm_schematics_action
 short_description: Manage C(schematics_actions) for Schematics Service API.
-author: IBM SDK Generator
-version_added: "0.1"
+author: Kavya Handadi (@kavya498)
+version_added: "1.0.0"
 description:
   - This module creates, updates, or deletes a C(schematics_action) resource for Schematics Service API.
 requirements:
@@ -39,14 +33,17 @@ options:
     description:
       - Output variables for the Action.
     type: list
+    elements: dict
     suboptions:
       name:
         description:
           - The name of the variable. For example, C(name = "inventory username").
         type: str
       value:
-        description:
-          - The value for the variable or reference to the value. For example, C(value = "<provide your sshI(key)value with \n>"). B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
+        description: |
+          The value for the variable or reference to the value.
+          For example, C(value = "<provide your sshI(key)value with \n>").
+          B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
         type: str
       use_default:
         description:
@@ -112,8 +109,10 @@ options:
               - If the variable required?.
             type: bool
           options:
-            description:
-              - The list of possible values for this variable.  If type is B(integer) or B(date), then the array of string is  converted to array of integers or date during the runtime.
+            description: |
+              The list of possible values for this variable.
+              If type is B(integer) or B(date),
+              then the array of string is converted to array of integers or date during the runtime.
             type: list
             elements: str
           min_value:
@@ -156,14 +155,17 @@ options:
     description:
       - Environment variables for the Action.
     type: list
+    elements: dict
     suboptions:
       name:
         description:
           - The name of the variable. For example, C(name = "inventory username").
         type: str
       value:
-        description:
-          - The value for the variable or reference to the value. For example, C(value = "<provide your sshI(key)value with \n>"). B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
+        description: |
+          The value for the variable or reference to the value.
+          For example, C(value = "<provide your sshI(key)value with \n>").
+          B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
         type: str
       use_default:
         description:
@@ -229,8 +231,9 @@ options:
               - If the variable required?.
             type: bool
           options:
-            description:
-              - The list of possible values for this variable.  If type is B(integer) or B(date), then the array of string is  converted to array of integers or date during the runtime.
+            description: |
+              The list of possible values for this variable.
+              If type is B(integer) or B(date), then the array of string is converted to array of integers or date during the runtime.
             type: list
             elements: str
           min_value:
@@ -273,18 +276,21 @@ options:
     description:
       - credentials of the Action.
     type: list
+    elements: dict
     suboptions:
       name:
         description:
           - The name of the credential variable.
         type: str
       value:
-        description:
-          - The credential value for the variable or reference to the value. For example, C(value = "<provide your sshI(key)value with \n>"). B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
+        description: |
+          The credential value for the variable or reference to the value.
+          For example, C(value = "<provide your sshI(key)value with \n>").
+          B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
         type: str
       use_default:
-        description:
-          - True, will ignore the data in the value attribute, instead the data in metadata.defaultI(value will be used.
+        description: |
+          True, will ignore the data in the value attribute,instead the data in metadata.defaultI(value will be used.
         type: bool
       metadata:
         description:
@@ -354,14 +360,17 @@ options:
     description:
       - Input variables for the Action.
     type: list
+    elements: dict
     suboptions:
       name:
         description:
           - The name of the variable. For example, C(name = "inventory username").
         type: str
       value:
-        description:
-          - The value for the variable or reference to the value. For example, C(value = "<provide your sshI(key)value with \n>"). B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
+        description: |
+          The value for the variable or reference to the value.
+          For example, C(value = "<provide your sshI(key)value with \n>").
+          B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
         type: str
       use_default:
         description:
@@ -427,8 +436,9 @@ options:
               - If the variable required?.
             type: bool
           options:
-            description:
-              - The list of possible values for this variable.  If type is B(integer) or B(date), then the array of string is  converted to array of integers or date during the runtime.
+            description: |
+              The list of possible values for this variable.
+              If type is B(integer) or B(date), then the array of string is converted to array of integers or date during the runtime.
             type: list
             elements: str
           min_value:
@@ -485,8 +495,10 @@ options:
           - The name of the credential variable.
         type: str
       value:
-        description:
-          - The credential value for the variable or reference to the value. For example, C(value = "<provide your sshI(key)value with \n>"). B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
+        description: |
+          The credential value for the variable or reference to the value.
+          For example, C(value = "<provide your sshI(key)value with \n>").
+          B(Note) The SSH key should contain C(\n) at the end of the key details in case of command line or API calls.
         type: str
       use_default:
         description:
@@ -672,12 +684,12 @@ options:
     type: dict
     suboptions:
       state_:
-        description:
-          - User-defined states
-        I( C(draft) Object can be modified; can be used by Jobs run by the author, during execution
-        ) C(live) Object can be modified; can be used by Jobs during execution
-        I( C(locked) Object cannot be modified; can be used by Jobs during execution
-        ) C(disable) Object can be modified. cannot be used by Jobs during execution.
+        description: |
+          User-defined states
+          I( C(draft) Object can be modified; can be used by Jobs run by the author, during execution)
+          C(live) Object can be modified; can be used by Jobs during execution
+          I( C(locked) Object cannot be modified; can be used by Jobs during execution)
+          C(disable) Object can be modified. cannot be used by Jobs during execution.
         type: str
         choices:
           - draft
@@ -693,14 +705,16 @@ options:
           - When the User who set the state of the Object.
         type: str
   bastion_connection_type:
-    description:
-      - Type of connection to be used when connecting to bastion host.  If the C(inventoryI(connection)type=winrm), then C(bastionI(connection)type) is not supported.
+    description: |
+      Type of connection to be used when connecting to bastion host.
+      If the C(inventoryI(connection)type=winrm), then C(bastionI(connection)type) is not supported.
     type: str
     choices:
       - ssh
   inventory_connection_type:
-    description:
-      - Type of connection to be used when connecting to remote host.  B(Note) Currently, WinRM supports only Windows system with the public IPs and do not support Bastion host.
+    description: |
+      Type of connection to be used when connecting to remote host.
+      B(Note) Currently, WinRM supports only Windows system with the public IPs and do not support Bastion host.
     type: str
     choices:
       - ssh
@@ -710,19 +724,23 @@ options:
       - Resource-group name for an action. By default, an action is created in C(Default) resource group.
     type: str
   targets_ini:
-    description:
-      - Inventory of host and host group for the playbook in C(INI) file format. For example, C("targetsI(ini": "[webserverhost] 
- 172.22.192.6 
- [dbhost]
- 172.22.192.5"). For more information, about an inventory host group syntax, see [Inventory host groups](https://cloud.ibm.com/docs/schematics?topic=schematics-schematics-cli-reference#schematics-inventory-host-grps).
+    description: |
+      Inventory of host and host group for the playbook in C(INI) file format.
+      For example, C("targetsI(ini": "[webserverhost] 72.22.192.6 [dbhost]172.22.192.5").
+      For more information, about an inventory host group syntax,
+      see [Inventory host groups](https://cloud.ibm.com/docs/schematics?topic=schematics-schematics-cli-reference#schematics-inventory-host-grps).
     type: str
   name:
-    description:
-      - The unique name of your action. The name can be up to 128 characters long and can include alphanumeric characters, spaces, dashes, and underscores. B(Example) you can use the name to stop action.
+    description: |
+      The unique name of your action.
+      The name can be up to 128 characters long and can include alphanumeric characters, spaces, dashes, and underscores.
+      B(Example) you can use the name to stop action.
     type: str
   location:
-    description:
-      - List of locations supported by IBM Cloud Schematics service.  While creating your workspace or action, choose the right region, since it cannot be changed.  Note, this does not limit the location of the IBM Cloud resources, provisioned using Schematics.
+    description: |
+      List of locations supported by IBM Cloud Schematics service.
+      While creating your workspace or action, choose the right region, since it cannot be changed.
+      Note, this does not limit the location of the IBM Cloud resources, provisioned using Schematics.
     type: str
     choices:
       - us-south
@@ -802,8 +820,8 @@ options:
       - Equivalent to -force options in the command line.
     type: bool
   x_github_token:
-    description:
-      - The personal access token to authenticate with your private GitHub or GitLab repository and access your Terraform template.
+    description: |
+      The personal access token to authenticate with your private GitHub or GitLab repository and access your Terraform template.
     type: str
   state:
     description:
@@ -816,8 +834,12 @@ seealso:
     description: Use Schematics to run your Ansible playbooks to provision, configure, and manage IBM Cloud resources.
     link: U(https://cloud.ibm.com/docs/schematics)
 notes:
-  - Authenticate this module by using an IBM Cloud API key. For more information about working with IBM Cloud API keys, see I(Managing API keys): U(https://cloud.ibm.com/docs/account?topic=account-manapikey).
-  - To configure the authentication, set your IBM Cloud API key on the C(IC_API_KEY) environment variable. The API key will be used to authenticate all IBM Cloud modules that use this environment variable.
+  - |
+    Authenticate this module by using an IBM Cloud API key.
+    For more information about working with IBM Cloud API keys, see I(Managing API keys): U(https://cloud.ibm.com/docs/account?topic=account-manapikey).
+  - |
+    To configure the authentication, set your IBM Cloud API key on the C(IC_API_KEY) environment variable.
+    The API key will be used to authenticate all IBM Cloud modules that use this environment variable.
 '''
 
 EXAMPLES = r'''
@@ -836,7 +858,10 @@ EXAMPLES = r'''
     system_lock_model:
   ibm_schematics_action:
     name: 'Stop Action'
-    description: 'The description of your action. The description can be up to 2048 characters long in size. **Example** you can use the description to stop the targets.'
+    description: |
+      'The description of your action.
+      The description can be up to 2048 characters long in size.
+      **Example** you can use the description to stop the targets.'
 
 - name: Update ibm_schematics_action
   vars:
@@ -853,7 +878,10 @@ EXAMPLES = r'''
     system_lock_model:
   ibm_schematics_action:
     name: 'Stop Action'
-    description: 'The description of your action. The description can be up to 2048 characters long in size. **Example** you can use the description to stop the targets.'
+    description: |
+      'The description of your action.
+      The description can be up to 2048 characters long in size.
+      **Example** you can use the description to stop the targets.'
 
 - name: Delete ibm_schematics_action
   ibm_schematics_action:
@@ -870,10 +898,9 @@ msg:
   type: dict
 '''
 
-from ansible.module_utils.basic import AnsibleModule
 
 from ..module_utils import config
-
+from ansible.module_utils.basic import AnsibleModule
 try:
     from ibm_schematics import SchematicsV1
     from ibm_cloud_sdk_core import ApiException
@@ -885,6 +912,7 @@ def run_module():
     module_args = dict(
         outputs=dict(
             type='list',
+            elements='dict',
             options=dict(
                 name=dict(
                     type='str',
@@ -900,7 +928,8 @@ def run_module():
                     options=dict(
                         type=dict(
                             type='str',
-                            choices=['boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
+                            choices=['boolean', 'string', 'integer', 'date',
+                                     'array', 'list', 'map', 'complex', 'link'],
                             required=False),
                         aliases=dict(
                             type='list',
@@ -968,6 +997,7 @@ def run_module():
             required=False),
         settings=dict(
             type='list',
+            elements='dict',
             options=dict(
                 name=dict(
                     type='str',
@@ -983,7 +1013,8 @@ def run_module():
                     options=dict(
                         type=dict(
                             type='str',
-                            choices=['boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
+                            choices=['boolean', 'string', 'integer', 'date',
+                                     'array', 'list', 'map', 'complex', 'link'],
                             required=False),
                         aliases=dict(
                             type='list',
@@ -1051,6 +1082,7 @@ def run_module():
             required=False),
         credentials=dict(
             type='list',
+            elements='dict',
             options=dict(
                 name=dict(
                     type='str',
@@ -1112,6 +1144,7 @@ def run_module():
             required=False),
         inputs=dict(
             type='list',
+            elements='dict',
             options=dict(
                 name=dict(
                     type='str',
@@ -1127,7 +1160,8 @@ def run_module():
                     options=dict(
                         type=dict(
                             type='str',
-                            choices=['boolean', 'string', 'integer', 'date', 'array', 'list', 'map', 'complex', 'link'],
+                            choices=['boolean', 'string', 'integer', 'date',
+                                     'array', 'list', 'map', 'complex', 'link'],
                             required=False),
                         aliases=dict(
                             type='list',
@@ -1263,7 +1297,8 @@ def run_module():
             required=False),
         source_type=dict(
             type='str',
-            choices=['local', 'git_hub', 'git_hub_enterprise', 'git_lab', 'ibm_git_lab', 'ibm_cloud_catalog'],
+            choices=['local', 'git_hub', 'git_hub_enterprise',
+                     'git_lab', 'ibm_git_lab', 'ibm_cloud_catalog'],
             required=False),
         # Represents the ExternalSource Python class
         source=dict(
@@ -1271,7 +1306,8 @@ def run_module():
             options=dict(
                 source_type=dict(
                     type='str',
-                    choices=['local', 'git_hub', 'git_hub_enterprise', 'git_lab', 'ibm_git_lab', 'ibm_cloud_catalog'],
+                    choices=['local', 'git_hub', 'git_hub_enterprise',
+                             'git_lab', 'ibm_git_lab', 'ibm_cloud_catalog'],
                     required=False),
                 git=dict(
                     type='dict',
@@ -1477,8 +1513,7 @@ def run_module():
     x_github_token = module.params["x_github_token"]
     state = module.params["state"]
 
-
-    sdk= config.get_schematicsv1_sdk()
+    sdk = config.get_schematicsv1_sdk()
 
     resource_exists = True
 

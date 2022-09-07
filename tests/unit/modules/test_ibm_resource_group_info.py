@@ -19,7 +19,7 @@ import os
 
 from ibm_cloud_sdk_core import ApiException
 from ansible_collections.community.internal_test_tools.tests.unit.compat.mock import patch
-from ansible_collections.community.internal_test_tools.tests.unit.plugins.modules.utils  import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
+from ansible_collections.community.internal_test_tools.tests.unit.plugins.modules.utils import ModuleTestCase, AnsibleFailJson, AnsibleExitJson, set_module_args
 
 from .common import DetailedResponseMock
 from plugins.modules import ibm_resource_group_info
@@ -32,7 +32,8 @@ class TestResourceGroupModuleInfo(ModuleTestCase):
 
     def test_list_ibm_resource_group_success(self):
         """Test the "list" path - successful."""
-        patcher = patch('plugins.modules.ibm_resource_group_info.ResourceManagerV2.get_resource_group')
+        patcher = patch(
+            'plugins.modules.ibm_resource_group_info.ResourceManagerV2.get_resource_group')
         mock = patcher.start()
         mock.return_value = DetailedResponseMock([])
 
@@ -53,9 +54,11 @@ class TestResourceGroupModuleInfo(ModuleTestCase):
 
     def test_list_ibm_resource_group_failed(self):
         """Test the "list" path - failed."""
-        patcher = patch('plugins.modules.ibm_resource_group_info.ResourceManagerV2.get_resource_group')
+        patcher = patch(
+            'plugins.modules.ibm_resource_group_info.ResourceManagerV2.get_resource_group')
         mock = patcher.start()
-        mock.side_effect = ApiException(400, message='List ibm_resource_group error')
+        mock.side_effect = ApiException(
+            400, message='List ibm_resource_group error')
 
         set_module_args({
             'id': 'testString',
